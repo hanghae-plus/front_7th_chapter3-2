@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product, ProductWithUI } from '../types';
+import { CartItem, Coupon, ProductWithUI } from '../types';
 import { Notification } from '../types';
 import useDebounce from './hooks/useDebounce';
 import { useCart } from './hooks/useCart';
@@ -26,21 +26,11 @@ const Cart = ({
     applyCoupon,
     clearCoupon,
     selectedCoupon,
-    calculateTotal: calculateTotalAction,
-    getRemainingStock: getRemainingStockAction,
+    calculateTotal,
+    getRemainingStock,
   } = cartActions;
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return 'SOLD OUT';
-      }
-    }
-    return `₩${price.toLocaleString()}`;
-  };
 
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;
@@ -67,42 +57,6 @@ const Cart = ({
 
     return Math.round(price * quantity * (1 - discount));
   };
-
-  const calculateCartTotal = () => {
-    return calculateTotalAction();
-  };
-
-  const getRemainingStock = (product: Product): number => {
-    return getRemainingStockAction(product);
-  };
-
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
-
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
 
   const handleClickAddToCart = (product: ProductWithUI) => {
     addToCart(product);
@@ -131,16 +85,28 @@ const Cart = ({
     else clearCoupon();
   };
 
-  const completeOrder = useCallback(() => {
+  const handleClickCompleteOrder = () => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       'success'
     );
     cartActions.clearCart();
-  }, [addNotification, cartActions]);
+  };
 
-  const totals = calculateCartTotal();
+  const totals = calculateTotal();
+
+  const addNotification = useCallback(
+    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+      const id = Date.now().toString();
+      setNotifications((prev) => [...prev, { id, message, type }]);
+
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+      }, 3000);
+    },
+    []
+  );
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -154,6 +120,32 @@ const Cart = ({
               .includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
+
+  const formatPrice = (price: number, productId?: string): string => {
+    if (productId) {
+      const product = products.find((p) => p.id === productId);
+      if (product && getRemainingStock(product) <= 0) {
+        return 'SOLD OUT';
+      }
+    }
+    return `₩${price.toLocaleString()}`;
+  };
+
+  useEffect(() => {
+    localStorage.setItem('products', JSON.stringify(products));
+  }, [products]);
+
+  useEffect(() => {
+    localStorage.setItem('coupons', JSON.stringify(coupons));
+  }, [coupons]);
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+      localStorage.removeItem('cart');
+    }
+  }, [cart]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -457,7 +449,7 @@ const Cart = ({
                 </div>
 
                 <button
-                  onClick={completeOrder}
+                  onClick={handleClickCompleteOrder}
                   className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                 >
                   {totals.totalAfterDiscount.toLocaleString()}원 결제하기
