@@ -1,0 +1,22 @@
+import { Coupon } from '../../types';
+import { initialCoupons } from '../constants';
+import { useLocalStorage } from './useLocalStorage';
+
+export const useCoupons = () => {
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    'coupons',
+    initialCoupons
+  );
+
+  // TODO: 쿠폰 관리 Hook
+  // 힌트:
+  // 1. 쿠폰 목록 상태 관리 (localStorage 연동 고려)
+  // 2. 쿠폰 추가/삭제
+  //
+  // 반환할 값:
+  // - coupons: 쿠폰 배열
+  // - addCoupon: 새 쿠폰 추가
+  // - removeCoupon: 쿠폰 삭제
+
+  return { coupons, setCoupons };
+};

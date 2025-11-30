@@ -2,23 +2,20 @@ import { useState } from 'react';
 import Admin from './Admin';
 import Cart from './Cart';
 import Notifications from './Notifications';
-import { CartItem, Coupon, Notification, ProductWithUI } from '../types';
-import { initialProducts, initialCoupons } from './constants';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { Notification } from '../types';
+import { useViewMode } from './hooks/useViewMode';
+import { useCart } from './hooks/useCart';
+import { useCoupons } from './hooks/useCoupons';
+import { useProducts } from './hooks/useProducts';
 
 const App = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { viewMode, toggleViewMode, isCartView, isAdminView } =
+    useViewMode('cart');
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
-  const [totalItemCount, setTotalItemCount] = useState(0);
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    'products',
-    initialProducts
-  );
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    'coupons',
-    initialCoupons
-  );
+  const { cart, setCart, totalItemCount, setTotalItemCount } = useCart();
+
+  const { coupons, setCoupons } = useCoupons();
+  const { products, setProducts } = useProducts();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -35,7 +32,7 @@ const App = () => {
             <div className="flex items-center flex-1">
               <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
               {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
-              {!isAdmin && (
+              {viewMode === 'cart' && (
                 <div className="ml-8 flex-1 max-w-md">
                   <input
                     type="text"
@@ -49,16 +46,16 @@ const App = () => {
             </div>
             <nav className="flex items-center space-x-4">
               <button
-                onClick={() => setIsAdmin(!isAdmin)}
+                onClick={toggleViewMode}
                 className={`px-3 py-1.5 text-sm rounded transition-colors ${
-                  isAdmin
+                  isAdminView
                     ? 'bg-gray-800 text-white'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                {isAdmin ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
+                {isAdminView ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
               </button>
-              {!isAdmin && (
+              {isCartView && (
                 <div className="relative">
                   <svg
                     className="w-6 h-6 text-gray-700"
@@ -86,7 +83,7 @@ const App = () => {
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? (
+        {viewMode === 'admin' ? (
           <Admin
             setNotifications={setNotifications}
             cart={cart}
