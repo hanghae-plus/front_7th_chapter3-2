@@ -24,7 +24,6 @@ const App = () => {
   const { products, setProducts } = useProducts();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,7 +57,7 @@ const App = () => {
             cartActions={cartActions}
             products={products}
             coupons={coupons}
-            searchTerm={debouncedSearchTerm}
+            searchTerm={searchTerm}
           />
         )}
       </main>

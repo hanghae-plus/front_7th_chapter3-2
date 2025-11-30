@@ -1,5 +1,6 @@
 import { Coupon, ProductWithUI } from '../../types';
 import { useCart } from '../hooks/useCart';
+import useDebounce from '../hooks/useDebounce';
 
 interface CartProps {
   addNotification: (
@@ -31,6 +32,8 @@ const Cart = ({
     getItemTotal,
     clearCart,
   } = cartActions;
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const handleClickAddToCart = (product: ProductWithUI) => {
     addToCart(product);
@@ -70,14 +73,16 @@ const Cart = ({
 
   const totals = calculateTotal();
 
-  const filteredProducts = searchTerm
+  const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.name
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase()) ||
           (product.description &&
             product.description
               .toLowerCase()
-              .includes(searchTerm.toLowerCase()))
+              .includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
 
