@@ -1,17 +1,18 @@
-import { Coupon, ProductWithUI } from '../types';
-import { Notification } from '../types';
-import useDebounce from './hooks/useDebounce';
-import { useCart } from './hooks/useCart';
+import { Coupon, ProductWithUI } from '../../types';
+import { useCart } from '../hooks/useCart';
 
 interface CartProps {
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  addNotification: (
+    message: string,
+    type: 'error' | 'success' | 'warning'
+  ) => void;
   cartActions: ReturnType<typeof useCart>;
   products: ProductWithUI[];
   coupons: Coupon[];
   searchTerm: string;
 }
 const Cart = ({
-  setNotifications,
+  addNotification,
   cartActions,
   products,
   coupons,
@@ -68,18 +69,6 @@ const Cart = ({
   };
 
   const totals = calculateTotal();
-
-  const addNotification = (
-    message: string,
-    type: 'error' | 'success' | 'warning' = 'success'
-  ) => {
-    const id = Date.now().toString();
-    setNotifications((prev) => [...prev, { id, message, type }]);
-
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, 3000);
-  };
 
   const filteredProducts = searchTerm
     ? products.filter(

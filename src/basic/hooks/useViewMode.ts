@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type ViewMode = 'cart' | 'admin';
+export type ViewMode = 'cart' | 'admin';
 
 export function useViewMode(initialMode: ViewMode = 'cart') {
   const [viewMode, setViewMode] = useState<ViewMode>(initialMode);

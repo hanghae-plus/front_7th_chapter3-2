@@ -1,9 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product, ProductWithUI } from '../types';
-import { Notification } from '../types';
+import { CartItem, Coupon, Product, ProductWithUI } from '../../types';
 
 interface AdminProps {
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  addNotification: (
+    message: string,
+    type: 'error' | 'success' | 'warning'
+  ) => void;
   cart: CartItem[];
   products: ProductWithUI[];
   setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
@@ -12,7 +14,7 @@ interface AdminProps {
 }
 
 const Admin = ({
-  setNotifications,
+  addNotification,
   cart,
   products,
   coupons,
@@ -61,18 +63,6 @@ const Admin = ({
     return remaining;
   };
 
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
-
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
@@ -93,7 +83,7 @@ const Admin = ({
     (newProduct: Omit<ProductWithUI, 'id'>) => {
       const product: ProductWithUI = {
         ...newProduct,
-        id: `p${Date.now()}`,
+        id: `p${Date.now()}-${Math.random()}`,
       };
       setProducts((prev) => [...prev, product]);
       addNotification('상품이 추가되었습니다.', 'success');

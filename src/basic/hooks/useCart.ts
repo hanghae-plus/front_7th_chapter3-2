@@ -60,7 +60,6 @@ export function useCart(addNotification?: NotificationFn) {
       return;
     }
 
-    // ✅ 업데이트만 수행 (추가 로직 제거)
     setCart((prevCart) =>
       cartModel.updateCartItemQuantity(prevCart, product.id, quantity)
     );
