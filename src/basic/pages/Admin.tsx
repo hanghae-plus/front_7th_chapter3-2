@@ -1,28 +1,26 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { CartItem, Coupon, Product, ProductWithUI } from '../../types';
 import { useProducts } from '../hooks/useProducts';
+import { useCoupons } from '../hooks/useCoupons';
 
 interface AdminProps {
   addNotification: (
     message: string,
     type: 'error' | 'success' | 'warning'
   ) => void;
-  cart: CartItem[];
-  products: ProductWithUI[];
   productActions: ReturnType<typeof useProducts>;
-  coupons: Coupon[];
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
+  couponActions: ReturnType<typeof useCoupons>;
+  cart: CartItem[];
 }
 
 const Admin = ({
   addNotification,
-  cart,
   productActions,
-  coupons,
-  setCoupons,
+  couponActions,
+  cart,
 }: AdminProps) => {
   const { products } = productActions;
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const { coupons } = couponActions;
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
     'products'
@@ -79,29 +77,13 @@ const Admin = ({
     productActions.removeProduct(productId);
   };
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification]
-  );
+  const addCoupon = (newCoupon: Coupon) => {
+    couponActions.addCoupon(newCoupon);
+  };
 
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification]
-  );
+  const removeCoupon = (couponCode: string) => {
+    couponActions.removeCoupon(couponCode);
+  };
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -528,7 +510,7 @@ const Admin = ({
                       </div>
                     </div>
                     <button
-                      onClick={() => deleteCoupon(coupon.code)}
+                      onClick={() => removeCoupon(coupon.code)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <svg

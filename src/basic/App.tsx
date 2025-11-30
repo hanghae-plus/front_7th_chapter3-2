@@ -19,7 +19,8 @@ const App = () => {
   const cartActions = useCart(addNotification);
   const { cart } = cartActions;
 
-  const { coupons, setCoupons } = useCoupons();
+  const couponActions = useCoupons(addNotification);
+  const { coupons } = couponActions;
 
   const productActions = useProducts();
   const { products } = productActions;
@@ -47,10 +48,8 @@ const App = () => {
           <Admin
             addNotification={addNotification}
             cart={cart}
-            products={products}
             productActions={productActions}
-            coupons={coupons}
-            setCoupons={setCoupons}
+            couponActions={couponActions}
           />
         ) : (
           <Cart
