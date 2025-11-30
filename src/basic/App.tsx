@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Admin from './Admin';
 import Cart from './Cart';
 import Notifications from './Notifications';
@@ -13,7 +13,21 @@ const App = () => {
   const { viewMode, toggleViewMode, isCartView, isAdminView } =
     useViewMode('cart');
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { cart, setCart, totalItemCount, setTotalItemCount } = useCart();
+
+  const addNotification = useCallback(
+    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+      const id = Date.now().toString();
+      setNotifications((prev) => [...prev, { id, message, type }]);
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+      }, 3000);
+    },
+    []
+  );
+
+  const cartActions = useCart(addNotification);
+  const { cart } = cartActions;
+  const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const { coupons, setCoupons } = useCoupons();
   const { products, setProducts } = useProducts();
@@ -84,7 +98,6 @@ const App = () => {
           <Admin
             setNotifications={setNotifications}
             cart={cart}
-            setTotalItemCount={setTotalItemCount}
             products={products}
             coupons={coupons}
             setProducts={setProducts}
@@ -93,9 +106,7 @@ const App = () => {
         ) : (
           <Cart
             setNotifications={setNotifications}
-            cart={cart}
-            setCart={setCart}
-            setTotalItemCount={setTotalItemCount}
+            cartActions={cartActions}
             products={products}
             coupons={coupons}
             searchTerm={searchTerm}

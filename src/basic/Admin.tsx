@@ -5,7 +5,6 @@ import { Notification } from '../types';
 interface AdminProps {
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
   cart: CartItem[];
-  setTotalItemCount: React.Dispatch<React.SetStateAction<number>>;
   products: ProductWithUI[];
   setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
   coupons: Coupon[];
@@ -15,7 +14,6 @@ interface AdminProps {
 const Admin = ({
   setNotifications,
   cart,
-  setTotalItemCount,
   products,
   coupons,
   setProducts,
@@ -74,11 +72,6 @@ const Admin = ({
     },
     []
   );
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
 
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
