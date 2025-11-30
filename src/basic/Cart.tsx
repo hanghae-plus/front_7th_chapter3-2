@@ -1,5 +1,4 @@
-import { useCallback, useEffect } from 'react';
-import { CartItem, Coupon, ProductWithUI } from '../types';
+import { Coupon, ProductWithUI } from '../types';
 import { Notification } from '../types';
 import useDebounce from './hooks/useDebounce';
 import { useCart } from './hooks/useCart';
@@ -28,35 +27,11 @@ const Cart = ({
     selectedCoupon,
     calculateTotal,
     getRemainingStock,
+    getItemTotal,
+    clearCart,
   } = cartActions;
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
-
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
-
-    return baseDiscount;
-  };
-
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    return Math.round(price * quantity * (1 - discount));
-  };
 
   const handleClickAddToCart = (product: ProductWithUI) => {
     addToCart(product);
@@ -91,22 +66,22 @@ const Cart = ({
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       'success'
     );
-    cartActions.clearCart();
+    clearCart();
   };
 
   const totals = calculateTotal();
 
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
+  const addNotification = (
+    message: string,
+    type: 'error' | 'success' | 'warning' = 'success'
+  ) => {
+    const id = Date.now().toString();
+    setNotifications((prev) => [...prev, { id, message, type }]);
 
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 3000);
+  };
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -130,22 +105,6 @@ const Cart = ({
     }
     return `₩${price.toLocaleString()}`;
   };
-
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -304,7 +263,7 @@ const Cart = ({
             ) : (
               <div className="space-y-3">
                 {cart.map((item) => {
-                  const itemTotal = calculateItemTotal(item);
+                  const itemTotal = getItemTotal(item);
                   const originalPrice = item.product.price * item.quantity;
                   const hasDiscount = itemTotal < originalPrice;
                   const discountRate = hasDiscount

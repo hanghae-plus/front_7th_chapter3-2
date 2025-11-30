@@ -1,22 +1,41 @@
 import type { CartItem, Coupon, Product } from '../../types';
 
-const getMaxApplicableDiscount = (item: CartItem): number => {
+const getProductQuantityDiscount = (item: CartItem): number => {
   const { discounts } = item.product;
   const { quantity } = item;
 
-  const baseDiscount = discounts.reduce((maxDiscount, discount) => {
+  return discounts.reduce((maxDiscount, discount) => {
     return quantity >= discount.quantity && discount.rate > maxDiscount
       ? discount.rate
       : maxDiscount;
   }, 0);
+};
+
+const hasBulkDiscount = (cart: CartItem[]): boolean => {
+  return cart.some((cartItem) => cartItem.quantity >= 10);
+};
+
+const applyBulkDiscount = (baseDiscount: number): number => {
+  return Math.min(baseDiscount + 0.05, 0.5); // 추가 5% 할인, 최대 50%
+};
+
+const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
+  const baseDiscount = getProductQuantityDiscount(item);
+
+  if (hasBulkDiscount(cart)) {
+    return applyBulkDiscount(baseDiscount);
+  }
 
   return baseDiscount;
 };
 
-export const calculateItemTotal = (item: CartItem): number => {
+export const calculateItemTotal = (
+  item: CartItem,
+  cart: CartItem[]
+): number => {
   const { price } = item.product;
   const { quantity } = item;
-  const discount = getMaxApplicableDiscount(item);
+  const discount = getMaxApplicableDiscount(item, cart);
 
   return Math.round(price * quantity * (1 - discount));
 };
@@ -28,7 +47,7 @@ export const calculateCartTotal = (cart: CartItem[], coupon?: Coupon) => {
   cart.forEach((item) => {
     const itemPrice = item.product.price * item.quantity;
     totalBeforeDiscount += itemPrice;
-    totalAfterDiscount += calculateItemTotal(item);
+    totalAfterDiscount += calculateItemTotal(item, cart);
   });
 
   if (coupon) {

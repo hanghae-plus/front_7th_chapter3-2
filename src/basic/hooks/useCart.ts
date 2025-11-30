@@ -97,6 +97,10 @@ export function useCart(addNotification?: NotificationFn) {
     setSelectedCoupon(null);
   };
 
+  const getItemTotal = (item: CartItem) => {
+    return cartModel.calculateItemTotal(item, cart);
+  };
+
   return {
     cart,
     addToCart,
@@ -105,6 +109,7 @@ export function useCart(addNotification?: NotificationFn) {
     clearCart,
     clearCoupon,
     getRemainingStock,
+    getItemTotal,
     removeFromCart,
     updateQuantity,
     selectedCoupon,
