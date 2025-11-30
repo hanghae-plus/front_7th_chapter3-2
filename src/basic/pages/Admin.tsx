@@ -1,5 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { CartItem, Coupon, Product, ProductWithUI } from '../../types';
+import { useProducts } from '../hooks/useProducts';
 
 interface AdminProps {
   addNotification: (
@@ -8,7 +9,7 @@ interface AdminProps {
   ) => void;
   cart: CartItem[];
   products: ProductWithUI[];
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
+  productActions: ReturnType<typeof useProducts>;
   coupons: Coupon[];
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
 }
@@ -16,11 +17,11 @@ interface AdminProps {
 const Admin = ({
   addNotification,
   cart,
-  products,
+  productActions,
   coupons,
-  setProducts,
   setCoupons,
 }: AdminProps) => {
+  const { products } = productActions;
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
@@ -63,53 +64,20 @@ const Admin = ({
     return remaining;
   };
 
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
+  const addProduct = (newProduct: Omit<ProductWithUI, 'id'>) => {
+    productActions.addProduct(newProduct);
+  };
 
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
+  const updateProduct = (
+    productId: string,
+    updates: Partial<ProductWithUI>
+  ) => {
+    productActions.updateProduct(productId, updates);
+  };
 
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
-
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}-${Math.random()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification('상품이 추가되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification('상품이 수정되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
-    },
-    [addNotification]
-  );
+  const deleteProduct = (productId: string) => {
+    productActions.removeProduct(productId);
+  };
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {

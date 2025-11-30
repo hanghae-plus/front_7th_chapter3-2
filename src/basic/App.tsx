@@ -6,7 +6,6 @@ import { useViewMode } from './hooks/useViewMode';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
 import { useProducts } from './hooks/useProducts';
-import useDebounce from './hooks/useDebounce';
 import { useNotifications } from './hooks/useNotifications';
 import Header from './components/Header';
 
@@ -21,7 +20,9 @@ const App = () => {
   const { cart } = cartActions;
 
   const { coupons, setCoupons } = useCoupons();
-  const { products, setProducts } = useProducts();
+
+  const productActions = useProducts();
+  const { products } = productActions;
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -47,8 +48,8 @@ const App = () => {
             addNotification={addNotification}
             cart={cart}
             products={products}
+            productActions={productActions}
             coupons={coupons}
-            setProducts={setProducts}
             setCoupons={setCoupons}
           />
         ) : (
