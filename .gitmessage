@@ -22,3 +22,33 @@
 # - 세션 관리 기능 추가
 #
 # Closes #123
+
+# ============================================
+# 한글 커밋 메시지 인코딩 문제 해결방안
+# ============================================
+#
+# Windows PowerShell에서 한글 커밋 메시지가 깨지는 경우:
+#
+# 방법 1: 커밋 메시지 파일 사용 (권장)
+#   git commit -F commit-msg.txt
+#   또는
+#   git commit -m "$(Get-Content commit-msg.txt -Encoding UTF8)"
+#
+# 방법 2: Git 인코딩 설정
+#   git config --global i18n.commitencoding utf-8
+#   git config --global i18n.logoutputencoding utf-8
+#   git config --global core.quotepath false
+#
+# 방법 3: PowerShell 인코딩 설정
+#   [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+#   $PSDefaultParameterValues['*:Encoding'] = 'utf8'
+#
+# 방법 4: Git Bash 사용
+#   Git Bash를 사용하면 한글 인코딩 문제가 거의 발생하지 않습니다.
+#
+# 방법 5: 커밋 메시지 파일 작성 시 주의사항
+#   - 파일을 UTF-8 인코딩으로 저장
+#   - BOM 없이 저장 (UTF-8 without BOM)
+#   - git commit -F 옵션 사용
+#
+# ============================================
