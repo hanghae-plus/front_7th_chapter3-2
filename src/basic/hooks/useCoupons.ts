@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Coupon } from "../../types";
+import { CartItem, Coupon } from "../../types";
 import { useNotification } from "./useNotification";
 import { calculateCartTotal } from "../models/cart";
 import { useCart } from "./useCart";
@@ -19,7 +19,15 @@ const initialCoupons: Coupon[] = [
   },
 ];
 
-export const useCoupons = () => {
+interface UseCouponsParams {
+  cart: CartItem[];
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
+}
+
+export const useCoupons = ({ cart, addNotification }: UseCouponsParams) => {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem("coupons");
     if (saved) {
@@ -31,8 +39,7 @@ export const useCoupons = () => {
     }
     return initialCoupons;
   });
-  const { addNotification } = useNotification();
-  const { cart } = useCart();
+
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   useEffect(() => {

@@ -16,14 +16,7 @@ interface Notification {
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const {
-    coupons,
-    selectedCoupon,
-    addCoupon,
-    deleteCoupon,
-    applyCoupon,
-    clearSelectedCoupon,
-  } = useCoupons();
+
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("cart");
     if (saved) {
@@ -35,6 +28,27 @@ const App = () => {
     }
     return [];
   });
+
+  const addNotification = useCallback(
+    (message: string, type: "error" | "success" | "warning" = "success") => {
+      const id = Date.now().toString();
+      setNotifications((prev) => [...prev, { id, message, type }]);
+
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+      }, 3000);
+    },
+    []
+  );
+
+  const {
+    coupons,
+    selectedCoupon,
+    addCoupon,
+    deleteCoupon,
+    applyCoupon,
+    clearSelectedCoupon,
+  } = useCoupons({ cart, addNotification });
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -142,18 +156,6 @@ const App = () => {
 
     return remaining;
   };
-
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
 
   const totalItemCount = useMemo(() => {
     return cart.reduce((sum, item) => sum + item.quantity, 0);
