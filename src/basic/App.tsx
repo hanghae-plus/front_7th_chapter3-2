@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-import { findMaxDiscountRate } from './features/coupon/coupon.utils';
 import { useNotification } from './shared/hooks/useNotification';
+import { useManageCoupon } from './features/admin/hooks/useManageCoupon';
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -43,21 +43,6 @@ const initialProducts: ProductWithUI[] = [
   },
 ];
 
-const initialCoupons: Coupon[] = [
-  {
-    name: '5000원 할인',
-    code: 'AMOUNT5000',
-    discountType: 'amount',
-    discountValue: 5000,
-  },
-  {
-    name: '10% 할인',
-    code: 'PERCENT10',
-    discountType: 'percentage',
-    discountValue: 10,
-  },
-];
-
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem('products');
@@ -81,18 +66,6 @@ const App = () => {
       }
     }
     return [];
-  });
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
   });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -124,6 +97,11 @@ const App = () => {
 
   const { notifications, addNotification, closeNotification } =
     useNotification();
+
+  const { addCoupon, deleteCoupon, coupons } = useManageCoupon(
+    selectedCoupon,
+    setSelectedCoupon,
+  );
 
   // 🚨 이거는 priceFormat하는 이름인데 내부에 가격이 0일 때 처리하는 로직이 들어있음
   const formatPrice = (price: number, productId?: string): string => {
@@ -370,30 +348,6 @@ const App = () => {
       addNotification('상품이 삭제되었습니다.', 'success');
     },
     [addNotification],
-  );
-
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification],
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification],
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
