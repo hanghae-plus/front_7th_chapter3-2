@@ -1,21 +1,9 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { ProductWithUI } from '../constants';
 import { ProductFormData, CouponFormData, EMPTY_PRODUCT_FORM, EMPTY_COUPON_FORM } from '../components/features/admin/types';
 import { Coupon } from '../../../types';
 import { initialCoupons } from '../constants';
-
-// localStorage에서 초기값 로드
-const loadCouponsFromStorage = (): Coupon[] => {
-  const saved = localStorage.getItem('coupons');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return initialCoupons;
-    }
-  }
-  return initialCoupons;
-};
 
 // 기본 Atoms
 export const isAdminAtom = atom<boolean>(false);
@@ -32,16 +20,8 @@ export const productFormAtom = atom<ProductFormData>(EMPTY_PRODUCT_FORM);
 
 export const couponFormAtom = atom<CouponFormData>(EMPTY_COUPON_FORM);
 
-export const couponsAtom = atom<Coupon[]>(loadCouponsFromStorage());
-
-// localStorage 동기화를 위한 atom
-export const couponsWithStorageAtom = atom(
-  (get) => get(couponsAtom),
-  (get, set, newCoupons: Coupon[]) => {
-    set(couponsAtom, newCoupons);
-    localStorage.setItem('coupons', JSON.stringify(newCoupons));
-  }
-);
+// localStorage와 자동 동기화되는 atom
+export const couponsAtom = atomWithStorage<Coupon[]>('coupons', initialCoupons);
 
 // Write-only Atoms (액션)
 export const toggleAdminAtom = atom(
@@ -133,7 +113,7 @@ export const handleDeleteCouponAtom = atom(
       return { success: false, message: '존재하지 않는 쿠폰입니다.' };
     }
     const newCoupons = coupons.filter(c => c.code !== couponCode);
-    set(couponsWithStorageAtom, newCoupons);
+    set(couponsAtom, newCoupons);
     return { success: true, message: '쿠폰이 삭제되었습니다.' };
   }
 );

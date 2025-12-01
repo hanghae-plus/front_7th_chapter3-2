@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { CartItem, Coupon, Product } from '../../../types';
 import {
   addItemToCart,
@@ -10,34 +11,8 @@ import {
 import { validateCoupon } from '../models/coupon';
 import { MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON } from '../constants';
 
-// localStorage에서 초기값 로드
-const loadCartFromStorage = (): CartItem[] => {
-  const saved = localStorage.getItem('cart');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return [];
-    }
-  }
-  return [];
-};
-
-// 기본 Atoms
-export const cartAtom = atom<CartItem[]>(loadCartFromStorage());
-
-// localStorage 동기화를 위한 atom
-export const cartWithStorageAtom = atom(
-  (get) => get(cartAtom),
-  (get, set, newCart: CartItem[]) => {
-    set(cartAtom, newCart);
-    if (newCart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(newCart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }
-);
+// localStorage와 자동 동기화되는 atom
+export const cartAtom = atomWithStorage<CartItem[]>('cart', []);
 
 export const selectedCouponAtom = atom<Coupon | null>(null);
 
@@ -72,10 +47,10 @@ export const addToCartAtom = atom(
         return { success: false, message: '재고가 부족합니다!' };
       }
       const newCart = updateCartItemQuantity(cart, product.id, newQuantity);
-      set(cartWithStorageAtom, newCart);
+      set(cartAtom, newCart);
     } else {
       const newCart = addItemToCart(cart, product);
-      set(cartWithStorageAtom, newCart);
+      set(cartAtom, newCart);
     }
 
     return { success: true, message: '장바구니에 담았습니다' };
@@ -87,7 +62,7 @@ export const removeFromCartAtom = atom(
   (get, set, productId: string) => {
     const cart = get(cartAtom);
     const newCart = removeItemFromCart(cart, productId);
-    set(cartWithStorageAtom, newCart);
+    set(cartAtom, newCart);
   }
 );
 
@@ -110,7 +85,7 @@ export const updateQuantityAtom = atom(
     }
 
     const newCart = updateCartItemQuantity(cart, productId, quantity);
-    set(cartWithStorageAtom, newCart);
+    set(cartAtom, newCart);
     return { success: true };
   }
 );
@@ -143,7 +118,7 @@ export const setSelectedCouponAtom = atom(
 export const clearCartAtom = atom(
   null,
   (get, set) => {
-    set(cartWithStorageAtom, []);
+    set(cartAtom, []);
     set(selectedCouponAtom, null);
   }
 );
@@ -151,7 +126,7 @@ export const clearCartAtom = atom(
 export const completeOrderAtom = atom(
   null,
   (get, set) => {
-    set(cartWithStorageAtom, []);
+    set(cartAtom, []);
     set(selectedCouponAtom, null);
   }
 );

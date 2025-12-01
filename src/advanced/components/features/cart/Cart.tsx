@@ -38,15 +38,6 @@ export const Cart = () => {
     }
   };
 
-  const handleApplyCoupon = (coupon: any) => {
-    const result = applyCoupon(coupon);
-    if (result && result.success) {
-      addNotification(result.message || '쿠폰이 적용되었습니다.', 'success');
-    } else if (result && !result.success) {
-      addNotification(result.message || '쿠폰 적용에 실패했습니다.', 'error');
-    }
-  };
-
   const handleOrder = () => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');

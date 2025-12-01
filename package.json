@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "jotai": "^2.15.2",
+    "jotai-utils": "^0.0.0",
     "pnpm": "^10.24.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

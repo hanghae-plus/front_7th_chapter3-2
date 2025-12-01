@@ -11,6 +11,9 @@ importers:
       jotai:
         specifier: ^2.15.2
         version: 2.15.2(@types/react@19.1.9)(react@19.1.1)
+      jotai-utils:
+        specifier: ^0.0.0
+        version: 0.0.0
       pnpm:
         specifier: ^10.24.0
         version: 10.24.0
@@ -1061,6 +1064,9 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+
+  jotai-utils@0.0.0:
+    resolution: {integrity: sha512-z/gS7iuWWwXY/JnvsYmcDpcFLnDsJVqkIFJ66h060LY5+cte8S7SDKEVEFPcoM6UQjyy3mj6eEKjcxb1+7OqZw==}
 
   jotai@2.15.2:
     resolution: {integrity: sha512-El86CCfXNMEOytp20NPfppqGGmcp6H6kIA+tJHdmASEUURJCYW4fh8nTHEnB8rUXEFAY1pm8PdHPwnrcPGwdEg==}
@@ -2441,6 +2447,8 @@ snapshots:
   is-potential-custom-element-name@1.0.1: {}
 
   isexe@2.0.0: {}
+
+  jotai-utils@0.0.0: {}
 
   jotai@2.15.2(@types/react@19.1.9)(react@19.1.1):
     optionalDependencies:

@@ -1,16 +1,14 @@
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { Input } from '../../ui/Input';
 import { MAX_DISCOUNT_AMOUNT, MAX_DISCOUNT_PERCENTAGE } from '../../../constants';
-import { couponFormAtom, resetCouponFormAtom } from '../../../atoms/adminAtoms';
-import { couponsAtom, couponsWithStorageAtom } from '../../../atoms/adminAtoms';
+import { couponFormAtom, resetCouponFormAtom, couponsAtom } from '../../../atoms/adminAtoms';
 import { addNotificationAtom } from '../../../atoms/notificationAtoms';
 import { Coupon } from '../../../../types';
 
 // 쿠폰 추가 폼 컴포넌트
 export const CouponForm = () => {
   const [couponForm, setCouponForm] = useAtom(couponFormAtom);
-  const coupons = useAtomValue(couponsAtom);
-  const setCoupons = useSetAtom(couponsWithStorageAtom);
+  const [coupons, setCoupons] = useAtom(couponsAtom);
   const resetCouponForm = useSetAtom(resetCouponFormAtom);
   const addNotification = useSetAtom(addNotificationAtom);
 

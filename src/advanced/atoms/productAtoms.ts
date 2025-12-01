@@ -1,31 +1,10 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { ProductWithUI, initialProducts } from '../constants';
 import { filterProducts } from '../models/product';
 
-// localStorage에서 초기값 로드
-const loadProductsFromStorage = (): ProductWithUI[] => {
-  const saved = localStorage.getItem('products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return initialProducts;
-    }
-  }
-  return initialProducts;
-};
-
-// 기본 Atoms
-export const productsAtom = atom<ProductWithUI[]>(loadProductsFromStorage());
-
-// localStorage 동기화를 위한 atom
-export const productsWithStorageAtom = atom(
-  (get) => get(productsAtom),
-  (get, set, newProducts: ProductWithUI[]) => {
-    set(productsAtom, newProducts);
-    localStorage.setItem('products', JSON.stringify(newProducts));
-  }
-);
+// localStorage와 자동 동기화되는 atom
+export const productsAtom = atomWithStorage<ProductWithUI[]>('products', initialProducts);
 
 export const searchTermAtom = atom<string>('');
 
@@ -46,7 +25,7 @@ export const addProductAtom = atom(
       id: `p${Date.now()}`
     };
     const newProducts = [...products, product];
-    set(productsWithStorageAtom, newProducts);
+    set(productsAtom, newProducts);
   }
 );
 
@@ -59,7 +38,7 @@ export const updateProductAtom = atom(
         ? { ...product, ...updates }
         : product
     );
-    set(productsWithStorageAtom, newProducts);
+    set(productsAtom, newProducts);
   }
 );
 
@@ -68,7 +47,7 @@ export const deleteProductAtom = atom(
   (get, set, productId: string) => {
     const products = get(productsAtom);
     const newProducts = products.filter(p => p.id !== productId);
-    set(productsWithStorageAtom, newProducts);
+    set(productsAtom, newProducts);
   }
 );
 
