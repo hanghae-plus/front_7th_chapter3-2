@@ -5,7 +5,6 @@ import { PagesLayout } from "./components/layout/PagesLayout";
 const App = () => {
   return (
     <Provider>
-      <div>advanced</div>
       <PagesLayout />
     </Provider>
   );
