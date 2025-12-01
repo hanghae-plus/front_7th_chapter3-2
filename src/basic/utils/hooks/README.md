@@ -55,12 +55,75 @@
 
 ```
 src/basic/utils/hooks/
-└── useDebounce.ts     # 디바운스 유틸리티 Hook
+├── useDebounce.ts        # 디바운스 유틸리티 Hook
+└── useNotifications.ts   # 알림 관리 유틸리티 Hook
 ```
 
 ---
 
 ## 각 Hook 상세 설명
+
+### 📦 `useNotifications` - 알림 관리 유틸리티 Hook
+
+#### 목적
+알림 메시지 상태 관리 및 자동 제거 처리
+
+#### 사용하는 Constants
+```typescript
+import { NOTIFICATION_DURATION } from '../../constants';
+```
+
+#### 상태 (State)
+- `notifications: Notification[]` - 알림 메시지 배열
+
+#### 주요 함수
+
+##### 1. `addNotification(message: string, type?: 'error' | 'success' | 'warning')`
+**역할**: 알림 메시지 추가 및 자동 제거 설정
+**로직**:
+1. 고유 ID 생성
+2. 알림 배열에 추가
+3. `NOTIFICATION_DURATION` 시간 후 자동 제거
+
+##### 2. `removeNotification(id: string)`
+**역할**: 알림 메시지 수동 제거
+
+#### 반환값
+```typescript
+{
+  notifications: Notification[];
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+  removeNotification: (id: string) => void;
+}
+```
+
+#### 사용 예시
+```typescript
+import { useNotifications } from './utils/hooks/useNotifications';
+import { Toast } from './components/ui/Toast';
+
+const MyComponent = () => {
+  const { notifications, addNotification, removeNotification } = useNotifications();
+
+  const handleAction = () => {
+    addNotification('작업이 완료되었습니다.', 'success');
+  };
+
+  return (
+    <div>
+      <button onClick={handleAction}>작업 실행</button>
+      <Toast notifications={notifications} onRemove={removeNotification} />
+    </div>
+  );
+};
+```
+
+#### 왜 필요한가?
+- **재사용성**: 여러 컴포넌트에서 동일한 알림 로직 사용
+- **일관성**: 알림 표시 시간 및 동작 통일
+- **자동화**: 알림 자동 제거로 수동 관리 불필요
+
+---
 
 ### 📦 `useDebounce` - 디바운스 유틸리티 Hook
 
