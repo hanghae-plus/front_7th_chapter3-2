@@ -161,6 +161,7 @@ export function CartPage({
   );
 
   const removeFromCart = useCallback((productId: string) => {
+    console.log('productId', productId);
     onChangeCart(prevCart =>
       prevCart.filter(item => item.product.id !== productId),
     );

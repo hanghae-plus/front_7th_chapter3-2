@@ -22,17 +22,18 @@ export function useLocalStorage<T>(
 
   const setValue = (value: T | ((prev: T) => T)) => {
     try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
+      setStoredValue(prev => {
+        const valueToStore = value instanceof Function ? value(prev) : value;
 
-      setStoredValue(valueToStore);
+        // 빈 값이면 제거
+        if (isEmpty(valueToStore)) {
+          LocalStorage.remove(key);
+        } else {
+          LocalStorage.set(key, valueToStore);
+        }
 
-      // 빈 값이면 제거
-      if (isEmpty(valueToStore)) {
-        LocalStorage.remove(key);
-      } else {
-        LocalStorage.set(key, valueToStore);
-      }
+        return valueToStore;
+      });
     } catch (error) {
       console.error(`useLocalStorage 값 설정 실패 (key: "${key}"):`, error);
     }
