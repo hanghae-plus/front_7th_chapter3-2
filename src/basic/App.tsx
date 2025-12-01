@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import { findMaxDiscountRate } from './features/coupon/coupon.utils';
 import { useNotification } from './shared/hooks/useNotification';
@@ -307,23 +307,27 @@ const App = () => {
     },
     [products, removeFromCart, addNotification, getRemainingStock],
   );
+  const currentCartTotal = useMemo(
+    () => calculateCartTotal().totalAfterDiscount,
+    [calculateCartTotal],
+  );
+
+  const checkCouponAvailability = useCallback(
+    (coupon: Coupon, currentCartTotal: number) => {
+      if (currentCartTotal < 10000 && coupon.discountType === 'percentage') {
+        return false;
+      }
+      return true;
+    },
+    [calculateCartTotal],
+  );
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
-
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        addNotification(
-          'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
-          'error',
-        );
-        return;
-      }
-
       setSelectedCoupon(coupon);
       addNotification('쿠폰이 적용되었습니다.', 'success');
     },
-    [addNotification, calculateCartTotal],
+    [addNotification],
   );
 
   const completeOrder = useCallback(() => {
@@ -1409,8 +1413,23 @@ const App = () => {
                             const coupon = coupons.find(
                               (c) => c.code === e.target.value,
                             );
-                            if (coupon) applyCoupon(coupon);
-                            else setSelectedCoupon(null);
+
+                            if (!coupon) return;
+
+                            const isCouponAvailable = checkCouponAvailability(
+                              coupon,
+                              currentCartTotal,
+                            );
+
+                            if (coupon && isCouponAvailable) {
+                              applyCoupon(coupon);
+                            } else {
+                              addNotification(
+                                'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
+                                'error',
+                              );
+                              setSelectedCoupon(null);
+                            }
                           }}
                         >
                           <option value="">쿠폰 선택</option>
