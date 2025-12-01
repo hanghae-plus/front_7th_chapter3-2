@@ -9,6 +9,7 @@ import {
   updateCartItemQuantity,
   getTotalItemCount,
 } from "./models/cart";
+import { formatPrice, formatPriceKorean } from "./utils/formatter";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -136,21 +137,6 @@ const App = () => {
     discountType: "amount" as "amount" | "percentage",
     discountValue: 0,
   });
-
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
 
   // 순수 함수 래퍼 - cart를 클로저로 캡처
   const getRemainingStock = (product: Product): number => {
@@ -579,7 +565,7 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {formatPrice(product.price, product.id)}
+                              {formatPriceKorean(product.price)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <span
@@ -1165,7 +1151,9 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className="mb-3">
                               <p className="text-lg font-bold text-gray-900">
-                                {formatPrice(product.price, product.id)}
+                                {remainingStock <= 0
+                                  ? "SOLD OUT"
+                                  : formatPrice(product.price)}
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className="text-xs text-gray-500">
