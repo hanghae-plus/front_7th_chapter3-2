@@ -4,7 +4,7 @@ import Header from "./components/Header";
 import Notifications from "./components/Notifications";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
-import { INITIAL_PRODUCTS } from "./constants/initialProducts";
+import { INITIAL_COUPONS, INITIAL_PRODUCTS } from "./constants/data";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -16,21 +16,6 @@ interface Notification {
   message: string;
   type: "error" | "success" | "warning";
 }
-
-const initialCoupons: Coupon[] = [
-  {
-    name: "5000원 할인",
-    code: "AMOUNT5000",
-    discountType: "amount",
-    discountValue: 5000,
-  },
-  {
-    name: "10% 할인",
-    code: "PERCENT10",
-    discountType: "percentage",
-    discountValue: 10,
-  },
-];
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -63,10 +48,10 @@ const App = () => {
       try {
         return JSON.parse(saved);
       } catch {
-        return initialCoupons;
+        return INITIAL_COUPONS;
       }
     }
-    return initialCoupons;
+    return INITIAL_COUPONS;
   });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);

@@ -1,3 +1,4 @@
+import { Coupon } from "../../types";
 import { ProductWithUI } from "../App";
 
 // 초기 데이터
@@ -32,5 +33,20 @@ export const INITIAL_PRODUCTS: ProductWithUI[] = [
       { quantity: 30, rate: 0.25 },
     ],
     description: "대용량과 고성능을 자랑하는 상품입니다.",
+  },
+];
+
+export const INITIAL_COUPONS: Coupon[] = [
+  {
+    name: "5000원 할인",
+    code: "AMOUNT5000",
+    discountType: "amount",
+    discountValue: 5000,
+  },
+  {
+    name: "10% 할인",
+    code: "PERCENT10",
+    discountType: "percentage",
+    discountValue: 10,
   },
 ];
