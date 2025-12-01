@@ -1,10 +1,42 @@
+import { useState } from 'react';
+import { LocalStorage } from '../lib/local-storage';
 
-// TODO: LocalStorage Hook
-// 힌트:
-// 1. localStorage와 React state 동기화
-// 2. 초기값 로드 시 에러 처리
-// 3. 저장 시 JSON 직렬화/역직렬화
-// 4. 빈 배열이나 undefined는 삭제
-//
-// 반환값: [저장된 값, 값 설정 함수]
-export function useLocalStorage() { }
+function isEmpty<T>(value: T): boolean {
+  if (value === undefined || value === null) {
+    return true;
+  }
+  if (Array.isArray(value) && value.length === 0) {
+    return true;
+  }
+  return false;
+}
+
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T,
+): [T, (value: T | ((prev: T) => T)) => void] {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    const item = LocalStorage.get<T>(key);
+    return item !== null ? item : initialValue;
+  });
+
+  const setValue = (value: T | ((prev: T) => T)) => {
+    try {
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
+
+      setStoredValue(valueToStore);
+
+      // 빈 값이면 제거
+      if (isEmpty(valueToStore)) {
+        LocalStorage.remove(key);
+      } else {
+        LocalStorage.set(key, valueToStore);
+      }
+    } catch (error) {
+      console.error(`useLocalStorage 값 설정 실패 (key: "${key}"):`, error);
+    }
+  };
+
+  return [storedValue, setValue];
+}
