@@ -1,0 +1,174 @@
+import { Input } from '../../ui/Input';
+import { Button } from '../../ui/Button';
+import { CloseIcon, PlusIcon } from '../../icons';
+import { MAX_STOCK } from '../../../constants';
+import { ProductFormData } from './types';
+
+interface ProductFormProps {
+  productForm: ProductFormData;
+  editingProduct: string | null;
+  onFormChange: (updates: Partial<ProductFormData>) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  onCancel: () => void;
+  addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
+}
+
+// 상품 추가/수정 폼 컴포넌트
+export const ProductForm = ({
+  productForm,
+  editingProduct,
+  onFormChange,
+  onSubmit,
+  onCancel,
+  addNotification
+}: ProductFormProps) => {
+  return (
+    <div className="p-6 border-t border-gray-200 bg-gray-50">
+      <form onSubmit={onSubmit} className="space-y-4">
+        <h3 className="text-lg font-medium text-gray-900">
+          {editingProduct === 'new' ? '새 상품 추가' : '상품 수정'}
+        </h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">상품명</label>
+            <Input
+              type="text"
+              value={productForm.name}
+              onChange={(e) => onFormChange({ name: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">설명</label>
+            <Input
+              type="text"
+              value={productForm.description}
+              onChange={(e) => onFormChange({ description: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">가격</label>
+            <Input
+              type="text"
+              value={productForm.price === 0 ? '' : productForm.price}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === '' || /^\d+$/.test(value)) {
+                  onFormChange({ price: value === '' ? 0 : parseInt(value) });
+                }
+              }}
+              onBlur={(e) => {
+                const value = e.target.value;
+                if (value === '') {
+                  onFormChange({ price: 0 });
+                } else if (parseInt(value) < 0) {
+                  addNotification('가격은 0보다 커야 합니다', 'error');
+                  onFormChange({ price: 0 });
+                }
+              }}
+              placeholder="숫자만 입력"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">재고</label>
+            <Input
+              type="text"
+              value={productForm.stock === 0 ? '' : productForm.stock}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === '' || /^\d+$/.test(value)) {
+                  onFormChange({ stock: value === '' ? 0 : parseInt(value) });
+                }
+              }}
+              onBlur={(e) => {
+                const value = e.target.value;
+                if (value === '') {
+                  onFormChange({ stock: 0 });
+                } else if (parseInt(value) < 0) {
+                  addNotification('재고는 0보다 커야 합니다', 'error');
+                  onFormChange({ stock: 0 });
+                } else if (parseInt(value) > MAX_STOCK) {
+                  addNotification(`재고는 ${MAX_STOCK.toLocaleString()}개를 초과할 수 없습니다`, 'error');
+                  onFormChange({ stock: MAX_STOCK });
+                }
+              }}
+              placeholder="숫자만 입력"
+              required
+            />
+          </div>
+        </div>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">할인 정책</label>
+          <div className="space-y-2">
+            {productForm.discounts.map((discount, index) => (
+              <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+                <Input
+                  type="number"
+                  value={discount.quantity}
+                  onChange={(e) => {
+                    const newDiscounts = [...productForm.discounts];
+                    newDiscounts[index].quantity = parseInt(e.target.value) || 0;
+                    onFormChange({ discounts: newDiscounts });
+                  }}
+                  className="w-20"
+                  min="1"
+                  placeholder="수량"
+                />
+                <span className="text-sm">개 이상 구매 시</span>
+                <Input
+                  type="number"
+                  value={discount.rate * 100}
+                  onChange={(e) => {
+                    const newDiscounts = [...productForm.discounts];
+                    newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
+                    onFormChange({ discounts: newDiscounts });
+                  }}
+                  className="w-16"
+                  min="0"
+                  max="100"
+                  placeholder="%"
+                />
+                <span className="text-sm">% 할인</span>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
+                    onFormChange({ discounts: newDiscounts });
+                  }}
+                  variant="danger"
+                  className="p-1"
+                >
+                  <CloseIcon />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              onClick={() => {
+                onFormChange({
+                  discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }]
+                });
+              }}
+              variant="secondary"
+              className="text-sm"
+            >
+              <PlusIcon className="w-4 h-4 inline mr-1" />
+              할인 추가
+            </Button>
+          </div>
+        </div>
+        
+        <div className="flex justify-end gap-3">
+          <Button type="button" onClick={onCancel} variant="secondary">
+            취소
+          </Button>
+          <Button type="submit" variant="primary">
+            {editingProduct === 'new' ? '추가' : '수정'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+

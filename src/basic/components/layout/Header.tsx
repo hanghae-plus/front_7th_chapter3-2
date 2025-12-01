@@ -1,0 +1,58 @@
+import { SearchBar } from '../features/product/SearchBar';
+import { Button } from '../ui/Button';
+import { CartIcon } from '../icons';
+
+interface HeaderProps {
+  isAdmin: boolean;
+  onToggleAdmin: () => void;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  cartItemCount: number;
+}
+
+// 헤더 영역 컴포넌트
+export const Header = ({
+  isAdmin,
+  onToggleAdmin,
+  searchTerm,
+  onSearchChange,
+  cartItemCount
+}: HeaderProps) => {
+  return (
+    <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center flex-1">
+            <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
+            {!isAdmin && (
+              <SearchBar
+                value={searchTerm}
+                onChange={onSearchChange}
+                className="ml-8 flex-1 max-w-md"
+              />
+            )}
+          </div>
+          <nav className="flex items-center space-x-4">
+            <Button
+              onClick={onToggleAdmin}
+              variant={isAdmin ? 'primary' : 'secondary'}
+            >
+              {isAdmin ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
+            </Button>
+            {!isAdmin && (
+              <div className="relative">
+                <CartIcon className="w-6 h-6 text-gray-700" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </div>
+            )}
+          </nav>
+        </div>
+      </div>
+    </header>
+  );
+};
+
