@@ -1,5 +1,4 @@
 import { Input } from '../../ui/Input';
-import { Button } from '../../ui/Button';
 import { MAX_DISCOUNT_AMOUNT, MAX_DISCOUNT_PERCENTAGE } from '../../../constants';
 import { CouponFormData } from './types';
 
@@ -95,12 +94,19 @@ export const CouponForm = ({
           </div>
         </div>
         <div className="flex justify-end gap-3">
-          <Button type="button" onClick={onCancel} variant="secondary">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
             취소
-          </Button>
-          <Button type="submit" variant="primary">
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
+          >
             쿠폰 생성
-          </Button>
+          </button>
         </div>
       </form>
     </div>

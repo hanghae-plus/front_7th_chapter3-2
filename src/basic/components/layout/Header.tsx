@@ -1,4 +1,3 @@
-import { SearchBar } from '../features/product/SearchBar';
 import { CartIcon } from '../icons';
 
 interface HeaderProps {
@@ -24,11 +23,15 @@ export const Header = ({
           <div className="flex items-center flex-1">
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
             {!isAdmin && (
-              <SearchBar
-                value={searchTerm}
-                onChange={onSearchChange}
-                className="ml-8 flex-1 max-w-md"
-              />
+              <div className="ml-8 flex-1 max-w-md">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  placeholder="상품 검색..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+              </div>
             )}
           </div>
           <nav className="flex items-center space-x-4">

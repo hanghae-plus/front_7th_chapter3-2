@@ -1,5 +1,4 @@
 import { ProductWithUI } from '../../../constants';
-import { Button } from '../../ui/Button';
 import { ImageIcon } from '../../icons';
 
 interface ProductCardProps {
@@ -65,14 +64,17 @@ export const ProductCard = ({
         </div>
         
         {/* 장바구니 버튼 */}
-        <Button
+        <button
           onClick={() => onAddToCart(product)}
           disabled={isOutOfStock}
-          variant={isOutOfStock ? 'secondary' : 'primary'}
-          className="w-full"
+          className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
+            isOutOfStock
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              : 'bg-gray-900 text-white hover:bg-gray-800'
+          }`}
         >
           {isOutOfStock ? '품절' : '장바구니 담기'}
-        </Button>
+        </button>
       </div>
     </div>
   );

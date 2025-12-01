@@ -1,6 +1,5 @@
 import { Input } from '../../ui/Input';
-import { Button } from '../../ui/Button';
-import { CloseIcon, PlusIcon } from '../../icons';
+import { CloseIcon } from '../../icons';
 import { MAX_STOCK } from '../../../constants';
 import { ProductFormData } from './types';
 
@@ -130,32 +129,31 @@ export const ProductForm = ({
                   placeholder="%"
                 />
                 <span className="text-sm">% 할인</span>
-                <Button
+                <button
                   type="button"
                   onClick={() => {
                     const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
                     onFormChange({ discounts: newDiscounts });
                   }}
-                  variant="danger"
-                  className="p-1"
+                  className="text-red-600 hover:text-red-800"
                 >
-                  <CloseIcon />
-                </Button>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             ))}
-            <Button
+            <button
               type="button"
               onClick={() => {
                 onFormChange({
                   discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }]
                 });
               }}
-              variant="secondary"
-              className="text-sm"
+              className="text-sm text-indigo-600 hover:text-indigo-800"
             >
-              <PlusIcon className="w-4 h-4 inline mr-1" />
-              할인 추가
-            </Button>
+              + 할인 추가
+            </button>
           </div>
         </div>
         
