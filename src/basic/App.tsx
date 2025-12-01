@@ -3,23 +3,9 @@ import { CartItem, Coupon, Product } from '../types';
 import { ToastProvider, useToast } from './shared/ui/toast';
 import { ProductWithUI } from './entities/product';
 import { INITIAL_PRODUCTS } from './entities/product/product-constants.config';
+import { INITIAL_COUPONS } from './entities/coupon/coupon-constants.config';
 
 // 초기 데이터
-
-const initialCoupons: Coupon[] = [
-  {
-    name: '5000원 할인',
-    code: 'AMOUNT5000',
-    discountType: 'amount',
-    discountValue: 5000,
-  },
-  {
-    name: '10% 할인',
-    code: 'PERCENT10',
-    discountType: 'percentage',
-    discountValue: 10,
-  },
-];
 
 const App = () => {
   const { notifications, addNotification, removeNotification } = useToast();
@@ -54,10 +40,10 @@ const App = () => {
       try {
         return JSON.parse(saved);
       } catch {
-        return initialCoupons;
+        return INITIAL_COUPONS;
       }
     }
-    return initialCoupons;
+    return INITIAL_COUPONS;
   });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
