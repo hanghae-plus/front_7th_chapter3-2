@@ -1,6 +1,6 @@
 import { ProductWithUI } from '../../constants';
 import { CartItem, Coupon } from '../../../types';
-import { useProducts } from '../../hooks/useProducts';
+import { useProducts } from '../../hooks/entities/useProducts';
 import { useDebounce } from '../../utils/hooks/useDebounce';
 import { ProductList } from '../features/product/ProductList';
 import { Cart } from '../features/cart/Cart';

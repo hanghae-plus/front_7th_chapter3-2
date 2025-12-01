@@ -71,14 +71,26 @@
 
 ```
 src/basic/hooks/
-├── useCart.ts         # 장바구니 관리 Hook
-├── useProducts.ts     # 상품 관리 Hook
-└── useCoupons.ts      # 쿠폰 관리 Hook
+├── entities/              # 엔티티별 비즈니스 로직 Hook
+│   ├── useCart.ts         # 장바구니 관리 Hook
+│   ├── useProducts.ts     # 상품 관리 Hook
+│   └── useCoupons.ts      # 쿠폰 관리 Hook
+├── useAdminForm.ts        # Admin 폼 관리 Hook
+├── useAppUI.ts            # 앱 UI 상태 관리 Hook
+├── useShoppingMall.ts     # 쇼핑몰 비즈니스 로직 조합 Hook
+└── README.md
 ```
 
+**폴더별 설명**:
+- **`entities/`**: 엔티티별 비즈니스 로직 Hook (Cart, Product, Coupon) - 엔티티별로 명확히 분리
+- **루트 레벨**: 특정 엔티티에 속하지 않는 Hook들
+  - `useAdminForm.ts`: Admin 기능 관련 Hook
+  - `useAppUI.ts`: UI 상태 관리 Hook (알림, 검색어, 모드 전환 등)
+  - `useShoppingMall.ts`: 여러 엔티티 Hook을 조합한 앱 레벨 Hook
+
 **참고**: 
-- 알림 기능은 단순 UI 로직이므로 `components/ui/Toast.tsx`로 분리되었고, 상태 관리는 `App.tsx`에서 직접 처리합니다.
-- 유틸리티 Hook (`useDebounce`)은 `utils/hooks/` 폴더로 분리되었습니다.
+- 알림 기능은 단순 UI 로직이므로 `components/ui/Toast.tsx`로 분리되었고, 상태 관리는 `utils/hooks/useNotifications.ts`로 분리되었습니다.
+- 유틸리티 Hook (`useDebounce`, `useNotifications`)은 `utils/hooks/` 폴더로 분리되었습니다.
 
 ---
 
@@ -287,7 +299,7 @@ import { initialCoupons } from '../constants';
 ### 예시 1: useCart 사용
 
 ```typescript
-import { useCart } from './hooks/useCart';
+import { useCart } from './hooks/entities/useCart';
 
 const MyComponent = () => {
   const {
@@ -327,7 +339,7 @@ const MyComponent = () => {
 
 ```typescript
 import { useState } from 'react';
-import { useProducts } from './hooks/useProducts';
+import { useProducts } from './hooks/entities/useProducts';
 import { useDebounce } from './utils/hooks/useDebounce';
 
 const ProductList = () => {
@@ -354,8 +366,8 @@ const ProductList = () => {
 
 ```typescript
 import { useState, useCallback } from 'react';
-import { useCart } from './hooks/useCart';
-import { useProducts } from './hooks/useProducts';
+import { useCart } from './hooks/entities/useCart';
+import { useProducts } from './hooks/entities/useProducts';
 import { Toast, Notification } from './components/ui/Toast';
 
 const App = () => {
