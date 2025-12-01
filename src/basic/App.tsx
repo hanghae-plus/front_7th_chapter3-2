@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { CartItem, Coupon } from '../types';
 import { ToastProvider, useToast } from './shared/ui/toast';
 
@@ -30,7 +30,6 @@ const App = () => {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [totalItemCount, setTotalItemCount] = useState(0);
 
   const handleChangeCart = (callback: (cart: CartItem[]) => CartItem[]) => {
     setCart(callback);
@@ -48,9 +47,8 @@ const App = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
+  const totalItemCount = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
   }, [cart]);
 
   return (
