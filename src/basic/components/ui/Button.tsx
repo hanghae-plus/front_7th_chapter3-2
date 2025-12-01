@@ -19,8 +19,8 @@ export const Button = ({
   const baseStyles = 'px-4 py-2 rounded-md font-medium transition-colors';
   const variantStyles = {
     primary: 'bg-gray-900 text-white hover:bg-gray-800',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    danger: 'bg-red-500 text-white hover:bg-red-600'
+    secondary: 'text-indigo-600 hover:text-indigo-900 mr-3',
+    danger: 'text-red-600 hover:text-red-900'
   };
 
   return (
