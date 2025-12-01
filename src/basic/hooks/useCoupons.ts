@@ -1,8 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { CartItem, Coupon } from "../../types";
-import { useNotification } from "./useNotification";
 import { calculateCartTotal } from "../models/cart";
-import { useCart } from "./useCart";
 
 const initialCoupons: Coupon[] = [
   {

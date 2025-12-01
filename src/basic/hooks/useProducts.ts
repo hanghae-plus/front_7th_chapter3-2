@@ -54,8 +54,7 @@ export const useProducts = () => {
     }
     return initialProducts;
   });
-  const { notifications, addNotification, removeNotification } =
-    useNotification();
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
