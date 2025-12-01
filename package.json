@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev": "vite --open ./index.origin.html",
     "dev:origin": "vite --open ./index.origin.html",
     "dev:basic": "vite --open ./index.basic.html",
     "dev:advanced": "vite --open ./index.advanced.html",
