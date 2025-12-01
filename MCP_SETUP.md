@@ -91,6 +91,94 @@ Windows에서 Cursor 설정 파일 위치:
 
 ## 문제 해결
 
+### 한글 커밋 메시지가 깨지는 문제
+
+Windows PowerShell에서 한글 커밋 메시지가 깨져서 저장되는 경우, 다음 방법으로 해결할 수 있습니다.
+
+#### 해결 방법 1: Git 인코딩 설정 (권장)
+
+Git의 커밋 메시지 인코딩을 UTF-8로 설정합니다:
+
+```bash
+# Git 전역 설정에 UTF-8 인코딩 추가
+git config --global i18n.commitencoding utf-8
+git config --global i18n.logoutputencoding utf-8
+
+# Windows에서 콘솔 인코딩 설정
+git config --global core.quotepath false
+```
+
+#### 해결 방법 2: PowerShell 인코딩 설정
+
+PowerShell 세션 시작 시 인코딩을 UTF-8로 설정합니다:
+
+```powershell
+# 현재 세션에만 적용
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+
+# 영구적으로 적용하려면 PowerShell 프로필에 추가
+# 프로필 위치 확인: $PROFILE
+# 프로필 파일에 위 명령어 추가
+```
+
+#### 해결 방법 3: 환경 변수 설정
+
+시스템 환경 변수에 다음을 추가합니다:
+
+1. **시스템 속성** → **고급** → **환경 변수** 열기
+2. **시스템 변수**에서 **새로 만들기** 클릭
+3. 변수 이름: `PYTHONIOENCODING`, 변수 값: `utf-8`
+4. 변수 이름: `LANG`, 변수 값: `ko_KR.UTF-8`
+
+또는 PowerShell에서:
+
+```powershell
+# 사용자 환경 변수에 추가
+[System.Environment]::SetEnvironmentVariable('PYTHONIOENCODING', 'utf-8', 'User')
+[System.Environment]::SetEnvironmentVariable('LANG', 'ko_KR.UTF-8', 'User')
+```
+
+#### 해결 방법 4: Git Bash 사용
+
+PowerShell 대신 Git Bash를 사용하면 한글 인코딩 문제가 발생하지 않습니다:
+
+```bash
+# Git Bash에서 커밋
+git commit -m "한글 커밋 메시지"
+```
+
+#### 해결 방법 5: 커밋 메시지 파일 사용
+
+한글 메시지를 파일로 작성하여 커밋:
+
+```bash
+# 메시지를 파일로 작성 (UTF-8 인코딩으로 저장)
+echo "한글 커밋 메시지" > commit-message.txt
+
+# 파일을 사용하여 커밋
+git commit -F commit-message.txt
+```
+
+#### 확인 방법
+
+설정이 제대로 적용되었는지 확인:
+
+```bash
+# Git 인코딩 설정 확인
+git config --global --get i18n.commitencoding
+git config --global --get i18n.logoutputencoding
+
+# 테스트 커밋 (실제로 커밋하지 않음)
+git commit --dry-run -m "테스트: 한글 메시지 확인"
+```
+
+#### 참고사항
+
+- MCP 서버를 통한 자동 커밋 시에도 위 설정이 적용됩니다
+- 설정 후 Cursor를 재시작하면 변경사항이 반영됩니다
+- 여전히 문제가 발생하면 영어로 커밋 메시지를 작성하는 것을 권장합니다
+
 ### MCP 서버가 작동하지 않는 경우
 
 1. **Node.js 버전 확인**
