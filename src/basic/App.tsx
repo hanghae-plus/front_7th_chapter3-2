@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import Button from './components/button';
 import { CartIcon, ImageIcon, PlusIcon, ShoppingBagIcon, TrashIcon, XIcon } from './components/icons';
+import Input from './components/input';
 import Toast from './components/toast';
 import useNotifications from './hooks/notifications';
 
@@ -416,13 +417,7 @@ const App = () => {
               {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
               {!isAdmin && (
                 <div className='ml-8 flex-1 max-w-md'>
-                  <input
-                    type='text'
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    placeholder='상품 검색...'
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
-                  />
+                  <Input type='search' value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder='상품 검색...' />
                 </div>
               )}
             </div>
@@ -546,26 +541,24 @@ const App = () => {
                       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                         <div>
                           <label className='block text-sm font-medium text-gray-700 mb-1'>상품명</label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.name}
                             onChange={e => setProductForm({ ...productForm, name: e.target.value })}
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                             required
                           />
                         </div>
                         <div>
                           <label className='block text-sm font-medium text-gray-700 mb-1'>설명</label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.description}
                             onChange={e => setProductForm({ ...productForm, description: e.target.value })}
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                           />
                         </div>
                         <div>
                           <label className='block text-sm font-medium text-gray-700 mb-1'>가격</label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.price === 0 ? '' : productForm.price}
                             onChange={e => {
@@ -583,14 +576,13 @@ const App = () => {
                                 setProductForm({ ...productForm, price: 0 });
                               }
                             }}
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                             placeholder='숫자만 입력'
                             required
                           />
                         </div>
                         <div>
                           <label className='block text-sm font-medium text-gray-700 mb-1'>재고</label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.stock === 0 ? '' : productForm.stock}
                             onChange={e => {
@@ -611,7 +603,6 @@ const App = () => {
                                 setProductForm({ ...productForm, stock: 9999 });
                               }
                             }}
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                             placeholder='숫자만 입력'
                             required
                           />
@@ -622,7 +613,7 @@ const App = () => {
                         <div className='space-y-2'>
                           {productForm.discounts.map((discount, index) => (
                             <div key={index} className='flex items-center gap-2 bg-gray-50 p-2 rounded'>
-                              <input
+                              <Input
                                 type='number'
                                 value={discount.quantity}
                                 onChange={e => {
@@ -630,12 +621,12 @@ const App = () => {
                                   newDiscounts[index].quantity = parseInt(e.target.value) || 0;
                                   setProductForm({ ...productForm, discounts: newDiscounts });
                                 }}
-                                className='w-20 px-2 py-1 border rounded'
+                                className='w-20'
                                 min='1'
                                 placeholder='수량'
                               />
                               <span className='text-sm'>개 이상 구매 시</span>
-                              <input
+                              <Input
                                 type='number'
                                 value={discount.rate * 100}
                                 onChange={e => {
@@ -643,7 +634,7 @@ const App = () => {
                                   newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
                                   setProductForm({ ...productForm, discounts: newDiscounts });
                                 }}
-                                className='w-16 px-2 py-1 border rounded'
+                                className='w-16'
                                 min='0'
                                 max='100'
                                 placeholder='%'
@@ -747,22 +738,22 @@ const App = () => {
                         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
                           <div>
                             <label className='block text-sm font-medium text-gray-700 mb-1'>쿠폰명</label>
-                            <input
+                            <Input
                               type='text'
                               value={couponForm.name}
                               onChange={e => setCouponForm({ ...couponForm, name: e.target.value })}
-                              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
+                              className='text-sm'
                               placeholder='신규 가입 쿠폰'
                               required
                             />
                           </div>
                           <div>
                             <label className='block text-sm font-medium text-gray-700 mb-1'>쿠폰 코드</label>
-                            <input
+                            <Input
                               type='text'
                               value={couponForm.code}
                               onChange={e => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })}
-                              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono'
+                              className='text-sm font-mono'
                               placeholder='WELCOME2024'
                               required
                             />
@@ -787,7 +778,7 @@ const App = () => {
                             <label className='block text-sm font-medium text-gray-700 mb-1'>
                               {couponForm.discountType === 'amount' ? '할인 금액' : '할인율(%)'}
                             </label>
-                            <input
+                            <Input
                               type='text'
                               value={couponForm.discountValue === 0 ? '' : couponForm.discountValue}
                               onChange={e => {
@@ -814,7 +805,7 @@ const App = () => {
                                   }
                                 }
                               }}
-                              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
+                              className='text-sm'
                               placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}
                               required
                             />
