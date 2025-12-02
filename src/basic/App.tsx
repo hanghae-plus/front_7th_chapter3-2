@@ -6,8 +6,9 @@
 // 4. 상태 관리는 각 페이지 컴포넌트에서 처리 (App은 라우팅만 담당)
 
 import { useState } from "react";
-import { Header } from "./components/Header";
-import { CartItem } from "../types";
+import { Header } from "./components/layout/Header";
+import { CartItem, Notification } from "../types";
+import Notifications from "./components/Notifications";
 
 export function App() {
   // TODO: 구현
@@ -23,11 +24,16 @@ export function App() {
     return [];
   });
   const [isAdmin, setIsAdmin] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Notifications
+        notifications={notifications}
+        setNotifications={setNotifications}
+      />
       <Header
         isAdmin={isAdmin}
         setIsAdmin={setIsAdmin}
