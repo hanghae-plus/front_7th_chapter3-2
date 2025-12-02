@@ -1,6 +1,6 @@
 import { Tabs } from '../../shared/ui/tabs';
-import { ProductsSection } from './ProductsSection';
-import { CouponsSection } from './CouponsSection';
+import { ProductsSection } from './products-section';
+import { CouponsSection } from './coupon-section';
 import { ProductWithUI } from '../../entities/product';
 import { Coupon } from '../../../types';
 import { ToastProps } from '../../shared/ui/toast';
@@ -13,7 +13,7 @@ interface PropsType {
   onDeleteProduct: (productId: string) => void;
   onAddCoupon: (newCoupon: Coupon) => void;
   onRemoveCoupon: (couponCode: string) => void;
-  onAddNotification: (notification: ToastProps) => void;
+  toast: (notification: ToastProps) => void;
 }
 
 export function AdminPage({
@@ -24,7 +24,7 @@ export function AdminPage({
   onDeleteProduct,
   onAddCoupon,
   onRemoveCoupon,
-  onAddNotification,
+  toast,
 }: PropsType) {
   return (
     <div className="max-w-6xl mx-auto">
@@ -45,7 +45,7 @@ export function AdminPage({
             onAddProduct={onAddProduct}
             onUpdateProduct={onUpdateProduct}
             onDeleteProduct={onDeleteProduct}
-            onAddNotification={onAddNotification}
+            toast={toast}
           />
         </Tabs.Content>
 
@@ -54,7 +54,7 @@ export function AdminPage({
             coupons={coupons}
             onAddCoupon={onAddCoupon}
             onRemoveCoupon={onRemoveCoupon}
-            onAddNotification={onAddNotification}
+            toast={toast}
           />
         </Tabs.Content>
       </Tabs>

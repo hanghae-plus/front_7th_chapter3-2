@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { ProductWithUI } from '../../entities/product';
-import { Product } from '../../../types';
-import { formatPrice } from '../../shared/lib/formatters';
+
 import { ToastProps } from '../../shared/ui/toast';
+import { ProductsTable } from './products-table';
 
 interface ProductsSectionProps {
   products: ProductWithUI[];
   onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
   onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   onDeleteProduct: (productId: string) => void;
-  onAddNotification: (notification: ToastProps) => void;
+  toast: (notification: ToastProps) => void;
 }
 
 export function ProductsSection({
@@ -17,7 +17,7 @@ export function ProductsSection({
   onAddProduct,
   onUpdateProduct,
   onDeleteProduct,
-  onAddNotification,
+  toast,
 }: ProductsSectionProps) {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -51,7 +51,7 @@ export function ProductsSection({
     setShowProductForm(false);
   };
 
-  const startEditProduct = (product: ProductWithUI) => {
+  const handleOpenProductForm = (product: ProductWithUI) => {
     setEditingProduct(product.id);
     setProductForm({
       name: product.name,
@@ -61,18 +61,6 @@ export function ProductsSection({
       discounts: product.discounts || [],
     });
     setShowProductForm(true);
-  };
-
-  const getRemainingStock = (product: Product): boolean => {
-    return product.stock > 0;
-  };
-
-  // REFACTOR
-  const getProductPrice = (product: Product): string => {
-    if (!getRemainingStock(product)) {
-      return 'SOLD OUT';
-    }
-    return formatPrice(product.price);
   };
 
   return (
@@ -100,69 +88,11 @@ export function ProductsSection({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                상품명
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                가격
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                재고
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                설명
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                작업
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {product.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {getProductPrice(product)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      product.stock > 10
-                        ? 'bg-green-100 text-green-800'
-                        : product.stock > 0
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {product.stock}개
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                  {product.description || '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    onClick={() => startEditProduct(product)}
-                    className="text-indigo-600 hover:text-indigo-900 mr-3"
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => onDeleteProduct(product.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    삭제
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ProductsTable
+          products={products}
+          onDeleteProduct={onDeleteProduct}
+          onOpenProductForm={handleOpenProductForm}
+        />
       </div>
 
       {showProductForm && (
@@ -226,7 +156,7 @@ export function ProductsSection({
                     if (value === '') {
                       setProductForm({ ...productForm, price: 0 });
                     } else if (parseInt(value) < 0) {
-                      onAddNotification({
+                      toast({
                         message: '가격은 0보다 커야 합니다',
                         type: 'error',
                       });
@@ -259,14 +189,14 @@ export function ProductsSection({
                     if (value === '') {
                       setProductForm({ ...productForm, stock: 0 });
                     } else if (parseInt(value) < 0) {
-                      onAddNotification({
+                      toast({
                         message: '재고는 0보다 커야 합니다',
                         type: 'error',
                       });
 
                       setProductForm({ ...productForm, stock: 0 });
                     } else if (parseInt(value) > 9999) {
-                      onAddNotification({
+                      toast({
                         message: '재고는 9999개를 초과할 수 없습니다',
                         type: 'error',
                       });

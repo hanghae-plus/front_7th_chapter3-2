@@ -68,7 +68,7 @@ const App = () => {
             onDeleteProduct={deleteProduct}
             onAddCoupon={addCoupon}
             onRemoveCoupon={removeCoupon}
-            onAddNotification={addNotification}
+            toast={addNotification}
           />
         ) : (
           <CartPage
