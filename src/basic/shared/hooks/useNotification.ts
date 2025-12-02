@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 
-interface Notification {
+export interface NotificationType {
   id: string;
   message: string;
   type: 'error' | 'success' | 'warning';
 }
 
 export const useNotification = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
