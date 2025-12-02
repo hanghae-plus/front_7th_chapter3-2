@@ -6,6 +6,13 @@
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
 import { CartItem, Coupon, Product } from '../../types';
+import { ProductWithUI } from '../constants';
+
+// ProductWithUI를 사용하는 장바구니 아이템 타입
+export interface CartItemWithUI {
+  product: ProductWithUI;
+  quantity: number;
+}
 
 // 장바구니 총액 타입
 export interface CartTotals {
