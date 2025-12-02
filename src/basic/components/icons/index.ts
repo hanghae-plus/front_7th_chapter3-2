@@ -12,3 +12,4 @@
 // TODO: 구현
 export { IconCart } from "./IconCart";
 export { IconImage } from "./IconImage";
+export { IconClose } from "./IconClose";
