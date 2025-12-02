@@ -12,11 +12,7 @@ import {
 import { initialProducts, initialCoupons } from "./constants";
 import { formatPrice, formatPriceKorean } from "./utils/formatter";
 import { useDebounce } from "./hooks/useDebounce";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
+import { useProducts, ProductWithUI } from "./hooks/useProducts";
 
 interface Notification {
   id: string;
@@ -25,17 +21,7 @@ interface Notification {
 }
 
 const App = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("cart");
@@ -110,10 +96,6 @@ const App = () => {
 
   // 순수 함수로 총 아이템 수 계산 (상태 대신 계산된 값 사용)
   const totalItemCount = getTotalItemCount(cart);
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
 
   useEffect(() => {
     localStorage.setItem("coupons", JSON.stringify(coupons));
@@ -205,38 +187,6 @@ const App = () => {
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);
-
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification("상품이 수정되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
-    },
-    [addNotification]
-  );
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
