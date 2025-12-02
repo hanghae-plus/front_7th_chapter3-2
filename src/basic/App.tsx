@@ -9,10 +9,10 @@ import {
   updateCartItemQuantity,
   getTotalItemCount,
 } from "./models/cart";
-import { initialProducts, initialCoupons } from "./constants";
 import { formatPrice, formatPriceKorean } from "./utils/formatter";
 import { useDebounce } from "./hooks/useDebounce";
 import { useProducts, ProductWithUI } from "./hooks/useProducts";
+import { useCoupons } from "./hooks/useCoupons";
 
 interface Notification {
   id: string;
@@ -22,6 +22,12 @@ interface Notification {
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const {
+    coupons,
+    addCoupon: addCouponToList,
+    deleteCoupon: deleteCouponFromList,
+    getCoupon,
+  } = useCoupons();
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("cart");
@@ -36,21 +42,9 @@ const App = () => {
     return [];
   });
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -96,10 +90,6 @@ const App = () => {
 
   // 순수 함수로 총 아이템 수 계산 (상태 대신 계산된 값 사용)
   const totalItemCount = getTotalItemCount(cart);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -188,28 +178,24 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification]);
 
+  // useCoupons의 함수를 래핑하여 notification 처리
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
+      const result = addCouponToList(newCoupon);
+      addNotification(result.message, result.success ? "success" : "error");
     },
-    [coupons, addNotification]
+    [addCouponToList, addNotification]
   );
 
   const deleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      const result = deleteCouponFromList(couponCode);
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
+      addNotification(result.message, "success");
     },
-    [selectedCoupon, addNotification]
+    [deleteCouponFromList, selectedCoupon, addNotification]
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
