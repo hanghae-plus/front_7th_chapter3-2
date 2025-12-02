@@ -6,7 +6,7 @@ import { Header } from './widgets/header.ui';
 import { AdminPage } from './pages/admin/page';
 import { CartPage } from './pages/cart/page';
 import { useProducts } from './entities/product';
-import { INITIAL_COUPONS } from './entities/coupon';
+import { INITIAL_COUPONS, useCoupons } from './entities/coupon';
 import { useLocalStorage } from './shared/hooks/use-local-storage';
 import { useDebounce } from './shared/hooks/use-debounce';
 
@@ -16,11 +16,9 @@ const App = () => {
   const { notifications, addNotification, removeNotification } = useToast();
 
   const { products, addProduct, updateProduct, deleteProduct } = useProducts({ toast: addNotification });
+  const { coupons, addCoupon, removeCoupon } = useCoupons({ toast: addNotification });
 
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    'coupons',
-    INITIAL_COUPONS,
-  );
+
 
   const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
 
@@ -33,9 +31,6 @@ const App = () => {
 
 
 
-  const handleChangeCoupons = (callback: (coupons: Coupon[]) => Coupon[]) => {
-    setCoupons(callback);
-  };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -66,7 +61,8 @@ const App = () => {
             onAddProduct={addProduct}
             onUpdateProduct={updateProduct}
             onDeleteProduct={deleteProduct}
-            onChangeCoupons={handleChangeCoupons}
+            onAddCoupon={addCoupon}
+            onRemoveCoupon={removeCoupon}
             onAddNotification={addNotification}
           />
         ) : (

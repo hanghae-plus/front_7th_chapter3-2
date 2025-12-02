@@ -26,7 +26,8 @@ interface PropsType {
   onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
   onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   onDeleteProduct: (productId: string) => void;
-  onChangeCoupons: (callback: (coupons: Coupon[]) => Coupon[]) => void;
+  onAddCoupon: (newCoupon: Coupon) => void;
+  onRemoveCoupon: (couponCode: string) => void;
   onAddNotification: (notification: ToastProps) => void;
 }
 
@@ -37,7 +38,8 @@ export function AdminPage({
   onAddProduct,
   onUpdateProduct,
   onDeleteProduct,
-  onChangeCoupons,
+  onAddCoupon,
+  onRemoveCoupon,
   onAddNotification,
 }: PropsType) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
@@ -46,7 +48,6 @@ export function AdminPage({
 
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [showProductForm, setShowProductForm] = useState(false);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -70,38 +71,8 @@ export function AdminPage({
 
 
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find(c => c.code === newCoupon.code);
-      if (existingCoupon) {
-        onAddNotification({
-          message: '이미 존재하는 쿠폰 코드입니다.',
-          type: 'error',
-        });
-        return;
-      }
-      onChangeCoupons(prev => [...prev, newCoupon]);
-      onAddNotification({
-        message: '쿠폰이 추가되었습니다.',
-        type: 'success',
-      });
-    },
-    [coupons, onAddNotification],
-  );
 
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      onChangeCoupons(prev => prev.filter(c => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      onAddNotification({
-        message: '쿠폰이 삭제되었습니다.',
-        type: 'success',
-      });
-    },
-    [selectedCoupon, onAddNotification],
-  );
+ 
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,7 +98,8 @@ export function AdminPage({
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
+    onAddCoupon(couponForm);
+
     setCouponForm({
       name: '',
       code: '',
@@ -549,7 +521,7 @@ export function AdminPage({
                       </div>
                     </div>
                     <button
-                      onClick={() => deleteCoupon(coupon.code)}
+                      onClick={() => onRemoveCoupon(coupon.code)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <svg
