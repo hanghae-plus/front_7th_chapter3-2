@@ -5,9 +5,9 @@ import { useCart } from '../hooks/useCart';
 import { useCoupons } from '../hooks/useCoupons';
 import { useProducts } from '../hooks/useProducts';
 import { calculateItemTotal } from '../models/cart';
-import { useDebounce } from '../utils/hooks/useDebounce';
-import { CartIcon, CloseIcon, ImagePlaceholderIcon } from './icons';
-import { ProductWithUI } from '../constants';
+import { useDebounce } from '../shared/lib/useDebounce';
+import { CartIcon, CloseIcon, ImagePlaceholderIcon } from '../shared/ui/icons';
+import { ProductWithUI } from '../shared/config';
 
 interface Notification {
   id: string;
@@ -85,7 +85,9 @@ export function CartPage() {
     (product) =>
       product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
       (product.description &&
-        product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
+        product.description
+          .toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()))
   );
 
   // 총액 계산
@@ -96,7 +98,10 @@ export function CartPage() {
 
   // 주문 완료 처리
   const completeOrder = () => {
-    addNotification(`주문이 완료되었습니다. 주문번호: ORD-${Date.now()}`, 'success');
+    addNotification(
+      `주문이 완료되었습니다. 주문번호: ORD-${Date.now()}`,
+      'success'
+    );
     clearCart();
   };
 
@@ -112,8 +117,8 @@ export function CartPage() {
                 notif.type === 'error'
                   ? 'bg-red-600'
                   : notif.type === 'warning'
-                    ? 'bg-yellow-600'
-                    : 'bg-green-600'
+                  ? 'bg-yellow-600'
+                  : 'bg-green-600'
               }`}
             >
               <span className="mr-2">{notif.message}</span>
@@ -133,8 +138,12 @@ export function CartPage() {
         <div className="lg:col-span-3">
           <section>
             <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
-              <div className="text-sm text-gray-600">총 {products.length}개 상품</div>
+              <h2 className="text-2xl font-semibold text-gray-800">
+                전체 상품
+              </h2>
+              <div className="text-sm text-gray-600">
+                총 {products.length}개 상품
+              </div>
             </div>
 
             {/* 검색바 */}
@@ -177,14 +186,19 @@ export function CartPage() {
                         )}
                         {product.discounts.length > 0 && (
                           <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                            ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+                            ~
+                            {Math.max(...product.discounts.map((d) => d.rate)) *
+                              100}
+                            %
                           </span>
                         )}
                       </div>
 
                       {/* 상품 정보 */}
                       <div className="p-4">
-                        <h3 className="font-medium text-gray-900 mb-1">{product.name}</h3>
+                        <h3 className="font-medium text-gray-900 mb-1">
+                          {product.name}
+                        </h3>
                         {product.description && (
                           <p className="text-sm text-gray-500 mb-2 line-clamp-2">
                             {product.description}
@@ -212,7 +226,9 @@ export function CartPage() {
                             </p>
                           )}
                           {remainingStock > 5 && (
-                            <p className="text-xs text-gray-500">재고 {remainingStock}개</p>
+                            <p className="text-xs text-gray-500">
+                              재고 {remainingStock}개
+                            </p>
                           )}
                         </div>
 
@@ -254,7 +270,9 @@ export function CartPage() {
               {cart.length === 0 ? (
                 <div className="text-center py-8">
                   <CartIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm">장바구니가 비어있습니다</p>
+                  <p className="text-gray-500 text-sm">
+                    장바구니가 비어있습니다
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -267,7 +285,10 @@ export function CartPage() {
                       : 0;
 
                     return (
-                      <div key={item.product.id} className="border-b pb-3 last:border-b-0">
+                      <div
+                        key={item.product.id}
+                        className="border-b pb-3 last:border-b-0"
+                      >
                         <div className="flex justify-between items-start mb-2">
                           <h4 className="text-sm font-medium text-gray-900 flex-1">
                             {item.product.name}
@@ -282,7 +303,12 @@ export function CartPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
                             <button
-                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity - 1
+                                )
+                              }
                               className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                             >
                               <span className="text-xs">−</span>
@@ -291,7 +317,12 @@ export function CartPage() {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity + 1
+                                )
+                              }
                               className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                             >
                               <span className="text-xs">+</span>
@@ -321,14 +352,18 @@ export function CartPage() {
                 {/* 쿠폰 선택 */}
                 <section className="bg-white rounded-lg border border-gray-200 p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-700">쿠폰 할인</h3>
+                    <h3 className="text-sm font-semibold text-gray-700">
+                      쿠폰 할인
+                    </h3>
                   </div>
                   {coupons.length > 0 && (
                     <select
                       className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                       value={selectedCoupon?.code || ''}
                       onChange={(e) => {
-                        const coupon = coupons.find((c) => c.code === e.target.value);
+                        const coupon = coupons.find(
+                          (c) => c.code === e.target.value
+                        );
                         if (coupon) applyCoupon(coupon);
                       }}
                     >
@@ -356,11 +391,16 @@ export function CartPage() {
                         {totals.totalBeforeDiscount.toLocaleString()}원
                       </span>
                     </div>
-                    {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
+                    {totals.totalBeforeDiscount - totals.totalAfterDiscount >
+                      0 && (
                       <div className="flex justify-between text-red-500">
                         <span>할인 금액</span>
                         <span>
-                          -{(totals.totalBeforeDiscount - totals.totalAfterDiscount).toLocaleString()}
+                          -
+                          {(
+                            totals.totalBeforeDiscount -
+                            totals.totalAfterDiscount
+                          ).toLocaleString()}
                           원
                         </span>
                       </div>

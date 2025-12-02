@@ -5,7 +5,7 @@
 //
 // 참고: origin/App.tsx의 초기 데이터 구조를 참조
 
-import { Coupon, Product } from '../../types';
+import { Coupon, Product } from '../../../types';
 
 // 초기 데이터
 

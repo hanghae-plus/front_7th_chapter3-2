@@ -27,7 +27,7 @@
 import { useState } from 'react';
 import { CartItem, Coupon, Product } from '../../types';
 import * as cartModel from '../models/cart';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { useLocalStorage } from '../shared/lib/useLocalStorage';
 
 export function useCart() {
   // 1. 장바구니 상태 관리 (localStorage 연동)
@@ -44,7 +44,9 @@ export function useCart() {
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
-    setCart((prev) => cartModel.updateCartItemQuantity(prev, productId, quantity));
+    setCart((prev) =>
+      cartModel.updateCartItemQuantity(prev, productId, quantity)
+    );
   };
 
   // 3. 쿠폰 적용

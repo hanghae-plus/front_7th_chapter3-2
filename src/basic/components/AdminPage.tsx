@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { Discount } from '../../types';
 import { useCoupons } from '../hooks/useCoupons';
 import { useProducts } from '../hooks/useProducts';
-import { CloseIcon, PlusIcon, TrashIcon } from './icons';
+import { CloseIcon, PlusIcon, TrashIcon } from '../shared/ui/icons';
 import { ProductWithUI } from '../constants';
 
 interface Notification {
@@ -37,7 +37,9 @@ export function AdminPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // 탭 상태
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
+    'products'
+  );
 
   // 상품 폼 상태
   const [showProductForm, setShowProductForm] = useState(false);
@@ -114,7 +116,13 @@ export function AdminPage() {
     }
 
     setEditingProduct(null);
-    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+    setProductForm({
+      name: '',
+      price: 0,
+      stock: 0,
+      description: '',
+      discounts: [],
+    });
     setShowProductForm(false);
   };
 
@@ -129,7 +137,12 @@ export function AdminPage() {
       discountValue: couponForm.discountValue,
     });
 
-    setCouponForm({ name: '', code: '', discountType: 'amount', discountValue: 0 });
+    setCouponForm({
+      name: '',
+      code: '',
+      discountType: 'amount',
+      discountValue: 0,
+    });
     setShowCouponForm(false);
   };
 
@@ -145,13 +158,17 @@ export function AdminPage() {
                 notif.type === 'error'
                   ? 'bg-red-600'
                   : notif.type === 'warning'
-                    ? 'bg-yellow-600'
-                    : 'bg-green-600'
+                  ? 'bg-yellow-600'
+                  : 'bg-green-600'
               }`}
             >
               <span className="mr-2">{notif.message}</span>
               <button
-                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+                onClick={() =>
+                  setNotifications((prev) =>
+                    prev.filter((n) => n.id !== notif.id)
+                  )
+                }
                 className="text-white hover:text-gray-200"
               >
                 <CloseIcon className="w-4 h-4" />
@@ -202,7 +219,13 @@ export function AdminPage() {
                 <button
                   onClick={() => {
                     setEditingProduct('new');
-                    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+                    setProductForm({
+                      name: '',
+                      price: 0,
+                      stock: 0,
+                      description: '',
+                      discounts: [],
+                    });
                     setShowProductForm(true);
                   }}
                   className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
@@ -249,8 +272,8 @@ export function AdminPage() {
                             product.stock > 10
                               ? 'bg-green-100 text-green-800'
                               : product.stock > 0
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800'
                           }`}
                         >
                           {product.stock}개
@@ -288,28 +311,42 @@ export function AdminPage() {
                   </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">상품명</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        상품명
+                      </label>
                       <input
                         type="text"
                         value={productForm.name}
-                        onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                        onChange={(e) =>
+                          setProductForm({
+                            ...productForm,
+                            name: e.target.value,
+                          })
+                        }
                         className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">설명</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        설명
+                      </label>
                       <input
                         type="text"
                         value={productForm.description}
                         onChange={(e) =>
-                          setProductForm({ ...productForm, description: e.target.value })
+                          setProductForm({
+                            ...productForm,
+                            description: e.target.value,
+                          })
                         }
                         className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">가격</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        가격
+                      </label>
                       <input
                         type="text"
                         value={productForm.price === 0 ? '' : productForm.price}
@@ -327,7 +364,10 @@ export function AdminPage() {
                           if (value === '') {
                             setProductForm({ ...productForm, price: 0 });
                           } else if (parseInt(value) < 0) {
-                            addNotification('가격은 0보다 커야 합니다', 'error');
+                            addNotification(
+                              '가격은 0보다 커야 합니다',
+                              'error'
+                            );
                             setProductForm({ ...productForm, price: 0 });
                           }
                         }}
@@ -337,7 +377,9 @@ export function AdminPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">재고</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        재고
+                      </label>
                       <input
                         type="text"
                         value={productForm.stock === 0 ? '' : productForm.stock}
@@ -355,10 +397,16 @@ export function AdminPage() {
                           if (value === '') {
                             setProductForm({ ...productForm, stock: 0 });
                           } else if (parseInt(value) < 0) {
-                            addNotification('재고는 0보다 커야 합니다', 'error');
+                            addNotification(
+                              '재고는 0보다 커야 합니다',
+                              'error'
+                            );
                             setProductForm({ ...productForm, stock: 0 });
                           } else if (parseInt(value) > 9999) {
-                            addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+                            addNotification(
+                              '재고는 9999개를 초과할 수 없습니다',
+                              'error'
+                            );
                             setProductForm({ ...productForm, stock: 9999 });
                           }
                         }}
@@ -371,17 +419,26 @@ export function AdminPage() {
 
                   {/* 할인 정책 */}
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">할인 정책</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      할인 정책
+                    </label>
                     <div className="space-y-2">
                       {productForm.discounts.map((discount, index) => (
-                        <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 bg-gray-50 p-2 rounded"
+                        >
                           <input
                             type="number"
                             value={discount.quantity}
                             onChange={(e) => {
                               const newDiscounts = [...productForm.discounts];
-                              newDiscounts[index].quantity = parseInt(e.target.value) || 0;
-                              setProductForm({ ...productForm, discounts: newDiscounts });
+                              newDiscounts[index].quantity =
+                                parseInt(e.target.value) || 0;
+                              setProductForm({
+                                ...productForm,
+                                discounts: newDiscounts,
+                              });
                             }}
                             className="w-20 px-2 py-1 border rounded"
                             min="1"
@@ -393,8 +450,12 @@ export function AdminPage() {
                             value={discount.rate * 100}
                             onChange={(e) => {
                               const newDiscounts = [...productForm.discounts];
-                              newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
-                              setProductForm({ ...productForm, discounts: newDiscounts });
+                              newDiscounts[index].rate =
+                                (parseInt(e.target.value) || 0) / 100;
+                              setProductForm({
+                                ...productForm,
+                                discounts: newDiscounts,
+                              });
                             }}
                             className="w-16 px-2 py-1 border rounded"
                             min="0"
@@ -408,7 +469,10 @@ export function AdminPage() {
                               const newDiscounts = productForm.discounts.filter(
                                 (_, i) => i !== index
                               );
-                              setProductForm({ ...productForm, discounts: newDiscounts });
+                              setProductForm({
+                                ...productForm,
+                                discounts: newDiscounts,
+                              });
                             }}
                             className="text-red-600 hover:text-red-800"
                           >
@@ -421,7 +485,10 @@ export function AdminPage() {
                         onClick={() => {
                           setProductForm({
                             ...productForm,
-                            discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
+                            discounts: [
+                              ...productForm.discounts,
+                              { quantity: 10, rate: 0.1 },
+                            ],
                           });
                         }}
                         className="text-sm text-indigo-600 hover:text-indigo-800"
@@ -436,7 +503,13 @@ export function AdminPage() {
                       type="button"
                       onClick={() => {
                         setEditingProduct(null);
-                        setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+                        setProductForm({
+                          name: '',
+                          price: 0,
+                          stock: 0,
+                          description: '',
+                          discounts: [],
+                        });
                         setShowProductForm(false);
                       }}
                       className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -469,8 +542,12 @@ export function AdminPage() {
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{coupon.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1 font-mono">{coupon.code}</p>
+                        <h3 className="font-semibold text-gray-900">
+                          {coupon.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 mt-1 font-mono">
+                          {coupon.code}
+                        </p>
                         <div className="mt-2">
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
                             {coupon.discountType === 'amount'
@@ -505,14 +582,23 @@ export function AdminPage() {
               {showCouponForm && (
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                   <form onSubmit={handleCouponSubmit} className="space-y-4">
-                    <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
+                    <h3 className="text-md font-medium text-gray-900">
+                      새 쿠폰 생성
+                    </h3>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">쿠폰명</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          쿠폰명
+                        </label>
                         <input
                           type="text"
                           value={couponForm.name}
-                          onChange={(e) => setCouponForm({ ...couponForm, name: e.target.value })}
+                          onChange={(e) =>
+                            setCouponForm({
+                              ...couponForm,
+                              name: e.target.value,
+                            })
+                          }
                           className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
                           placeholder="신규 가입 쿠폰"
                           required
@@ -526,7 +612,10 @@ export function AdminPage() {
                           type="text"
                           value={couponForm.code}
                           onChange={(e) =>
-                            setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })
+                            setCouponForm({
+                              ...couponForm,
+                              code: e.target.value.toUpperCase(),
+                            })
                           }
                           className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
                           placeholder="WELCOME2024"
@@ -542,7 +631,9 @@ export function AdminPage() {
                           onChange={(e) =>
                             setCouponForm({
                               ...couponForm,
-                              discountType: e.target.value as 'amount' | 'percentage',
+                              discountType: e.target.value as
+                                | 'amount'
+                                | 'percentage',
                             })
                           }
                           className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
@@ -553,17 +644,24 @@ export function AdminPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          {couponForm.discountType === 'amount' ? '할인 금액' : '할인율(%)'}
+                          {couponForm.discountType === 'amount'
+                            ? '할인 금액'
+                            : '할인율(%)'}
                         </label>
                         <input
                           type="text"
-                          value={couponForm.discountValue === 0 ? '' : couponForm.discountValue}
+                          value={
+                            couponForm.discountValue === 0
+                              ? ''
+                              : couponForm.discountValue
+                          }
                           onChange={(e) => {
                             const value = e.target.value;
                             if (value === '' || /^\d+$/.test(value)) {
                               setCouponForm({
                                 ...couponForm,
-                                discountValue: value === '' ? 0 : parseInt(value),
+                                discountValue:
+                                  value === '' ? 0 : parseInt(value),
                               });
                             }
                           }}
@@ -571,22 +669,42 @@ export function AdminPage() {
                             const value = parseInt(e.target.value) || 0;
                             if (couponForm.discountType === 'percentage') {
                               if (value > 100) {
-                                addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
-                                setCouponForm({ ...couponForm, discountValue: 100 });
+                                addNotification(
+                                  '할인율은 100%를 초과할 수 없습니다',
+                                  'error'
+                                );
+                                setCouponForm({
+                                  ...couponForm,
+                                  discountValue: 100,
+                                });
                               } else if (value < 0) {
-                                setCouponForm({ ...couponForm, discountValue: 0 });
+                                setCouponForm({
+                                  ...couponForm,
+                                  discountValue: 0,
+                                });
                               }
                             } else {
                               if (value > 100000) {
-                                addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
-                                setCouponForm({ ...couponForm, discountValue: 100000 });
+                                addNotification(
+                                  '할인 금액은 100,000원을 초과할 수 없습니다',
+                                  'error'
+                                );
+                                setCouponForm({
+                                  ...couponForm,
+                                  discountValue: 100000,
+                                });
                               } else if (value < 0) {
-                                setCouponForm({ ...couponForm, discountValue: 0 });
+                                setCouponForm({
+                                  ...couponForm,
+                                  discountValue: 0,
+                                });
                               }
                             }
                           }}
                           className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-                          placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}
+                          placeholder={
+                            couponForm.discountType === 'amount' ? '5000' : '10'
+                          }
                           required
                         />
                       </div>

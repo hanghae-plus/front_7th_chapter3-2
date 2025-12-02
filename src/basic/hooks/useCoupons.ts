@@ -9,8 +9,8 @@
 // - removeCoupon: 쿠폰 삭제
 
 import { Coupon } from '../../types';
-import { initialCoupons } from '../constants';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { initialCoupons } from '../shared/config';
+import { useLocalStorage } from '../shared/lib/useLocalStorage';
 
 export function useCoupons() {
   // TODO: 구현

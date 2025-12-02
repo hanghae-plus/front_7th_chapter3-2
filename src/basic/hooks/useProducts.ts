@@ -14,8 +14,8 @@
 // - removeProductDiscount: 할인 규칙 삭제
 
 import { Discount, Product } from '../../types';
-import { initialProducts } from '../constants';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { initialProducts } from '../shared/config';
+import { useLocalStorage } from '../shared/lib/useLocalStorage';
 
 export function useProducts() {
   // 1. 상품 목록 상태 관리 (localStorage 연동)
