@@ -1,4 +1,5 @@
 import { ProductCreateForm } from "../features/product/ui/ProductCreateForm";
+import { ProductDashboard } from "../features/product/ui/ProductDashboard";
 import { ProductTable } from "../features/product/ui/ProductTable";
 import { Coupon, ProductForm, ProductWithUI } from "../types";
 
@@ -82,49 +83,20 @@ export function AdminPage({
       </div>
 
       {activeTab === "products" ? (
-        <section className="bg-white rounded-lg border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">상품 목록</h2>
-              <button
-                onClick={() => {
-                  setEditingProduct("new");
-                  setProductForm({
-                    name: "",
-                    price: 0,
-                    stock: 0,
-                    description: "",
-                    discounts: [],
-                  });
-                  setShowProductForm(true);
-                }}
-                className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
-              >
-                새 상품 추가
-              </button>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <ProductTable
-              products={products}
-              formatPrice={formatPrice}
-              startEditProduct={startEditProduct}
-              deleteProduct={deleteProduct}
-            />
-          </div>
-          {showProductForm && (
-            <ProductCreateForm
-              handleProductSubmit={handleProductSubmit}
-              editingProduct={editingProduct}
-              productForm={productForm}
-              setProductForm={setProductForm}
-              addNotification={addNotification}
-              setEditingProduct={setEditingProduct}
-              setShowProductForm={setShowProductForm}
-            />
-          )}
-        </section>
+        <ProductDashboard
+          setEditingProduct={setEditingProduct}
+          setProductForm={setProductForm}
+          setShowProductForm={setShowProductForm}
+          products={products}
+          formatPrice={formatPrice}
+          startEditProduct={startEditProduct}
+          deleteProduct={deleteProduct}
+          showProductForm={showProductForm}
+          handleProductSubmit={handleProductSubmit}
+          editingProduct={editingProduct}
+          productForm={productForm}
+          addNotification={addNotification}
+        />
       ) : (
         <section className="bg-white rounded-lg border border-gray-200">
           <div className="p-6 border-b border-gray-200">
