@@ -20,11 +20,20 @@
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["./src/basic/components/*", "./src/advanced/components/*"],
+      "@/components/*": [
+        "./src/basic/components/*",
+        "./src/advanced/components/*"
+      ],
       "@/hooks/*": ["./src/basic/hooks/*", "./src/advanced/hooks/*"],
       "@/models/*": ["./src/basic/models/*", "./src/advanced/models/*"],
       "@/utils/*": ["./src/basic/utils/*", "./src/advanced/utils/*"],
-      "@/constants/*": ["./src/basic/constants/*", "./src/advanced/constants/*"],
+      "@/constants/*": [
+        "./src/basic/constants/*",
+        "./src/advanced/constants/*"
+      ],
+      "@/types": ["./src/basic/types", "./src/advanced/types"],
+      "@/types/*": ["./src/basic/types/*", "./src/advanced/types/*"],
+      "@/pages/*": ["./src/basic/pages/*", "./src/advanced/pages/*"],
       "@/*": ["./src/*"]
     },
 

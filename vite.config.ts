@@ -33,7 +33,7 @@ function dynamicAliasPlugin(): Plugin {
       const relativePath = source.substring(2); // '@/' 제거
 
       // components, hooks, models, utils, constants인 경우 해당 폴더로 매핑
-      const localFolders = ['components', 'hooks', 'models', 'utils', 'constants'];
+      const localFolders = ['components', 'hooks', 'models', 'utils', 'constants', 'types', 'pages'];
       const firstSegment = relativePath.split('/')[0];
 
       if (localFolders.includes(firstSegment)) {
