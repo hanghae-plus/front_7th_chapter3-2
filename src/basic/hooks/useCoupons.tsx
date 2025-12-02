@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Coupon } from "../../types";
 import { initialCoupons } from "../constants";
 
@@ -20,6 +20,19 @@ const useCoupons = ({ addNotification }: Props) => {
   });
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
+  const addCoupon = useCallback(
+    (newCoupon: Coupon) => {
+      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
+      if (existingCoupon) {
+        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+        return;
+      }
+      setCoupons((prev) => [...prev, newCoupon]);
+      addNotification("쿠폰이 추가되었습니다.", "success");
+    },
+    [coupons, addNotification]
+  );
+
   useEffect(() => {
     localStorage.setItem("coupons", JSON.stringify(coupons));
   }, [coupons]);
@@ -29,6 +42,7 @@ const useCoupons = ({ addNotification }: Props) => {
     selectedCoupon,
     setCoupons,
     setSelectedCoupon,
+    addCoupon,
   };
 };
 

@@ -20,7 +20,7 @@ const App = () => {
 
   const { cart, totalItemCount, setCart, calculateCartTotal, calculateItemTotal, removeFromCart } = useCart();
   const { products, setProducts } = useProduct();
-  const { coupons, selectedCoupon, setCoupons, setSelectedCoupon } = useCoupon(addNotification);
+  const { coupons, selectedCoupon, setCoupons, setSelectedCoupon, addCoupon } = useCoupon({ addNotification });
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
@@ -164,18 +164,18 @@ const App = () => {
     [addNotification]
   );
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
-    },
-    [coupons, addNotification]
-  );
+  // const addCoupon = useCallback(
+  //   (newCoupon: Coupon) => {
+  //     const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
+  //     if (existingCoupon) {
+  //       addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+  //       return;
+  //     }
+  //     setCoupons((prev) => [...prev, newCoupon]);
+  //     addNotification("쿠폰이 추가되었습니다.", "success");
+  //   },
+  //   [coupons, addNotification]
+  // );
 
   const deleteCoupon = useCallback(
     (couponCode: string) => {
