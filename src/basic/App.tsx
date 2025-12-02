@@ -52,7 +52,7 @@ const App = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { store, admin } = PAGES;
-  const { switchPage, isCurrentPage } = usePage(store);
+  const { currentPage, switchPage, isCurrentPage } = usePage(store);
   const { notifications, addNotification, removeNotification } = useNotifications();
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
@@ -359,28 +359,33 @@ const App = () => {
       )
     : products;
 
+  const nav = {
+    [store]: (
+      <>
+        <Button size='xs' variant='text' onClick={() => switchPage(admin)}>
+          관리자 페이지로
+        </Button>
+        <div className='relative'>
+          <CartIcon className='text-gray-700' />
+          {cart.length > 0 && (
+            <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+              {totalItemCount}
+            </span>
+          )}
+        </div>
+      </>
+    ),
+    [admin]: (
+      <Button size='xs' variant='dark' onClick={() => switchPage(store)}>
+        쇼핑몰로 돌아가기
+      </Button>
+    )
+  };
+
   return (
     <div className='min-h-screen bg-gray-50'>
       <Toast notifications={notifications} onClose={removeNotification} />
-      <Header
-        nav={
-          <>
-            <Button size='xs' variant={isCurrentPage(admin) ? 'dark' : 'text'} onClick={() => switchPage(isCurrentPage(admin) ? store : admin)}>
-              {isCurrentPage(admin) ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
-            </Button>
-            {isCurrentPage(store) && (
-              <div className='relative '>
-                <CartIcon className='text-gray-700' />
-                {cart.length > 0 && (
-                  <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
-                    {totalItemCount}
-                  </span>
-                )}
-              </div>
-            )}
-          </>
-        }
-      >
+      <Header nav={nav[currentPage]}>
         {isCurrentPage(store) && <Input type='search' value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder='상품 검색...' />}
       </Header>
 
