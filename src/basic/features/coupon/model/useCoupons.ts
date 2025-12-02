@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { Coupon } from "../../../shared/model/types";
 import { useLocalStorage } from "../../../shared/lib/useLocalStorage";
 

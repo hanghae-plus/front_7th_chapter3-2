@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Notification } from "./shared/model/types";
 
 // Widgets (UI 조립)
