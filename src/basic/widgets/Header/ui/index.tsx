@@ -1,4 +1,4 @@
-import { CartItem } from "../../../shared/types/types";
+import { CartItem } from "../../../shared/model/types";
 
 interface Props {
   // 1. 데이터 (Data)

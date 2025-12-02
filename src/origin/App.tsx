@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { CartItem, Coupon, Product } from "../basic/shared/types/types";
+import { CartItem, Coupon, Product } from "../basic/shared/model/types";
 
 interface ProductWithUI extends Product {
   description?: string;

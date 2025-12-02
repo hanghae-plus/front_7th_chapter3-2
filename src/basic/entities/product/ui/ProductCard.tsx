@@ -1,5 +1,5 @@
-import { ProductWithUI, CartItem } from "../../../shared/types/types";
-import { formatCurrency } from "../../../shared/lib/format";
+import { ProductWithUI, CartItem } from "../../../shared/model/types";
+import { formatCurrencyWithSymbol } from "../../../shared/lib/format";
 import { getRemainingStock } from "../lib";
 
 interface Props {
@@ -66,7 +66,7 @@ export const ProductCard = ({ product, cart, onAddToCart }: Props) => {
         {/* 가격 및 할인 정책 */}
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">
-            {formatCurrency(product.price)}
+            {formatCurrencyWithSymbol(product.price)}
           </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">

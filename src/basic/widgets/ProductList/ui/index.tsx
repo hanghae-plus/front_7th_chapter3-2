@@ -1,4 +1,4 @@
-import { ProductWithUI, CartItem } from "../../../shared/types/types";
+import { ProductWithUI, CartItem } from "../../../shared/model/types";
 import { ProductCard } from "../../../entities/product/ui/ProductCard";
 
 interface Props {

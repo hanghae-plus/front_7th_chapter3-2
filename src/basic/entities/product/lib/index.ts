@@ -1,4 +1,4 @@
-import { CartItem, Product } from "../../../shared/types/types";
+import { CartItem, Product } from "../../../shared/model/types";
 
 /**
  * 상품의 재고가 얼마나 남았는지 계산합니다.
