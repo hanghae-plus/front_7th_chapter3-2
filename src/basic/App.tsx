@@ -3,16 +3,15 @@ import AdminPage from "./Pages/AdminPage";
 import CartPage from "./Pages/CartPage";
 import Header from "./components/layout/Header";
 import { useSearch } from "./hooks/useSearch";
-import { useCart } from "./hooks/useCart";
 import NotificationList, {
   type Notification,
 } from "./components/layout/NotificationList";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [currentPage, setCurrentPage] = useState<"cart" | "admin">("cart");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { searchTerm, setSearchTerm } = useSearch();
-  const { cart } = useCart();
 
   const handleCloseNotification = (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
@@ -27,13 +26,13 @@ const App = () => {
       <Header
         isAdmin={isAdmin}
         searchTerm={searchTerm}
-        cart={cart}
         setIsAdmin={setIsAdmin}
         setSearchTerm={setSearchTerm}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? <></> : <CartPage searchTerm={searchTerm} />}
+        <CartPage searchTerm={searchTerm} />
+        {/* {isAdmin ? <></> : <CartPage searchTerm={searchTerm} />} */}
       </main>
     </div>
   );

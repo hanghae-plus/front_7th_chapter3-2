@@ -43,7 +43,13 @@ export const useCoupons = () => {
   const removeCoupon = () => {
     setSelectedCoupon(null);
     // addNotification("쿠폰이 제거되었습니다.", "info");
-  }
+  };
 
-  return { coupons, applyCoupon, removeCoupon };
+  return {
+    coupons,
+    selectedCoupon,
+    setSelectedCoupon,
+    applyCoupon,
+    removeCoupon,
+  };
 };

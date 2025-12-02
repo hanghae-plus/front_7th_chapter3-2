@@ -1,38 +1,31 @@
 import { type FC } from "react";
 import CartItems from "./CartItems";
-import CouponItem from "./CouponItem";
 import PayItem from "./PayItem";
-import { CartItem, Coupon } from "../../../types";
 import ShoppingBagIcon from "../icons/ShoppingBagIcon";
+import { useCart } from "../../hooks/useCart";
+import { useCoupons } from "../../hooks/useCoupons";
+import CouponSelector from "./CouponSelector";
+import { calculateCartTotal } from "../../models/cart";
 
-interface IProps {
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
+const CartArea: FC = () => {
+  const { cart, removeFromCart, updateQuantity, emptyCart } = useCart();
+  const {
+    coupons,
+    applyCoupon,
+    selectedCoupon,
+    setSelectedCoupon,
+    removeCoupon,
+  } = useCoupons();
+
+  const totals = calculateCartTotal(cart, selectedCoupon);
+
+  const handleCompleteOrder = () => {
+    const orderNumber = `ORD-${Date.now()}`;
+    alert(`주문이 완료되었습니다. 주문번호: ${orderNumber}`);
+    emptyCart();
+    removeCoupon();
   };
-  calculateItemTotal: (item: CartItem) => number;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  applyCoupon: (coupon: Coupon) => void;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  completeOrder: () => void;
-}
 
-const CartArea: FC<IProps> = ({
-  cart,
-  coupons,
-  selectedCoupon,
-  applyCoupon,
-  setSelectedCoupon,
-  totals,
-  calculateItemTotal,
-  completeOrder,
-  removeFromCart,
-  updateQuantity,
-}) => {
   return (
     <div className="sticky top-24 space-y-4">
       <section className="bg-white rounded-lg border border-gray-200 p-4">
@@ -48,22 +41,21 @@ const CartArea: FC<IProps> = ({
         ) : (
           <CartItems
             cart={cart}
-            calculateItemTotal={calculateItemTotal}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
+            onRemove={removeFromCart}
+            onUpdateQuantity={updateQuantity}
           />
         )}
       </section>
 
       {cart.length > 0 && (
         <>
-          <CouponItem
+          <CouponSelector
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            applyCoupon={applyCoupon}
+            onApply={applyCoupon}
             setSelectedCoupon={setSelectedCoupon}
           />
-          <PayItem totals={totals} completeOrder={completeOrder} />
+          <PayItem totals={totals} onCheckout={handleCompleteOrder} />
         </>
       )}
     </div>

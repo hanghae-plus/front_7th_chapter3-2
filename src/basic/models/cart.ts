@@ -85,7 +85,7 @@ export const calculateCartTotal = (
 
 export const addItemToCart = (
   cart: CartItem[],
-  product: ProductWithUI
+  product: any //ProductWithUI
 ): CartItem[] => {
   const existingItem = cart.find((item) => item.product.id === product.id);
 
@@ -105,38 +105,38 @@ export const addItemToCart = (
 };
 
 
-export const removeFromCart = useCallback((productId: string) => {
-  setCart((prevCart) =>
-    prevCart.filter((item) => item.product.id !== productId)
-  );
-}, []);
+// export const removeFromCart = useCallback((productId: string) => {
+//   setCart((prevCart) =>
+//     prevCart.filter((item) => item.product.id !== productId)
+//   );
+// }, []);
 
-const updateQuantity = useCallback(
-  (productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
+// const updateQuantity = useCallback(
+//   (productId: string, newQuantity: number) => {
+//     if (newQuantity <= 0) {
+//       removeFromCart(productId);
+//       return;
+//     }
 
-    const product = products.find((p) => p.id === productId);
-    if (!product) return;
+//     const product = products.find((p) => p.id === productId);
+//     if (!product) return;
 
-    const maxStock = product.stock;
-    if (newQuantity > maxStock) {
-      addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
-      return;
-    }
+//     const maxStock = product.stock;
+//     if (newQuantity > maxStock) {
+//       addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+//       return;
+//     }
 
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.product.id === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    );
-  },
-  [products, removeFromCart, addNotification, getRemainingStock]
-);
+//     setCart((prevCart) =>
+//       prevCart.map((item) =>
+//         item.product.id === productId
+//           ? { ...item, quantity: newQuantity }
+//           : item
+//       )
+//     );
+//   },
+//   [products, removeFromCart, addNotification, getRemainingStock]
+// );
 
 export const getRemainingStock = (
   cart: CartItem[],

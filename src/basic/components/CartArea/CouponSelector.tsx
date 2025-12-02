@@ -4,11 +4,11 @@ import { Coupon } from "../../../types";
 interface IProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon) => void;
+  onApply: (coupon: Coupon) => void;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-const CouponItem: FC<IProps> = ({ coupons, selectedCoupon, applyCoupon, setSelectedCoupon }) => {
+const CouponSelector: FC<IProps> = ({ coupons, selectedCoupon, onApply, setSelectedCoupon }) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -23,7 +23,7 @@ const CouponItem: FC<IProps> = ({ coupons, selectedCoupon, applyCoupon, setSelec
           value={selectedCoupon?.code || ""}
           onChange={(e) => {
             const coupon = coupons.find((c) => c.code === e.target.value);
-            if (coupon) applyCoupon(coupon);
+            if (coupon) onApply(coupon);
             else setSelectedCoupon(null);
           }}>
           <option value="">쿠폰 선택</option>
@@ -42,4 +42,4 @@ const CouponItem: FC<IProps> = ({ coupons, selectedCoupon, applyCoupon, setSelec
   );
 };
 
-export default CouponItem;
+export default CouponSelector;

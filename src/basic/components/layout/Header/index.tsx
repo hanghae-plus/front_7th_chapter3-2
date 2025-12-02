@@ -2,11 +2,11 @@ import { type FC } from "react";
 import CartBadge from "./CartBadge";
 import SearchBar from "./SearchBar";
 import { CartItem } from "../../../../types";
+import { useCart } from "../../../hooks/useCart";
 
 interface IProps {
   isAdmin: boolean;
   searchTerm: string;
-  cart: CartItem[];
   setIsAdmin: (isAdmin: boolean) => void;
   setSearchTerm: (searchTerm: string) => void;
 }
@@ -14,10 +14,12 @@ interface IProps {
 const Header: FC<IProps> = ({
   isAdmin,
   searchTerm,
-  cart,
   setIsAdmin,
   setSearchTerm,
 }) => {
+  
+  const { cart } = useCart();
+
   const getAdminButtonClass = (isAdmin: boolean) => {
     const base = "px-3 py-1.5 text-sm rounded transition-colors";
     const variant = isAdmin
