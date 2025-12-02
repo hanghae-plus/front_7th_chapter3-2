@@ -5,8 +5,8 @@
 // - 외부 상태에 의존하지 않음
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
-import { CartItem, Coupon, Product } from '../../types';
-import { ProductWithUI } from '../shared/config';
+import { CartItem, Coupon, Product } from '../../../../types';
+import { ProductWithUI } from '../../../shared/config';
 
 // ProductWithUI를 사용하는 장바구니 아이템 타입
 export interface CartItemWithUI {

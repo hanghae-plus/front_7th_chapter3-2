@@ -8,7 +8,10 @@ import {
 import { useLocalStorage } from './shared/lib/useLocalStorage';
 import { useDebounce } from './shared/lib/useDebounce';
 import { useNotification } from './shared/lib/useNotification';
-import * as cartModel from './models/cart';
+import * as cartModel from './entities/cart/model/cart';
+import ProductCard from './entities/product/ui/ProductCard';
+import ProductGrid from './entities/product/ui/ProductGrid';
+import CouponCard from './entities/coupon/ui/CouponCard';
 
 const App = () => {
   // localStorage 연동 상태 (hooks 사용)
@@ -786,46 +789,11 @@ const App = () => {
                 <div className="p-6">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {coupons.map((coupon) => (
-                      <div
+                      <CouponCard
                         key={coupon.code}
-                        className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200"
-                      >
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900">
-                              {coupon.name}
-                            </h3>
-                            <p className="text-sm text-gray-600 mt-1 font-mono">
-                              {coupon.code}
-                            </p>
-                            <div className="mt-2">
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
-                                {coupon.discountType === 'amount'
-                                  ? `${coupon.discountValue.toLocaleString()}원 할인`
-                                  : `${coupon.discountValue}% 할인`}
-                              </span>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => deleteCoupon(coupon.code)}
-                            className="text-gray-400 hover:text-red-600 transition-colors"
-                          >
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
+                        coupon={coupon}
+                        onDelete={deleteCoupon}
+                      />
                     ))}
 
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
@@ -1025,103 +993,18 @@ const App = () => {
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <ProductGrid>
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
-
                       return (
-                        <div
+                        <ProductCard
                           key={product.id}
-                          className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-                        >
-                          {/* 상품 이미지 영역 (placeholder) */}
-                          <div className="relative">
-                            <div className="aspect-square bg-gray-100 flex items-center justify-center">
-                              <svg
-                                className="w-24 h-24 text-gray-300"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1}
-                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
-                            </div>
-                            {product.isRecommended && (
-                              <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
-                                BEST
-                              </span>
-                            )}
-                            {product.discounts.length > 0 && (
-                              <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                                ~
-                                {Math.max(
-                                  ...product.discounts.map((d) => d.rate)
-                                ) * 100}
-                                %
-                              </span>
-                            )}
-                          </div>
-
-                          {/* 상품 정보 */}
-                          <div className="p-4">
-                            <h3 className="font-medium text-gray-900 mb-1">
-                              {product.name}
-                            </h3>
-                            {product.description && (
-                              <p className="text-sm text-gray-500 mb-2 line-clamp-2">
-                                {product.description}
-                              </p>
-                            )}
-
-                            {/* 가격 정보 */}
-                            <div className="mb-3">
-                              <p className="text-lg font-bold text-gray-900">
-                                {formatPrice(product.price, product.id)}
-                              </p>
-                              {product.discounts.length > 0 && (
-                                <p className="text-xs text-gray-500">
-                                  {product.discounts[0].quantity}개 이상 구매시
-                                  할인 {product.discounts[0].rate * 100}%
-                                </p>
-                              )}
-                            </div>
-
-                            {/* 재고 상태 */}
-                            <div className="mb-3">
-                              {remainingStock <= 5 && remainingStock > 0 && (
-                                <p className="text-xs text-red-600 font-medium">
-                                  품절임박! {remainingStock}개 남음
-                                </p>
-                              )}
-                              {remainingStock > 5 && (
-                                <p className="text-xs text-gray-500">
-                                  재고 {remainingStock}개
-                                </p>
-                              )}
-                            </div>
-
-                            {/* 장바구니 버튼 */}
-                            <button
-                              onClick={() => addToCart(product)}
-                              disabled={remainingStock <= 0}
-                              className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                                remainingStock <= 0
-                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                  : 'bg-gray-900 text-white hover:bg-gray-800'
-                              }`}
-                            >
-                              {remainingStock <= 0 ? '품절' : '장바구니 담기'}
-                            </button>
-                          </div>
-                        </div>
+                          product={product}
+                          cart={cart}
+                          onAddToCart={addToCart}
+                        />
                       );
                     })}
-                  </div>
+                  </ProductGrid>
                 )}
               </section>
             </div>
