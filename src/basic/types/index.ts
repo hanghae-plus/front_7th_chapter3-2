@@ -28,6 +28,14 @@ export interface ProductWithUI extends Product {
   isRecommended?: boolean;
 }
 
+export interface ProductForm {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Array<{ quantity: number; rate: number }>;
+}
+
 export interface Notification {
   id: string;
   message: string;
