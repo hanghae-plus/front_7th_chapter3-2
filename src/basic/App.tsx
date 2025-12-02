@@ -3,30 +3,17 @@ import { CartItem, Coupon, Product } from "../types";
 import { useProducts } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
+import { useNotification } from "./hooks/useNotification";
 
 interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
 }
 
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
-
 const App = () => {
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
+  const { notifications, addNotification, removeNotification } =
+    useNotification();
 
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
   const { products, addProduct, updateProduct, deleteProduct } = useProducts({
     addNotification,
   });
@@ -50,7 +37,6 @@ const App = () => {
   } = useCoupons({ cart, addNotification });
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -260,11 +246,7 @@ const App = () => {
             >
               <span className="mr-2">{notif.message}</span>
               <button
-                onClick={() =>
-                  setNotifications((prev) =>
-                    prev.filter((n) => n.id !== notif.id)
-                  )
-                }
+                onClick={() => removeNotification(notif.id)}
                 className="text-white hover:text-gray-200"
               >
                 <svg
