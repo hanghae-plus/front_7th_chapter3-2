@@ -1,6 +1,6 @@
-import { ProductList } from "../features/product/components/ProductList";
+import { ProductList } from "../components/ProductList";
 import { CartItem, Coupon, ProductWithUI } from "../types";
-import { IconCart } from "../ui/icons";
+import { IconCart } from "../components/icons";
 
 export function CartPage({
   products,

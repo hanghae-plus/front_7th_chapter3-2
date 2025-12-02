@@ -1,4 +1,4 @@
-import { ProductWithUI } from "../../../types";
+import { ProductWithUI } from "../types";
 import { ProductCard } from "./ProductCard";
 
 export function ProductList({

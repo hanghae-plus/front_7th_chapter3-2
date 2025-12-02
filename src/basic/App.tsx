@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Header } from "./ui/Header";
+import { Header } from "./components/Header";
 import type {
   CartItem,
   Coupon,
@@ -11,7 +11,7 @@ import type {
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { initialCoupons, initialProducts } from "./constants";
-import { Toast } from "./ui/Toast";
+import { Toast } from "./components/ui/Toast";
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
