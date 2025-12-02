@@ -1,6 +1,9 @@
-import { Validation } from '@/basic/types/validation.types';
+import { Validation } from '@/types';
 
-export type CouponValidationError = 'DUPLICATED' | 'NOT_FOUND';
+export type CouponValidationError =
+  | 'DUPLICATED'
+  | 'NOT_FOUND'
+  | 'INVALID_DISCOUNT';
 export type CouponValidation = Validation<CouponValidationError>;
 
 export interface Coupon {

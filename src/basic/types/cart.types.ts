@@ -1,4 +1,4 @@
-import { Product, Validation } from '@/basic/types';
+import { Product, Validation } from '@/types';
 
 export type CartValidationError =
   | 'CART_OUT_OF_STOCK'

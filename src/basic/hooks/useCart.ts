@@ -23,7 +23,6 @@
 // - calculateTotal: 총액 계산 함수
 // - getRemainingStock: 재고 확인 함수
 // - clearCart: 장바구니 비우기 함수
-import { CartItem, CartValidation, Coupon, Product } from '@/basic/types';
 import {
   addItemToCart,
   calculateCartTotal,
@@ -35,6 +34,7 @@ import {
   validateApplyCoupon,
   validateRemoveCart,
 } from '@/models/cart';
+import { CartItem, CartValidation, Coupon, Product } from '@/types';
 import { useLocalStorage } from '@/utils/hooks/useLocalStorage';
 import { useCallback, useState } from 'react';
 

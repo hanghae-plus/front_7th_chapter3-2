@@ -1,5 +1,5 @@
-import { Coupon, CouponValidation } from '@/basic/types';
 import { validateAddCoupon, validateRemoveCoupon } from '@/models/coupon';
+import { Coupon, CouponValidation } from '@/types';
 import { useLocalStorage } from '@/utils/hooks/useLocalStorage';
 import { useCallback } from 'react';
 

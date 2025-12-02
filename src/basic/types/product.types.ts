@@ -1,9 +1,20 @@
+import { Validation } from '@/types/validation.types';
+
+export type ProductValidationError =
+  | 'INVALID_PRICE'
+  | 'INVALID_STOCK'
+  | 'NOT_FOUND';
+
+export type ProductValidation = Validation<ProductValidationError>;
+
 export interface Product {
   id: string;
   name: string;
   price: number;
   stock: number;
   discounts: Discount[];
+  description?: string;
+  isRecommended?: boolean;
 }
 
 export interface Discount {
