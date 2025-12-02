@@ -47,21 +47,6 @@ const App = () => {
     discountValue: 0,
   });
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
   const getRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
     const remaining = product.stock - (cartItem?.quantity || 0);
@@ -275,6 +260,7 @@ const App = () => {
             showProductForm={showProductForm}
             editingProduct={editingProduct}
             productForm={productForm}
+            getRemainingStock={getRemainingStock}
             setShowCouponForm={setShowCouponForm}
             setCouponForm={setCouponForm}
             deleteCoupon={deleteCoupon}
@@ -283,7 +269,6 @@ const App = () => {
             setEditingProduct={setEditingProduct}
             setProductForm={setProductForm}
             setShowProductForm={setShowProductForm}
-            formatPrice={formatPrice}
             startEditProduct={startEditProduct}
             deleteProduct={deleteProduct}
             handleProductSubmit={handleProductSubmit}
@@ -299,7 +284,6 @@ const App = () => {
             selectedCoupon={selectedCoupon}
             totals={totals}
             getRemainingStock={getRemainingStock}
-            formatPrice={formatPrice}
             addToCart={addToCart}
             calculateItemTotal={calculateItemTotal}
             removeFromCart={removeFromCart}

@@ -1,3 +1,5 @@
+import { formatPrice } from "../../utils/formatters";
+
 type Props = {
   products: any[];
   cart: any[];
@@ -5,7 +7,6 @@ type Props = {
   filteredProducts: any[];
   debouncedSearchTerm: string;
   getRemainingStock: (product: any) => number;
-  formatPrice: (price: number, productId: number) => string;
   addToCart: (product: any) => void;
   calculateItemTotal: (product: any) => number;
   removeFromCart: (productId: number) => void;
@@ -27,7 +28,6 @@ const ShoppingMallTemplate = ({
   filteredProducts,
   debouncedSearchTerm,
   getRemainingStock,
-  formatPrice,
   addToCart,
   calculateItemTotal,
   removeFromCart,
@@ -94,7 +94,9 @@ const ShoppingMallTemplate = ({
 
                       {/* 가격 정보 */}
                       <div className="mb-3">
-                        <p className="text-lg font-bold text-gray-900">{formatPrice(product.price, product.id)}</p>
+                        <p className="text-lg font-bold text-gray-900">
+                          {formatPrice(getRemainingStock(product), product.price)}
+                        </p>
                         {product.discounts.length > 0 && (
                           <p className="text-xs text-gray-500">
                             {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%

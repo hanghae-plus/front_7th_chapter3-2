@@ -1,31 +1,34 @@
+import { formatPrice } from "../../utils/formatters";
+
 type Props = {
-  products :  any
-  coupons : any   
-  showCouponForm : boolean
-  setShowCouponForm : React.Dispatch<React.SetStateAction<boolean>>
-  setCouponForm : React.Dispatch<React.SetStateAction<any>>
-  deleteCoupon : (id : number) => void
-  handleCouponSubmit : (e : React.FormEvent<HTMLFormElement>) => void
-  couponForm : any
-  activeTab : string
-  setActiveTab : React.Dispatch<React.SetStateAction<string>>
-  setEditingProduct : React.Dispatch<React.SetStateAction<string>>
-  setProductForm : React.Dispatch<React.SetStateAction<any>>
-  setShowProductForm : React.Dispatch<React.SetStateAction<boolean>>
-  formatPrice : (price : number, id : number) => string
-  startEditProduct : (product : any) => void
-  deleteProduct : (id : number) => void
-  showProductForm : boolean
-  handleProductSubmit : (e : React.FormEvent<HTMLFormElement>) => void
-  editingProduct : any
-  productForm : any
-  addNotification : (message : string) => void
-}
+  products: any;
+  coupons: any;
+  showCouponForm: boolean;
+  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setCouponForm: React.Dispatch<React.SetStateAction<any>>;
+  deleteCoupon: (id: number) => void;
+  handleCouponSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  couponForm: any;
+  activeTab: string;
+  getRemainingStock: (product: any) => number;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  setEditingProduct: React.Dispatch<React.SetStateAction<string>>;
+  setProductForm: React.Dispatch<React.SetStateAction<any>>;
+  setShowProductForm: React.Dispatch<React.SetStateAction<boolean>>;
+  startEditProduct: (product: any) => void;
+  deleteProduct: (id: number) => void;
+  showProductForm: boolean;
+  handleProductSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  editingProduct: any;
+  productForm: any;
+  addNotification: (message: string) => void;
+};
 
 const Template = ({
   products,
   coupons,
   showCouponForm,
+  getRemainingStock,
   setShowCouponForm,
   setCouponForm,
   deleteCoupon,
@@ -36,7 +39,6 @@ const Template = ({
   setEditingProduct,
   setProductForm,
   setShowProductForm,
-  formatPrice,
   startEditProduct,
   deleteProduct,
   showProductForm,
@@ -44,7 +46,7 @@ const Template = ({
   editingProduct,
   productForm,
   addNotification,
-}:Props) => {
+}: Props) => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
@@ -120,7 +122,7 @@ const Template = ({
                   <tr key={product.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatPrice(product.price, product.id)}
+                      {formatPrice(getRemainingStock(product), product.price, true)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span
