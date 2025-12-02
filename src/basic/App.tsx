@@ -8,8 +8,8 @@ import type {
   Notification,
   ProductForm,
 } from "./types";
-import { AdminPage } from "./components/AdminPage";
-import { CartPage } from "./components/CartPage";
+import { AdminPage } from "./pages/AdminPage";
+import { CartPage } from "./pages/CartPage";
 import { initialCoupons, initialProducts } from "./constants";
 import { Toast } from "./components/Toast";
 
