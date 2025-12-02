@@ -16,16 +16,22 @@
 // - ProductList: 상품 목록 표시
 // - Cart: 장바구니 표시 및 결제
 
-import { useCallback, useState } from 'react';
 import { ProductWithUI } from '../../entities/product';
 import { CartItem, Coupon, Product } from '../../../types';
+import { calculateTotal } from '../../entities/cart/use-cart.model';
 
 interface PropsType {
   products: ProductWithUI[];
   coupons: Coupon[];
   cart: CartItem[];
+  selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
-  onChangeCart: (callback: (cart: CartItem[]) => CartItem[]) => void;
+  onAddToCart: (product: ProductWithUI) => void;
+  onRemoveFromCart: (productId: string) => void;
+  onUpdateQuantity: (productId: string, newQuantity: number) => void;
+  onApplyCoupon: (coupon: Coupon) => void;
+  onGetRemainingStock: (product: Product) => number;
+  onClearCart: () => void;
   onAddNotification: ({
     message,
     type,
@@ -39,12 +45,15 @@ export function CartPage({
   products,
   coupons,
   cart,
+  selectedCoupon,
   debouncedSearchTerm,
-  onChangeCart,
+  onAddToCart,
+  onRemoveFromCart,
+  onUpdateQuantity,
+  onApplyCoupon,
+  onClearCart,
   onAddNotification,
 }: PropsType) {
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
@@ -82,38 +91,6 @@ export function CartPage({
     return Math.round(price * quantity * (1 - discount));
   };
 
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        totalAfterDiscount = Math.max(
-          0,
-          totalAfterDiscount - selectedCoupon.discountValue
-        );
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
-  };
-
   const getRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
     const remaining = product.stock - (cartItem?.quantity || 0);
@@ -121,111 +98,28 @@ export function CartPage({
     return remaining;
   };
 
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
-      if (remainingStock <= 0) {
-        onAddNotification({ message: '재고가 부족합니다!', type: 'error' });
-        return;
-      }
+  const updateQuantity = (productId: string, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      onRemoveFromCart(productId);
+      return;
+    }
 
-      onChangeCart((prevCart) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
+    const product = products.find((p) => p.id === productId);
+    if (!product) return;
 
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            onAddNotification({
-              message: `재고는 ${product.stock}개까지만 있습니다.`,
-              type: 'error',
-            });
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
+    const maxStock = product.stock;
+    if (newQuantity > maxStock) {
+      onAddNotification({
+        message: `재고는 ${maxStock}개까지만 있습니다.`,
+        type: 'error',
       });
+      return;
+    }
 
-      onAddNotification({ message: '장바구니에 담았습니다', type: 'success' });
-    },
-    [cart, onAddNotification, getRemainingStock]
-  );
+    onUpdateQuantity(productId, newQuantity);
+  };
 
-  const removeFromCart = useCallback((productId: string) => {
-    console.log('productId', productId);
-    onChangeCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
-  }, []);
-
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
-
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        onAddNotification({
-          message: `재고는 ${maxStock}개까지만 있습니다.`,
-          type: 'error',
-        });
-        return;
-      }
-
-      onChangeCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-    },
-    [products, removeFromCart, onAddNotification, getRemainingStock]
-  );
-
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
-
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        onAddNotification({
-          message: 'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
-          type: 'error',
-        });
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      onAddNotification({ message: '쿠폰이 적용되었습니다.', type: 'success' });
-    },
-    [onAddNotification, calculateCartTotal]
-  );
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    onAddNotification({
-      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      type: 'success',
-    });
-    onChangeCart(() => []);
-    setSelectedCoupon(null);
-  }, [onAddNotification]);
-
-  const totals = calculateCartTotal();
+  const totals = calculateTotal(cart, selectedCoupon);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -339,7 +233,7 @@ export function CartPage({
 
                       {/* 장바구니 버튼 */}
                       <button
-                        onClick={() => addToCart(product)}
+                        onClick={() => onAddToCart(product)}
                         disabled={remainingStock <= 0}
                         className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
                           remainingStock <= 0
@@ -414,7 +308,7 @@ export function CartPage({
                           {item.product.name}
                         </h4>
                         <button
-                          onClick={() => removeFromCart(item.product.id)}
+                          onClick={() => onRemoveFromCart(item.product.id)}
                           className="text-gray-400 hover:text-red-500 ml-2"
                         >
                           <svg
@@ -491,8 +385,7 @@ export function CartPage({
                       const coupon = coupons.find(
                         (c) => c.code === e.target.value
                       );
-                      if (coupon) applyCoupon(coupon);
-                      else setSelectedCoupon(null);
+                      if (coupon) onApplyCoupon(coupon);
                     }}
                   >
                     <option value="">쿠폰 선택</option>
@@ -540,7 +433,7 @@ export function CartPage({
                 </div>
 
                 <button
-                  onClick={completeOrder}
+                  onClick={onClearCart}
                   className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                 >
                   {totals.totalAfterDiscount.toLocaleString()}원 결제하기
