@@ -10,6 +10,7 @@ import {
   getTotalItemCount,
 } from "./models/cart";
 import { formatPrice, formatPriceKorean } from "./utils/formatter";
+import { useDebounce } from "./hooks/useDebounce";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -119,7 +120,8 @@ const App = () => {
   );
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -173,13 +175,6 @@ const App = () => {
       localStorage.removeItem("cart");
     }
   }, [cart]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
