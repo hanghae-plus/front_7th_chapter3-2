@@ -8,10 +8,13 @@ import {
 import { useLocalStorage } from './shared/lib/useLocalStorage';
 import { useDebounce } from './shared/lib/useDebounce';
 import { useNotification } from './shared/lib/useNotification';
-import * as cartModel from './entities/cart/model/cart';
 import ProductCard from './entities/product/ui/ProductCard';
 import ProductGrid from './entities/product/ui/ProductGrid';
 import CouponCard from './entities/coupon/ui/CouponCard';
+import { useCart } from './features/cart/model/useCart';
+import CartList from './features/cart/ui/CartList';
+import CartSummary from './features/cart/ui/CartSummary';
+import { formatPrice } from './shared/lib/formatters';
 
 const App = () => {
   // localStorage 연동 상태 (hooks 사용)
@@ -19,16 +22,11 @@ const App = () => {
     'products',
     initialProducts
   );
-  const [cart, setCart] = useLocalStorage<cartModel.CartItemWithUI[]>(
-    'cart',
-    []
-  );
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
     'coupons',
     initialCoupons
   );
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { notifications, addNotification, removeNotification } =
     useNotification();
@@ -38,6 +36,21 @@ const App = () => {
   );
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // 장바구니 기능 (useCart 훅 사용)
+  const {
+    cart,
+    selectedCoupon,
+    setSelectedCoupon,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    applyCoupon,
+    completeOrder,
+    getRemainingStock,
+    calculateItemTotal,
+    calculateCartTotal,
+  } = useCart(addNotification);
 
   // 디바운스 hook 사용
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -60,10 +73,10 @@ const App = () => {
   });
 
   // 가격 포맷팅 (UI 로직이므로 컴포넌트에 유지)
-  const formatPrice = (price: number, productId?: string): string => {
+  const formatProductPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
-      if (product && cartModel.getRemainingStock(product, cart) <= 0) {
+      if (product && getRemainingStock(product) <= 0) {
         return 'SOLD OUT';
       }
     }
@@ -75,128 +88,12 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
-  // 장바구니 계산 함수들 (models 사용)
-  const calculateItemTotal = (item: cartModel.CartItemWithUI): number => {
-    return cartModel.calculateItemTotal(item, cart);
-  };
-
-  const calculateCartTotal = () => {
-    return cartModel.calculateCartTotal(cart, selectedCoupon);
-  };
-
-  const getRemainingStock = (product: ProductWithUI): number => {
-    return cartModel.getRemainingStock(product, cart);
-  };
-
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
   }, [cart]);
-
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
-      if (remainingStock <= 0) {
-        addNotification('재고가 부족합니다!', 'error');
-        return;
-      }
-
-      setCart((prevCart) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
-
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              'error'
-            );
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
-
-      addNotification('장바구니에 담았습니다', 'success');
-    },
-    [cart, addNotification]
-  );
-
-  const removeFromCart = useCallback(
-    (productId: string) => {
-      setCart((prevCart) =>
-        prevCart.filter((item) => item.product.id !== productId)
-      );
-    },
-    [setCart]
-  );
-
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
-
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
-        return;
-      }
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-    },
-    [products, removeFromCart, addNotification, setCart]
-  );
-
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
-
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        addNotification(
-          'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
-          'error'
-        );
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification('쿠폰이 적용되었습니다.', 'success');
-    },
-    [addNotification, cart, selectedCoupon]
-  );
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      'success'
-    );
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification, setCart]);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
@@ -299,8 +196,6 @@ const App = () => {
     });
     setShowProductForm(true);
   };
-
-  const totals = calculateCartTotal();
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -498,7 +393,7 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {formatPrice(product.price, product.id)}
+                              {formatProductPrice(product.price, product.id)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <span
@@ -1028,108 +923,14 @@ const App = () => {
                     </svg>
                     장바구니
                   </h2>
-                  {cart.length === 0 ? (
-                    <div className="text-center py-8">
-                      <svg
-                        className="w-16 h-16 text-gray-300 mx-auto mb-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1}
-                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                        />
-                      </svg>
-                      <p className="text-gray-500 text-sm">
-                        장바구니가 비어있습니다
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item);
-                        const originalPrice =
-                          item.product.price * item.quantity;
-                        const hasDiscount = itemTotal < originalPrice;
-                        const discountRate = hasDiscount
-                          ? Math.round((1 - itemTotal / originalPrice) * 100)
-                          : 0;
-
-                        return (
-                          <div
-                            key={item.product.id}
-                            className="border-b pb-3 last:border-b-0"
-                          >
-                            <div className="flex justify-between items-start mb-2">
-                              <h4 className="text-sm font-medium text-gray-900 flex-1">
-                                {item.product.name}
-                              </h4>
-                              <button
-                                onClick={() => removeFromCart(item.product.id)}
-                                className="text-gray-400 hover:text-red-500 ml-2"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M6 18L18 6M6 6l12 12"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <button
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.product.id,
-                                      item.quantity - 1
-                                    )
-                                  }
-                                  className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                                >
-                                  <span className="text-xs">−</span>
-                                </button>
-                                <span className="mx-3 text-sm font-medium w-8 text-center">
-                                  {item.quantity}
-                                </span>
-                                <button
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.product.id,
-                                      item.quantity + 1
-                                    )
-                                  }
-                                  className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                                >
-                                  <span className="text-xs">+</span>
-                                </button>
-                              </div>
-                              <div className="text-right">
-                                {hasDiscount && (
-                                  <span className="text-xs text-red-500 font-medium block">
-                                    -{discountRate}%
-                                  </span>
-                                )}
-                                <p className="text-sm font-medium text-gray-900">
-                                  {Math.round(itemTotal).toLocaleString()}원
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                  <CartList
+                    cart={cart}
+                    calculateItemTotal={calculateItemTotal}
+                    onUpdateQuantity={(productId, quantity) =>
+                      updateQuantity(productId, quantity, products)
+                    }
+                    onRemove={removeFromCart}
+                  />
                 </section>
 
                 {cart.length > 0 && (
@@ -1160,7 +961,7 @@ const App = () => {
                             <option key={coupon.code} value={coupon.code}>
                               {coupon.name} (
                               {coupon.discountType === 'amount'
-                                ? `${coupon.discountValue.toLocaleString()}원`
+                                ? formatPrice(coupon.discountValue)
                                 : `${coupon.discountValue}%`}
                               )
                             </option>
@@ -1169,49 +970,10 @@ const App = () => {
                       )}
                     </section>
 
-                    <section className="bg-white rounded-lg border border-gray-200 p-4">
-                      <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">상품 금액</span>
-                          <span className="font-medium">
-                            {totals.totalBeforeDiscount.toLocaleString()}원
-                          </span>
-                        </div>
-                        {totals.totalBeforeDiscount -
-                          totals.totalAfterDiscount >
-                          0 && (
-                          <div className="flex justify-between text-red-500">
-                            <span>할인 금액</span>
-                            <span>
-                              -
-                              {(
-                                totals.totalBeforeDiscount -
-                                totals.totalAfterDiscount
-                              ).toLocaleString()}
-                              원
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex justify-between py-2 border-t border-gray-200">
-                          <span className="font-semibold">결제 예정 금액</span>
-                          <span className="font-bold text-lg text-gray-900">
-                            {totals.totalAfterDiscount.toLocaleString()}원
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={completeOrder}
-                        className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
-                      >
-                        {totals.totalAfterDiscount.toLocaleString()}원 결제하기
-                      </button>
-
-                      <div className="mt-3 text-xs text-gray-500 text-center">
-                        <p>* 실제 결제는 이루어지지 않습니다</p>
-                      </div>
-                    </section>
+                    <CartSummary
+                      totals={calculateCartTotal()}
+                      onCompleteOrder={completeOrder}
+                    />
                   </>
                 )}
               </div>
