@@ -1,66 +1,44 @@
-# 프로젝트 목표
+# 🎯 프로젝트 목표
 
 ## 최종 목표
+React 쇼핑몰 앱의 비즈니스 로직을 분리하고 계층 구조를 이해하는 리팩토링
 
-테스트 코드의 Input과 Output을 보면서 hook과 function을 작성하여, React의 적절한 책임 계층(Component, hook, function)을 이해하고 분리하는 것
-
-## 기본과제 (basic)
-
-상태관리 없이 비즈니스 로직을 분리하고 테스트 코드 통과
+## Phase 1: 기본과제 (basic)
+상태관리 없이 hook/function 분리
 
 ### 세부 태스크
 
-- [ ] cart, product에 대한 계산 함수 분리
-  - [ ] calculateItemTotal
-  - [ ] getMaxApplicableDiscount
-  - [ ] calculateCartTotal
-  - [ ] updateCartItemQuantity
-- [ ] 상태를 다루는 hook, 유틸리티 hook 분리
-  - [ ] useCart
-  - [ ] useCoupon
-  - [ ] useProduct
-  - [ ] useLocalStorage
+#### 1) 계산 함수 분리 (순수함수)
+- [ ] `calculateItemTotal` - 아이템 총액 계산
+- [ ] `getMaxApplicableDiscount` - 최대 적용 가능 할인율
+- [ ] `calculateCartTotal` - 장바구니 총액 계산
+- [ ] `updateCartItemQuantity` - 장바구니 수량 업데이트
+
+#### 2) 커스텀 훅 분리
+- [ ] `useCart` - 장바구니 상태 관리
+- [ ] `useCoupons` - 쿠폰 상태 관리
+- [ ] `useProducts` - 상품 상태 관리
+- [ ] `useLocalStorage` - 로컬 스토리지 유틸리티
+
+#### 3) 컴포넌트 계층 구조
 - [ ] 엔티티 컴포넌트와 UI 컴포넌트 분리
-  - [ ] ProductCard
-  - [ ] Cart
-  - [ ] 기타 필요 컴포넌트
-- [ ] 테스트 코드 통과 (`pnpm test:basic`)
+- [ ] ProductCard, Cart 등 컴포넌트 분리
 
-### 체크리스트
+#### 4) 테스트 통과
+- [ ] `pnpm test:basic` 통과
 
-- [ ] Component에서 사용되는 Data가 아닌 로직들은 hook으로 옮겨졌나요?
-- [ ] 주어진 hook의 책임에 맞도록 코드가 분리가 되었나요?
-- [ ] 계산함수는 순수함수로 작성이 되었나요?
-- [ ] 특정 Entity만 다루는 함수는 분리되어 있나요?
-- [ ] 특정 Entity만 다루는 Component와 UI를 다루는 Component는 분리되어 있나요?
-- [ ] 데이터 흐름에 맞는 계층구조를 이루고 의존성이 맞게 작성이 되었나요?
-
-## 심화과제 (advanced)
-
-Context 또는 Jotai를 사용해서 Props drilling 제거
+## Phase 2: 심화과제 (advanced)
+Context 또는 Jotai로 Props drilling 제거
 
 ### 세부 태스크
-
-- [ ] Context 또는 Jotai 중 하나 선택
-- [ ] 전역상태관리 구축
-- [ ] domain custom hook 리팩토링
-- [ ] 불필요한 props drilling 제거
-- [ ] 테스트 코드 통과 (`pnpm test:advanced`)
-
-### 체크리스트
-
-- [ ] Context나 Jotai를 사용해서 전역상태관리를 구축했나요?
-- [ ] 전역상태관리를 통해 domain custom hook을 적절하게 리팩토링 했나요?
-- [ ] 도메인 컴포넌트에 도메인 props는 남기고 props drilling을 유발하는 불필요한 props는 잘 제거했나요?
-- [ ] 전체적으로 분리와 재조립이 더 수월해진 결합도가 낮아진 코드가 되었나요?
+- [ ] 전역 상태관리 구축 (Context/Jotai/Zustand 중 선택)
+- [ ] 도메인 커스텀 훅 리팩토링
+- [ ] 불필요한 props 제거
+- [ ] `pnpm test:advanced` 통과
 
 ## 성공 기준
-
-- `pnpm test:basic` 모든 테스트 통과
-- `pnpm test:advanced` 모든 테스트 통과
-- 코드 리뷰 체크리스트 모든 항목 충족
-
----
-
-**생성일**: 2025-12-01
-**마지막 수정**: 2025-12-01
+- [ ] 모든 테스트 통과 (`pnpm test`)
+- [ ] Component에서 비즈니스 로직 분리 완료
+- [ ] 계산함수는 순수함수로 작성
+- [ ] 특정 Entity만 다루는 함수/컴포넌트 분리
+- [ ] 데이터 흐름에 맞는 계층구조

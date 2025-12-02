@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - 항상 한글로 대화할 것
 - 유저의 질문에 답변할 때, 도움이 되는 MCP(Model Context Protocol) 도구가 있다면 반드시 활용할 것 (예: context7로 라이브러리 문서 조회, sequential-thinking으로 복잡한 문제 분석 등)
+- **코드 구현은 유저가 명시적으로 요청할 때만 진행할 것**
+- 주요 역할: 남은 태스크를 추적하고, 순차적으로 해결할 수 있도록 태스크 관리
 
 ## Context Management
 
