@@ -1,6 +1,5 @@
 import { CartItem, Coupon } from '../../../types';
 import { Dispatch, SetStateAction } from 'react';
-import { ProductWithUI } from '../../App';
 import { useManageCoupon } from '../admin/hooks/useManageCoupon';
 
 import { useCart } from './hook/useCart';
@@ -8,6 +7,7 @@ import { useCart } from './hook/useCart';
 import { CouponSection } from './components/coupon/CouponSection';
 import { PaymentSection } from './components/payment/PaymentSection';
 import { CartSection } from './components/cart/CartSection';
+import { ProductWithUI } from '../product/hook/useProduct';
 
 export const Cart = ({
   cart,
@@ -61,7 +61,6 @@ export const Cart = ({
               coupons={coupons}
               cartTotalPrice={cartTotalPrice}
               applyCoupon={applyCoupon}
-              addNotification={addNotification}
             />
 
             <PaymentSection
