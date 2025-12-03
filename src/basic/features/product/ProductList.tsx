@@ -5,11 +5,22 @@ export const ProductList = ({
   debouncedSearchTerm,
   addToCart,
   getRemainingStock,
+  addNotification,
 }: {
   products: Product[];
   debouncedSearchTerm: string;
-  addToCart: (product: Product) => void;
+  addToCart: (
+    product: Product,
+    onSuccess?: (
+      message: string,
+      type: 'success' | 'error' | 'warning',
+    ) => void,
+  ) => void;
   getRemainingStock: (product: Product) => number;
+  addNotification: (
+    message: string,
+    type: 'success' | 'error' | 'warning',
+  ) => void;
 }) => {
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -133,7 +144,11 @@ export const ProductList = ({
 
                     {/* 장바구니 버튼 */}
                     <button
-                      onClick={() => addToCart(product)}
+                      onClick={() =>
+                        addToCart(product, (message, type) => {
+                          addNotification(message, type);
+                        })
+                      }
                       disabled={remainingStock <= 0}
                       className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
                         remainingStock <= 0

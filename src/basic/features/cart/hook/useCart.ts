@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { CartItem, Coupon } from '../../../../types';
+import { CartItem, Coupon, Product } from '../../../../types';
 import { applyCouponDiscount, calculateCartTotalPrice } from '../cart.service';
 import { ProductWithUI } from '../../product/hook/useProduct';
 
@@ -116,6 +116,55 @@ export const useCart = ({
     setSelectedCoupon(null);
   }, [addNotification]);
 
+  const getRemainingStock = (cart: CartItem[], product: Product): number => {
+    const cartItem = cart.find((item) => item.product.id === product.id);
+    const remaining = product.stock - (cartItem?.quantity || 0);
+
+    return remaining;
+  };
+
+  const addToCart = useCallback(
+    (
+      product: ProductWithUI,
+      onSuccess?: (
+        message: string,
+        type: 'success' | 'error' | 'warning',
+      ) => void,
+    ) => {
+      const remainingStock = getRemainingStock(cart, product);
+      if (remainingStock <= 0) {
+        onSuccess?.('재고가 부족합니다!', 'error');
+        return;
+      }
+
+      setCart((prevCart) => {
+        const existingItem = prevCart.find(
+          (item) => item.product.id === product.id,
+        );
+
+        if (existingItem) {
+          const newQuantity = existingItem.quantity + 1;
+
+          if (newQuantity > product.stock) {
+            onSuccess?.(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+            return prevCart;
+          }
+
+          return prevCart.map((item) =>
+            item.product.id === product.id
+              ? { ...item, quantity: newQuantity }
+              : item,
+          );
+        }
+
+        return [...prevCart, { product, quantity: 1 }];
+      });
+
+      onSuccess?.('장바구니에 담았습니다', 'success');
+    },
+    [cart, getRemainingStock],
+  );
+
   return {
     updateQuantity,
     removeFromCart,
@@ -124,5 +173,7 @@ export const useCart = ({
     cart,
     setCart,
     totalItemCount,
+    getRemainingStock,
+    addToCart,
   };
 };

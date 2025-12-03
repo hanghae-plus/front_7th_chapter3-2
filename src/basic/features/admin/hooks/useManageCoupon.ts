@@ -3,7 +3,6 @@ import { Coupon } from '../../../../types';
 import { useNotification } from '../../../shared/hooks/useNotification';
 
 export const useManageCoupon = () => {
-  // 이건 어드민의 역할!
   const { addNotification } = useNotification();
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
