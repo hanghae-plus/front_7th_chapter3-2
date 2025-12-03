@@ -27,7 +27,7 @@ const CouponSection = ({ coupons, totals, selectedCoupon, setSelectedCoupon, add
       setSelectedCoupon(coupon);
       addNotification('쿠폰이 적용되었습니다.', 'success');
     },
-    [addNotification, totals]
+    [addNotification, totals, setSelectedCoupon]
   );
 
   return (

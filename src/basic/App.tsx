@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from './components/button';
 import Header from './components/header';
 import { CartIcon } from './components/icons';
 import Input from './components/input';
 import Toast from './components/toast';
-import { initialCoupons } from './constants/coupons';
 import { PAGES } from './constants/pages';
+import useCoupons from './hooks/coupons';
 import useDebounce from './hooks/debounce';
 import useLocalStorage from './hooks/local-storage';
 import useNotifications from './hooks/notifications';
@@ -21,8 +21,8 @@ const App = () => {
   const { currentPage, switchPage, isCurrentPage } = usePage(store);
   const { notifications, addNotification, removeNotification } = useNotifications();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
+  const { coupons, addCoupon, deleteCoupon } = useCoupons(addNotification);
   const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm);
@@ -32,28 +32,13 @@ const App = () => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
   }, [cart]);
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find(c => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons(prev => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification]
-  );
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons(prev => prev.filter(c => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification]
-  );
+
+  // 선택된 쿠폰이 삭제되면 자동으로 초기화
+  useEffect(() => {
+    if (selectedCoupon && !coupons.find(c => c.code === selectedCoupon.code)) {
+      setSelectedCoupon(null);
+    }
+  }, [coupons, selectedCoupon]);
 
   const nav = {
     [store]: (
