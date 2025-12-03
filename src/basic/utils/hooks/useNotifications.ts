@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Notification } from '../../components/ui/Toast';
+import { Notification } from '../../../types';
 import { NOTIFICATION_DURATION } from '../../constants';
 
 // 알림 관리 유틸리티 Hook

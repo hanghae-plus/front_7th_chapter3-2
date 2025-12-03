@@ -2,16 +2,10 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { CloseIcon } from '../icons';
 import { notificationsAtom, removeNotificationAtom } from '../../atoms/notificationAtoms';
 
-export interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
-
 // Toast 알림 컴포넌트
 export const Toast = () => {
-  const notifications = useAtomValue(notificationsAtom);
-  const removeNotification = useSetAtom(removeNotificationAtom);
+  const notifications = useAtomValue(notificationsAtom); //읽기 전용
+  const removeNotification = useSetAtom(removeNotificationAtom); //쓰기 전용
 
   if (notifications.length === 0) {
     return null;

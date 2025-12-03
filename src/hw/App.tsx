@@ -1,16 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product } from '../types';
+import { CartItem, Coupon, Product, Notification } from '../types';
 import Header from './components/layout/Header';
 
 interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
-}
-
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
 }
 
 // 초기 데이터

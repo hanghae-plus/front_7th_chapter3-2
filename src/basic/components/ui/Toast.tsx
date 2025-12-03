@@ -1,10 +1,5 @@
 import { CloseIcon } from '../icons';
-
-export interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
+import { Notification } from '../../../types';
 
 interface ToastProps {
   notifications: Notification[];
