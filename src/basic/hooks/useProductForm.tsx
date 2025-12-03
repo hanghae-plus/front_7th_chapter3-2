@@ -52,10 +52,16 @@ export const useProductForm = ({ addProduct, updateProduct, addNotification }: P
   }, []);
 
   const startAddProduct = useCallback(() => {
+    setProductForm({
+      name: "",
+      price: 0,
+      stock: 0,
+      description: "",
+      discounts: [],
+    });
     setEditingProduct("new");
-    resetForm();
     setShowProductForm(true);
-  }, [resetForm]);
+  }, []);
 
   const handleProductSubmit = useCallback(
     (e: React.FormEvent) => {
