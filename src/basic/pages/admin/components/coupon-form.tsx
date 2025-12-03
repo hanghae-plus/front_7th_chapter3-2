@@ -67,6 +67,7 @@ const CouponForm = ({ addCoupon, close, addNotification }: CouponFormProps) => {
           <div>
             <Label>할인 타입</Label>
             <Select
+              variant='shadow'
               value={form.discountType}
               onChange={handleChange.discountType}
               options={Object.values(DISCOUNT_TYPES).map(type => ({ label: DISCOUNT_TYPE_LABELS[type], value: type }))}
