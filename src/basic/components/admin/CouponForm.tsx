@@ -1,4 +1,4 @@
-import { CouponFormType } from "../hooks/useCouponForm";
+import { CouponFormType } from "../../hooks/useCouponForm";
 
 interface CouponFormProps {
   couponForm: {

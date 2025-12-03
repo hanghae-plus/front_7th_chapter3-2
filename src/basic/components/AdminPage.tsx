@@ -85,8 +85,8 @@ const AdminPage = ({
   };
 
   const handleNewProduct = () => {
-    setEditingProduct("new");
     resetProductForm();
+    setEditingProduct("new");
     setShowProductForm(true);
   };
 

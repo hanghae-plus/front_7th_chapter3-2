@@ -1,8 +1,15 @@
 import { useCallback, useState } from "react";
 import { Coupon } from "../../types";
 import { initialCoupons } from "../constants";
+import { couponModel } from "../models/coupon";
 
-export const useCoupons = () => {
+interface UseCouponsProps {
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
+}
+export const useCoupons = ({ addNotification }: UseCouponsProps) => {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem("coupons");
     if (saved) {
@@ -45,6 +52,23 @@ export const useCoupons = () => {
     setShowCouponForm(!showCouponForm);
   };
 
+  const applyCoupon = useCallback(
+    (coupon: Coupon, currentTotal: number) => {
+      const isApplicable = couponModel.isApplicable(currentTotal, coupon);
+
+      if (!isApplicable) {
+        addNotification(
+          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
+          "error"
+        );
+        return;
+      }
+      setSelectedCoupon(coupon);
+      addNotification("쿠폰이 적용되었습니다.", "success");
+    },
+    [addNotification]
+  );
+
   return {
     coupons,
     selectedCoupon,
@@ -55,5 +79,6 @@ export const useCoupons = () => {
     deleteCoupon,
     isDuplicateCoupon,
     toggleCouponForm,
+    applyCoupon,
   };
 };
