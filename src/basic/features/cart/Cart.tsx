@@ -1,48 +1,39 @@
 import { CartItem, Coupon } from '../../../types';
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { ProductWithUI } from '../../App';
+import { useManageCoupon } from '../admin/hooks/useManageCoupon';
 
 export const Cart = ({
   cart,
   setCart,
-  calculateItemTotal,
-  calculateCartTotal,
-  selectedCoupon,
-  setSelectedCoupon,
-  coupons,
+
   addNotification,
   products,
 }: {
   products: ProductWithUI[];
   cart: CartItem[];
   setCart: Dispatch<SetStateAction<CartItem[]>>;
-  calculateItemTotal: (item: CartItem) => number;
-  calculateCartTotal: () => {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  selectedCoupon: Coupon | null;
-  coupons: Coupon[];
-  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
+
   addNotification: (
     message: string,
     type: 'success' | 'error' | 'warning',
   ) => void;
 }) => {
-  const currentCartTotal = useMemo(
-    () => calculateCartTotal().totalAfterDiscount,
-    [calculateCartTotal],
-  );
+  // 이건 장바구니에서만 다뤄도 됨
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
-  const checkCouponAvailability = useCallback(
-    (coupon: Coupon, currentCartTotal: number) => {
-      if (currentCartTotal < 10000 && coupon.discountType === 'percentage') {
-        return false;
-      }
-      return true;
-    },
-    [calculateCartTotal],
-  );
+  const { coupons } = useManageCoupon(selectedCoupon, setSelectedCoupon);
+
+  useEffect(() => {
+    localStorage.setItem('coupons', JSON.stringify(coupons));
+  }, [coupons]);
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
@@ -61,8 +52,6 @@ export const Cart = ({
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);
-
-  const totals = calculateCartTotal();
 
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
@@ -96,6 +85,82 @@ export const Cart = ({
       prevCart.filter((item) => item.product.id !== productId),
     );
   }, []);
+
+  // max Applicable Discount인데 장바구니에서 총합 구할 때 사용
+  // 근데 함수 이름은 뭔가 최대할인율을 반영한 가격같은데 동작은 그게 맞나?
+  const getMaxApplicableDiscount = (item: CartItem): number => {
+    const { discounts } = item.product;
+    const { quantity } = item;
+
+    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
+      return quantity >= discount.quantity && discount.rate > maxDiscount
+        ? discount.rate
+        : maxDiscount;
+    }, 0);
+
+    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+    if (hasBulkPurchase) {
+      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+    }
+
+    return baseDiscount;
+  };
+
+  const calculateItemTotal = (item: CartItem): number => {
+    const { price } = item.product;
+    const { quantity } = item;
+    const discount = getMaxApplicableDiscount(item);
+
+    return Math.round(price * quantity * (1 - discount));
+  };
+
+  const calculateCartTotal = (): {
+    totalBeforeDiscount: number;
+    totalAfterDiscount: number;
+  } => {
+    let totalBeforeDiscount = 0;
+    let totalAfterDiscount = 0;
+
+    cart.forEach((item) => {
+      const itemPrice = item.product.price * item.quantity;
+      totalBeforeDiscount += itemPrice;
+      totalAfterDiscount += calculateItemTotal(item);
+    });
+
+    if (selectedCoupon) {
+      if (selectedCoupon.discountType === 'amount') {
+        totalAfterDiscount = Math.max(
+          0,
+          totalAfterDiscount - selectedCoupon.discountValue,
+        );
+      } else {
+        totalAfterDiscount = Math.round(
+          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
+        );
+      }
+    }
+
+    return {
+      totalBeforeDiscount: Math.round(totalBeforeDiscount),
+      totalAfterDiscount: Math.round(totalAfterDiscount),
+    };
+  };
+
+  const currentCartTotal = useMemo(
+    () => calculateCartTotal().totalAfterDiscount,
+    [calculateCartTotal],
+  );
+  const totals = calculateCartTotal();
+
+  const checkCouponAvailability = useCallback(
+    (coupon: Coupon, currentCartTotal: number) => {
+      if (currentCartTotal < 10000 && coupon.discountType === 'percentage') {
+        return false;
+      }
+      return true;
+    },
+    [calculateCartTotal],
+  );
 
   return (
     <div className="lg:col-span-1">

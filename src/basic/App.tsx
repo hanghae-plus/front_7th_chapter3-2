@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product } from '../types';
+import { CartItem, Product } from '../types';
 import { useNotification } from './shared/hooks/useNotification';
-import { useManageCoupon } from './features/admin/hooks/useManageCoupon';
 import { Admin } from './features/admin';
 import { Header } from './shared/component/Header';
 import { ProductList } from './features/product/ProductList';
@@ -85,9 +84,6 @@ const App = () => {
     return [];
   });
 
-  // 이건 장바구니에서만 다뤄도 됨
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
   // 이건 전역 관리 필요 => 이거 설정에 따라 페이지 레이아웃이 달라짐
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -104,69 +100,6 @@ const App = () => {
   const { notifications, addNotification, closeNotification } =
     useNotification();
 
-  // 쿠폰은 장바구니에서 사용, admin에서 관리
-  const { coupons } = useManageCoupon(selectedCoupon, setSelectedCoupon);
-
-  // max Applicable Discount인데 장바구니에서 총합 구할 때 사용
-  // 근데 함수 이름은 뭔가 최대할인율을 반영한 가격같은데 동작은 그게 맞나?
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
-
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
-
-    return baseDiscount;
-  };
-
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    return Math.round(price * quantity * (1 - discount));
-  };
-
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        totalAfterDiscount = Math.max(
-          0,
-          totalAfterDiscount - selectedCoupon.discountValue,
-        );
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
-  };
-
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {
@@ -177,10 +110,6 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -294,11 +223,6 @@ const App = () => {
               products={products}
               cart={cart}
               setCart={setCart}
-              calculateItemTotal={calculateItemTotal}
-              calculateCartTotal={calculateCartTotal}
-              selectedCoupon={selectedCoupon}
-              setSelectedCoupon={setSelectedCoupon}
-              coupons={coupons}
               addNotification={addNotification}
             />
           </div>
