@@ -1,7 +1,13 @@
-import { CartItem, Coupon } from '../../../types';
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import { CartItem } from '../../../types';
+import { Dispatch, SetStateAction, useCallback } from 'react';
 import { ProductWithUI } from '../../App';
 import { useManageCoupon } from '../admin/hooks/useManageCoupon';
+import {
+  applyCouponDiscount,
+  calculateCartTotalPrice,
+  calculateItemTotal,
+  checkCouponAvailability,
+} from './cart.service';
 
 export const Cart = ({
   cart,
@@ -20,16 +26,6 @@ export const Cart = ({
 }) => {
   const { coupons, selectedCoupon, setSelectedCoupon, applyCoupon } =
     useManageCoupon();
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      'success',
-    );
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification]);
 
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
@@ -64,82 +60,36 @@ export const Cart = ({
     );
   }, []);
 
-  // max Applicable Discount인데 장바구니에서 총합 구할 때 사용
-  // 근데 함수 이름은 뭔가 최대할인율을 반영한 가격같은데 동작은 그게 맞나?
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
-
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
-
-    return baseDiscount;
-  };
-
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    return Math.round(price * quantity * (1 - discount));
-  };
-
-  const calculateCartTotal = (): {
+  const calculateCartTotal = (
+    cart: CartItem[],
+  ): {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
   } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
+    const { totalBeforeDiscount, totalAfterDiscount } =
+      calculateCartTotalPrice(cart);
 
     if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        totalAfterDiscount = Math.max(
-          0,
-          totalAfterDiscount - selectedCoupon.discountValue,
-        );
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
-        );
-      }
+      return applyCouponDiscount(selectedCoupon, {
+        totalBeforeDiscount,
+        totalAfterDiscount,
+      });
     }
 
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
+    return { totalBeforeDiscount, totalAfterDiscount };
   };
 
-  const currentCartTotal = useMemo(
-    () => calculateCartTotal().totalAfterDiscount,
-    [calculateCartTotal],
-  );
-  const totals = calculateCartTotal();
+  const totals = calculateCartTotal(cart);
 
-  const checkCouponAvailability = useCallback(
-    (coupon: Coupon, currentCartTotal: number) => {
-      if (currentCartTotal < 10000 && coupon.discountType === 'percentage') {
-        return false;
-      }
-      return true;
-    },
-    [calculateCartTotal],
-  );
-
+  const completeOrder = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`;
+    addNotification(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      'success',
+    );
+    setCart([]);
+    setSelectedCoupon(null);
+  }, [addNotification]);
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">
@@ -180,7 +130,7 @@ export const Cart = ({
           ) : (
             <div className="space-y-3">
               {cart.map((item) => {
-                const itemTotal = calculateItemTotal(item);
+                const itemTotal = calculateItemTotal(item, cart);
                 const originalPrice = item.product.price * item.quantity;
                 const hasDiscount = itemTotal < originalPrice;
                 const discountRate = hasDiscount
@@ -279,7 +229,7 @@ export const Cart = ({
 
                     const isCouponAvailable = checkCouponAvailability(
                       coupon,
-                      currentCartTotal,
+                      totals.totalAfterDiscount,
                     );
 
                     if (coupon && isCouponAvailable) {
