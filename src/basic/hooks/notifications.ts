@@ -3,7 +3,7 @@ import { Notification, NotificationType } from '../types/notifications';
 
 const NOTIFICATION_DURATION = 3000;
 
-type AddNotification = (message: string, type?: NotificationType) => void;
+export type AddNotification = (message: string, type?: NotificationType) => void;
 type RemoveNotification = (id: string) => void;
 type ClearNotifications = () => void;
 
