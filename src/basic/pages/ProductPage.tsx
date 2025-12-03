@@ -4,30 +4,22 @@ import { ProductWithUI, Notification } from '../types';
 import { formatPriceKRW } from '../utils';
 interface ProductPageProps {
   products: ProductWithUI[];
+  cart: CartItem[];
   coupons: Coupon[];
   debouncedSearchTerm: string;
 
+  setCart: (cart: CartItem[]) => void;
   setNotifications: (notifications: Notification[]) => void;
 }
 
 export default function ProductPage({
   products,
+  cart,
   coupons,
   debouncedSearchTerm,
   setNotifications,
+  setCart,
 }: ProductPageProps) {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const getRemainingStock = (product: Product): number => {

@@ -235,6 +235,8 @@ const App = () => {
         ) : (
           <ProductPage
             products={products}
+            cart={cart}
+            setCart={setCart}
             coupons={coupons}
             debouncedSearchTerm={debouncedSearchTerm}
             setNotifications={setNotifications}
