@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { CartItem, Product } from '../types';
 import { useNotification } from './shared/hooks/useNotification';
 import { Admin } from './features/admin';
@@ -8,6 +8,8 @@ import { Cart } from './features/cart/Cart';
 import { Notification } from './features/notification';
 import { ProductWithUI, useProduct } from './features/product/hook/useProduct';
 import { useSearchProduct } from './features/product/hook/useSearchProduct';
+import { useCart } from './features/cart/hook/useCart';
+import { useManageCoupon } from './features/admin/hooks/useManageCoupon';
 
 export const getRemainingStock = (
   cart: CartItem[],
@@ -27,32 +29,23 @@ const App = () => {
     useNotification();
   const { searchTerm, setSearchTerm, debouncedSearchTerm } = useSearchProduct();
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
+  const { coupons, applyCoupon, selectedCoupon, setSelectedCoupon } =
+    useManageCoupon();
+
+  const {
+    cart,
+    setCart,
+    totalItemCount,
+    cartTotalPrice,
+    updateQuantity,
+    removeFromCart,
+    completeOrder,
+  } = useCart({
+    products,
+    addNotification,
+    selectedCoupon,
+    setSelectedCoupon,
   });
-
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
@@ -146,10 +139,17 @@ const App = () => {
             />
 
             <Cart
-              products={products}
               cart={cart}
               setCart={setCart}
-              addNotification={addNotification}
+              cartTotalPrice={cartTotalPrice}
+              totalItemCount={totalItemCount}
+              updateQuantity={updateQuantity}
+              removeFromCart={removeFromCart}
+              completeOrder={completeOrder}
+              selectedCoupon={selectedCoupon}
+              setSelectedCoupon={setSelectedCoupon}
+              coupons={coupons}
+              applyCoupon={applyCoupon}
             />
           </div>
         )}

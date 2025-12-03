@@ -1,5 +1,3 @@
-import { CartItem, Coupon } from '../../../types';
-import { Dispatch, SetStateAction } from 'react';
 import { useManageCoupon } from '../admin/hooks/useManageCoupon';
 
 import { useCart } from './hook/useCart';
@@ -7,43 +5,36 @@ import { useCart } from './hook/useCart';
 import { CouponSection } from './components/coupon/CouponSection';
 import { PaymentSection } from './components/payment/PaymentSection';
 import { CartSection } from './components/cart/CartSection';
-import { ProductWithUI } from '../product/hook/useProduct';
+import { CartItem, Coupon } from '../../../types';
+import { Dispatch, SetStateAction } from 'react';
 
 export const Cart = ({
   cart,
-  setCart,
-  addNotification,
-  products,
+  selectedCoupon,
+  setSelectedCoupon,
+  cartTotalPrice,
+  updateQuantity,
+  removeFromCart,
+  completeOrder,
+
+  coupons,
+  applyCoupon,
 }: {
-  products: ProductWithUI[];
   cart: CartItem[];
   setCart: Dispatch<SetStateAction<CartItem[]>>;
-
-  addNotification: (
-    message: string,
-    type: 'success' | 'error' | 'warning',
+  cartTotalPrice: { totalBeforeDiscount: number; totalAfterDiscount: number };
+  totalItemCount: number;
+  updateQuantity: (productId: string, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  completeOrder: () => void;
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
+  coupons: Coupon[];
+  applyCoupon: (
+    coupon: Coupon,
+    { onSuccess }: { onSuccess?: () => void },
   ) => void;
 }) => {
-  const { coupons, selectedCoupon, setSelectedCoupon, applyCoupon } =
-    useManageCoupon();
-
-  const { updateQuantity, removeFromCart, cartTotalPrice, completeOrder } =
-    useCart({
-      products,
-      cart,
-      setCart,
-      addNotification,
-      selectedCoupon,
-      setSelectedCoupon,
-      applyCoupon: (coupon: Coupon) => {
-        applyCoupon(coupon, {
-          onSuccess: () => {
-            addNotification('쿠폰이 적용되었습니다.', 'success');
-          },
-        });
-      },
-    });
-
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">

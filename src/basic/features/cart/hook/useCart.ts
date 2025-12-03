@@ -1,19 +1,21 @@
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { CartItem, Coupon } from '../../../../types';
 import { applyCouponDiscount, calculateCartTotalPrice } from '../cart.service';
 import { ProductWithUI } from '../../product/hook/useProduct';
 
 export const useCart = ({
   products,
-  cart,
-  setCart,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: {
   products: ProductWithUI[];
-  cart: CartItem[];
-  setCart: Dispatch<SetStateAction<CartItem[]>>;
 
   addNotification: (
     message: string,
@@ -22,9 +24,34 @@ export const useCart = ({
 
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
-
-  applyCoupon: (coupon: Coupon) => void;
 }) => {
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('cart');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
+
+  const [totalItemCount, setTotalItemCount] = useState(0);
+
+  useEffect(() => {
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    setTotalItemCount(count);
+  }, [cart]);
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+      localStorage.removeItem('cart');
+    }
+  }, [cart]);
+
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
@@ -94,5 +121,8 @@ export const useCart = ({
     removeFromCart,
     cartTotalPrice,
     completeOrder,
+    cart,
+    setCart,
+    totalItemCount,
   };
 };
