@@ -1,5 +1,7 @@
+import { useCallback } from 'react';
 import { Coupon } from '../../../../../types';
 import { checkCouponAvailability } from '../../cart.service';
+import { formatPrice } from '../../../../shared/utils/priceUtils';
 
 export const CouponSelector = ({
   selectedCoupon,
@@ -22,41 +24,53 @@ export const CouponSelector = ({
     type: 'success' | 'error' | 'warning',
   ) => void;
 }) => {
+  const onCouponChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const coupon = coupons.find((c) => c.code === e.target.value);
+
+      if (!coupon) return;
+
+      const isCouponAvailable = checkCouponAvailability(
+        coupon,
+        cartTotalPrice.totalAfterDiscount,
+      );
+
+      if (!isCouponAvailable) {
+        addNotification(
+          'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
+          'error',
+        );
+        setSelectedCoupon(null);
+        return;
+      }
+
+      applyCoupon(coupon, {
+        onSuccess: () => {
+          addNotification('쿠폰이 적용되었습니다.', 'success');
+        },
+      });
+    },
+    [
+      coupons,
+      cartTotalPrice.totalAfterDiscount,
+      addNotification,
+      setSelectedCoupon,
+      applyCoupon,
+    ],
+  );
+
   return (
     <select
       className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
       value={selectedCoupon?.code || ''}
-      onChange={(e) => {
-        const coupon = coupons.find((c) => c.code === e.target.value);
-
-        if (!coupon) return;
-
-        const isCouponAvailable = checkCouponAvailability(
-          coupon,
-          cartTotalPrice.totalAfterDiscount,
-        );
-
-        if (coupon && isCouponAvailable) {
-          applyCoupon(coupon, {
-            onSuccess: () => {
-              addNotification('쿠폰이 적용되었습니다.', 'success');
-            },
-          });
-        } else {
-          addNotification(
-            'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
-            'error',
-          );
-          setSelectedCoupon(null);
-        }
-      }}
+      onChange={onCouponChange}
     >
       <option value="">쿠폰 선택</option>
       {coupons.map((coupon) => (
         <option key={coupon.code} value={coupon.code}>
           {coupon.name} (
           {coupon.discountType === 'amount'
-            ? `${coupon.discountValue.toLocaleString()}원`
+            ? `${formatPrice(coupon.discountValue)}원`
             : `${coupon.discountValue}%`}
           )
         </option>
