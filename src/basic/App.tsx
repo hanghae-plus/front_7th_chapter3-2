@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "./components/Header";
 import ShoppingMallTemplate from "./components/ShoppingMall/Template";
 import AdminTemplate from "./components/Admin/Template";
@@ -7,6 +7,8 @@ import { useCart } from "./hooks/useCart";
 import useCoupon from "./hooks/useCoupons";
 import useProduct from "./hooks/useProducts";
 import useNotificaton from "./hooks/useNotificaton";
+import { useDebounce } from "./hooks/useDebounce";
+import { filterProducts } from "./utils/productCalculations";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } = useNotificaton();
@@ -32,24 +34,13 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const totals = calculateCartTotal(selectedCoupon);
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description && product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  // 순수 함수를 사용하여 상품 필터링
+  const filteredProductList = filterProducts(products, debouncedSearchTerm);
 
   return (
     <div className="min-hx-screen bg-gray-50">
@@ -82,7 +73,7 @@ const App = () => {
             products={products}
             coupons={coupons}
             cart={cart}
-            filteredProducts={filteredProducts}
+            filteredProducts={filteredProductList}
             debouncedSearchTerm={debouncedSearchTerm}
             selectedCoupon={selectedCoupon}
             totals={totals}

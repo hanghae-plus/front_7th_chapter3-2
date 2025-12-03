@@ -6,6 +6,7 @@ import {
   calculateCartTotal as calcCartTotal,
   updateCartItemQuantity,
 } from "../utils/cartCalculations";
+import { getRemainingStock as calcRemainingStock } from "../utils/productCalculations";
 
 type Props = {
   addNotification: (message: string, type?: "error" | "success" | "warning") => void;
@@ -25,10 +26,7 @@ export const useCart = ({ addNotification }: Props) => {
   };
 
   const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
+    return calcRemainingStock(product, cart);
   };
 
   const addToCart = useCallback(
