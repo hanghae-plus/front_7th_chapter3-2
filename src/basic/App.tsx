@@ -1,9 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product, Notification } from '../types';
+import { Notification } from '../types';
 import Header from './widgets/Header/Header';
 import AdminPage, { ProductWithUI } from './pages/AdminPage';
 import CartPage from './pages/CartPage';
 import NotificationList from './widgets/NotificationList/NotificationList';
+import { CartItem } from './entities/cart/model';
+import { Coupon } from './entities/coupon/model';
+import { Product } from './entities/product/model';
+import { 
+  calculateCartTotal as calcCartTotal,
+  calculateItemTotal as calcItemTotal
+} from './entities/cart/utils';
+import { getRemainingStock as getStock, filterProducts } from './entities/product/utils';
+import { canApplyCoupon, isDuplicateCoupon } from './entities/coupon/utils';
+import { formatPrice as formatPriceUtil, generateOrderNumber } from './shared/utils/format';
 
 // 초기 데이터
 const initialProducts: ProductWithUI[] = [
@@ -103,78 +113,27 @@ const App = () => {
 
 
   const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find(p => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return 'SOLD OUT';
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-    
-    return `₩${price.toLocaleString()}`;
+    return formatPriceUtil(
+      price, 
+      isAdmin, 
+      productId ? products.find(p => p.id === productId) : undefined,
+      cart
+    );
   };
 
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-    
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount 
-        ? discount.rate 
-        : maxDiscount;
-    }, 0);
-    
-    const hasBulkPurchase = cart.some(cartItem => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
-    
-    return baseDiscount;
+  const getRemainingStock = (product: Product): number => {
+    return getStock(product, cart);
   };
 
   const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-    
-    return Math.round(price * quantity * (1 - discount));
+    return calcItemTotal(item, cart);
   };
 
   const calculateCartTotal = (): {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
   } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach(item => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-      } else {
-        totalAfterDiscount = Math.round(totalAfterDiscount * (1 - selectedCoupon.discountValue / 100));
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount)
-    };
-  };
-
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find(item => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-    
-    return remaining;
+    return calcCartTotal(cart, selectedCoupon);
   };
 
   const addNotification = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
@@ -226,10 +185,13 @@ const App = () => {
           addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
           return prevCart;
         }
-
+      }
+      
+      // 재고 검증 통과
+      if (existingItem) {
         return prevCart.map(item =>
           item.product.id === product.id
-            ? { ...item, quantity: newQuantity }
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
@@ -238,7 +200,7 @@ const App = () => {
     });
     
     addNotification('장바구니에 담았습니다', 'success');
-  }, [cart, addNotification, getRemainingStock]);
+  }, [cart, addNotification]);
 
   const removeFromCart = useCallback((productId: string) => {
     setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
@@ -266,22 +228,23 @@ const App = () => {
           : item
       )
     );
-  }, [products, removeFromCart, addNotification, getRemainingStock]);
+  }, [products, removeFromCart, addNotification]);
 
   const applyCoupon = useCallback((coupon: Coupon) => {
     const currentTotal = calculateCartTotal().totalAfterDiscount;
     
-    if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-      addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
+    const { canApply: isValid, reason } = canApplyCoupon(coupon, currentTotal);
+    if (!isValid && reason) {
+      addNotification(reason, 'error');
       return;
     }
 
     setSelectedCoupon(coupon);
     addNotification('쿠폰이 적용되었습니다.', 'success');
-  }, [addNotification, calculateCartTotal]);
+  }, [addNotification, cart, selectedCoupon]);
 
   const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
+    const orderNumber = generateOrderNumber();
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     setCart([]);
     setSelectedCoupon(null);
@@ -313,8 +276,7 @@ const App = () => {
   }, [addNotification]);
 
   const addCoupon = useCallback((newCoupon: Coupon) => {
-    const existingCoupon = coupons.find(c => c.code === newCoupon.code);
-    if (existingCoupon) {
+    if (isDuplicateCoupon(coupons, newCoupon.code)) {
       addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
       return;
     }
@@ -330,12 +292,7 @@ const App = () => {
     addNotification('쿠폰이 삭제되었습니다.', 'success');
   }, [selectedCoupon, addNotification]);
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(product => 
-        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        (product.description && product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   return (
     <div className="min-h-screen bg-gray-50">
