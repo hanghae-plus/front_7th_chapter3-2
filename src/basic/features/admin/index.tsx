@@ -19,7 +19,13 @@ export const Admin = ({
     type?: 'error' | 'success' | 'warning',
   ) => void;
 }) => {
-  const { addCoupon, deleteCoupon, coupons } = useManageCoupon(null, () => {});
+  const {
+    addCoupon,
+    deleteCoupon,
+    coupons,
+    selectedCoupon,
+    setSelectedCoupon,
+  } = useManageCoupon();
 
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -502,7 +508,13 @@ export const Admin = ({
                       </div>
                     </div>
                     <button
-                      onClick={() => deleteCoupon(coupon.code)}
+                      onClick={() => {
+                        deleteCoupon(coupon.code);
+                        if (selectedCoupon?.code === coupon.code) {
+                          setSelectedCoupon(null);
+                        }
+                        addNotification('쿠폰이 삭제되었습니다.', 'success');
+                      }}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <svg

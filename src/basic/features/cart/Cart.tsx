@@ -27,9 +27,8 @@ export const Cart = ({
   ) => void;
 }) => {
   // 이건 장바구니에서만 다뤄도 됨
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
-  const { coupons } = useManageCoupon(selectedCoupon, setSelectedCoupon);
+  const { coupons, selectedCoupon, setSelectedCoupon } = useManageCoupon();
 
   useEffect(() => {
     localStorage.setItem('coupons', JSON.stringify(coupons));

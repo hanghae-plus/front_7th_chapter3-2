@@ -2,12 +2,11 @@ import { useCallback, useState } from 'react';
 import { Coupon } from '../../../../types';
 import { useNotification } from '../../../shared/hooks/useNotification';
 
-export const useManageCoupon = (
-  selectedCoupon: Coupon | null,
-  setSelectedCoupon: (coupon: Coupon | null) => void,
-) => {
+export const useManageCoupon = () => {
   // 이건 어드민의 역할!
   const { addNotification } = useNotification();
+
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const initialCoupons: Coupon[] = [
     {
@@ -49,16 +48,15 @@ export const useManageCoupon = (
     [coupons, addNotification],
   );
 
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification],
-  );
+  const deleteCoupon = useCallback((couponCode: string) => {
+    setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+  }, []);
 
-  return { addCoupon, deleteCoupon, coupons };
+  return {
+    addCoupon,
+    deleteCoupon,
+    coupons,
+    selectedCoupon,
+    setSelectedCoupon,
+  };
 };
