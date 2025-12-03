@@ -9,7 +9,6 @@ export function AdminPage({
   addCoupon,
   deleteCoupon,
   addNotification,
-  formatPrice,
   deleteProduct,
   updateProduct,
   addProduct,
@@ -22,7 +21,6 @@ export function AdminPage({
     message: string,
     type: "error" | "success" | "warning"
   ) => void;
-  formatPrice: (price: number, productId?: string) => string;
   deleteProduct: (productId: string) => void;
   updateProduct: (productId: string, product: ProductForm) => void;
   addProduct: (product: ProductForm) => void;
@@ -65,7 +63,6 @@ export function AdminPage({
       {activeTab === "products" ? (
         <ProductDashboard
           products={products}
-          formatPrice={formatPrice}
           deleteProduct={deleteProduct}
           addNotification={addNotification}
           updateProduct={updateProduct}

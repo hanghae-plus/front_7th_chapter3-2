@@ -1,12 +1,12 @@
 export function CartPayment({
   totals,
-  completeOrder,
+  onPurchase,
 }: {
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
   };
-  completeOrder: () => void;
+  onPurchase: () => void;
 }) {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
@@ -39,7 +39,7 @@ export function CartPayment({
       </div>
 
       <button
-        onClick={completeOrder}
+        onClick={onPurchase}
         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
       >
         {totals.totalAfterDiscount.toLocaleString()}원 결제하기

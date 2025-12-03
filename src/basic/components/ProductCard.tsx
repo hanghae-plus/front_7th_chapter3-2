@@ -3,17 +3,15 @@ import { IconImage } from "./icons";
 
 export function ProductCard({
   product,
-  formatPrice,
-  getRemainingStock,
+  remainingStock,
   addToCart,
+  formatPrice,
 }: {
   product: ProductWithUI;
-  formatPrice: (price: number, productId?: string) => string;
-  getRemainingStock: (product: ProductWithUI) => number;
+  remainingStock: number;
   addToCart: (product: ProductWithUI) => void;
+  formatPrice: (product: ProductWithUI) => string;
 }) {
-  const remainingStock = getRemainingStock(product);
-
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       {/* 상품 이미지 영역 (placeholder) */}
@@ -45,7 +43,7 @@ export function ProductCard({
         {/* 가격 정보 */}
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">
-            {formatPrice(product.price, product.id)}
+            {formatPrice(product)}
           </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">

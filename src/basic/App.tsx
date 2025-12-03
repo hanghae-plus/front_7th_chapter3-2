@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Header } from "./components/Header";
-import type { Product, Notification } from "./types";
+import type { Notification } from "./types";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { Toast } from "./components/ui/Toast";
@@ -55,29 +55,17 @@ const App = () => {
     addNotification,
   });
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
-
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handlePurchase = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`;
+    addNotification(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      "success"
+    );
+    setCart([]);
+    setSelectedCoupon(null);
+  }, [addNotification]);
 
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
@@ -94,16 +82,6 @@ const App = () => {
       localStorage.removeItem("cart");
     }
   }, [cart]);
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -145,9 +123,8 @@ const App = () => {
             products={products}
             coupons={coupons}
             addCoupon={addCoupon}
-            deleteCoupon={(code: string) => deleteCoupon(code)}
+            deleteCoupon={deleteCoupon}
             addNotification={addNotification}
-            formatPrice={formatPrice}
             deleteProduct={deleteProduct}
             updateProduct={updateProduct}
             addProduct={addProduct}
@@ -157,15 +134,13 @@ const App = () => {
             products={products}
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
-            getRemainingStock={getRemainingStock}
-            formatPrice={formatPrice}
             addToCart={addToCart}
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             applyCoupon={applyCoupon}
-            completeOrder={completeOrder}
+            onPurchase={handlePurchase}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
           />

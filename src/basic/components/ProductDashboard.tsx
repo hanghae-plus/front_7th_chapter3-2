@@ -5,14 +5,12 @@ import { useState } from "react";
 
 export function ProductDashboard({
   products,
-  formatPrice,
   deleteProduct,
   addNotification,
   updateProduct,
   addProduct,
 }: {
   products: ProductWithUI[];
-  formatPrice: (price: number, productId?: string) => string;
   deleteProduct: (productId: string) => void;
   addNotification: (
     message: string,
@@ -92,7 +90,6 @@ export function ProductDashboard({
       <div className="overflow-x-auto">
         <ProductTable
           products={products}
-          formatPrice={formatPrice}
           startEditProduct={startEditProduct}
           deleteProduct={deleteProduct}
         />

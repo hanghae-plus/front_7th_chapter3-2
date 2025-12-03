@@ -1,13 +1,12 @@
 import { ProductWithUI } from "../types";
+import { formatPriceWon } from "../utils/formatPriceWon";
 
 export function ProductTable({
   products,
-  formatPrice,
   startEditProduct,
   deleteProduct,
 }: {
   products: ProductWithUI[];
-  formatPrice: (price: number, productId?: string) => string;
   startEditProduct: (product: ProductWithUI) => void;
   deleteProduct: (productId: string) => void;
 }) {
@@ -39,7 +38,7 @@ export function ProductTable({
               {product.name}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {formatPrice(product.price, product.id)}
+              {formatPriceWon(product.price)}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               <span
