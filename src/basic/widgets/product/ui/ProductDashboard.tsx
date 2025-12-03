@@ -1,37 +1,70 @@
 import { ProductForm as ProductFormType, ProductWithUI } from "../../../types";
 import { ProductForm } from "../../../features/control-product-form/ui/ProductForm";
 import { ProductTable } from "../../../entities/product/ui/ProductTable";
+import { useState } from "react";
 
 export function ProductDashboard({
-  setEditingProduct,
-  setProductForm,
-  setShowProductForm,
   products,
   formatPrice,
-  startEditProduct,
   deleteProduct,
-  showProductForm,
-  handleProductSubmit,
-  editingProduct,
-  productForm,
   addNotification,
+  updateProduct,
+  addProduct,
 }: {
-  setEditingProduct: (id: string | null) => void;
-  setProductForm: (product: ProductFormType) => void;
-  setShowProductForm: (show: boolean) => void;
   products: ProductWithUI[];
   formatPrice: (price: number, productId?: string) => string;
-  startEditProduct: (product: ProductWithUI) => void;
   deleteProduct: (productId: string) => void;
-  showProductForm: boolean;
-  handleProductSubmit: (e: React.FormEvent) => void;
-  editingProduct: string | null;
-  productForm: ProductFormType;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
   ) => void;
+  updateProduct: (productId: string, product: ProductFormType) => void;
+  addProduct: (product: ProductFormType) => void;
 }) {
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [productForm, setProductForm] = useState({
+    name: "",
+    price: 0,
+    stock: 0,
+    description: "",
+    discounts: [] as Array<{ quantity: number; rate: number }>,
+  });
+
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== "new") {
+      updateProduct(editingProduct, productForm);
+      setEditingProduct(null);
+    } else {
+      addProduct({
+        ...productForm,
+        discounts: productForm.discounts,
+      });
+    }
+    setProductForm({
+      name: "",
+      price: 0,
+      stock: 0,
+      description: "",
+      discounts: [],
+    });
+    setEditingProduct(null);
+    setShowProductForm(false);
+  };
+
+  const startEditProduct = (product: ProductWithUI) => {
+    setEditingProduct(product.id);
+    setProductForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      description: product.description || "",
+      discounts: product.discounts || [],
+    });
+    setShowProductForm(true);
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">

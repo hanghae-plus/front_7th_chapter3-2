@@ -32,19 +32,10 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
 
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
@@ -228,40 +219,6 @@ const App = () => {
     [selectedCoupon, addNotification]
   );
 
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
-
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
-
   const totals = calculateCartTotal();
 
   const filteredProducts = debouncedSearchTerm
@@ -305,20 +262,14 @@ const App = () => {
         {isAdmin ? (
           <AdminPage
             products={products}
-            setEditingProduct={(id: string | null) => setEditingProduct(id)}
-            setProductForm={(product: ProductForm) => setProductForm(product)}
-            setShowProductForm={setShowProductForm}
-            showProductForm={showProductForm}
             coupons={coupons}
             addCoupon={addCoupon}
             deleteCoupon={(code: string) => deleteCoupon(code)}
-            handleProductSubmit={handleProductSubmit}
             addNotification={addNotification}
             formatPrice={formatPrice}
-            startEditProduct={startEditProduct}
             deleteProduct={deleteProduct}
-            editingProduct={editingProduct}
-            productForm={productForm}
+            updateProduct={updateProduct}
+            addProduct={addProduct}
           />
         ) : (
           <CartPage

@@ -5,39 +5,27 @@ import { useState } from "react";
 
 export function AdminPage({
   products,
-  setEditingProduct,
-  setProductForm,
-  setShowProductForm,
-  showProductForm,
   coupons,
   addCoupon,
   deleteCoupon,
-  handleProductSubmit,
   addNotification,
   formatPrice,
-  startEditProduct,
   deleteProduct,
-  editingProduct,
-  productForm,
+  updateProduct,
+  addProduct,
 }: {
   products: ProductWithUI[];
-  setEditingProduct: (id: string | null) => void;
-  setProductForm: (product: ProductForm) => void;
-  setShowProductForm: (show: boolean) => void;
-  showProductForm: boolean;
   coupons: Coupon[];
   addCoupon: (coupon: Coupon) => void;
   deleteCoupon: (code: string) => void;
-  handleProductSubmit: (e: React.FormEvent) => void;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
   ) => void;
   formatPrice: (price: number, productId?: string) => string;
-  startEditProduct: (product: ProductWithUI) => void;
   deleteProduct: (productId: string) => void;
-  editingProduct: string | null;
-  productForm: ProductForm;
+  updateProduct: (productId: string, product: ProductFormType) => void;
+  addProduct: (product: ProductFormType) => void;
 }) {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -76,18 +64,12 @@ export function AdminPage({
 
       {activeTab === "products" ? (
         <ProductDashboard
-          setEditingProduct={setEditingProduct}
-          setProductForm={setProductForm}
-          setShowProductForm={setShowProductForm}
           products={products}
           formatPrice={formatPrice}
-          startEditProduct={startEditProduct}
           deleteProduct={deleteProduct}
-          showProductForm={showProductForm}
-          handleProductSubmit={handleProductSubmit}
-          editingProduct={editingProduct}
-          productForm={productForm}
           addNotification={addNotification}
+          updateProduct={updateProduct}
+          addProduct={addProduct}
         />
       ) : (
         <CouponDashboard
