@@ -1,8 +1,9 @@
 import { useState, useCallback } from "react";
-import { Coupon } from "../../types";
+import { Coupon, AdminTab } from "../../types";
 import { formatPriceKorean } from "../utils/formatter";
 import { ProductWithUI } from "../hooks/useProducts";
 import { useCoupons } from "../hooks/useCoupons";
+import { Tabs } from "../features";
 
 interface AdminPageProps {
   products: ProductWithUI[];
@@ -25,7 +26,7 @@ export const AdminPage = ({
     deleteCoupon: deleteCouponFromList,
   } = useCoupons();
 
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
+  const [activeTab, setActiveTab] = useState<AdminTab>("products");
   const [showProductForm, setShowProductForm] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -115,30 +116,7 @@ export const AdminPage = ({
         <p className="text-gray-600 mt-1">상품과 쿠폰을 관리할 수 있습니다</p>
       </div>
 
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab("products")}
-            className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "products"
-                ? "border-gray-900 text-gray-900"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            상품 관리
-          </button>
-          <button
-            onClick={() => setActiveTab("coupons")}
-            className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "coupons"
-                ? "border-gray-900 text-gray-900"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            쿠폰 관리
-          </button>
-        </nav>
-      </div>
+      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {activeTab === "products" ? (
         <section className="bg-white rounded-lg border border-gray-200">
@@ -607,8 +585,7 @@ export const AdminPage = ({
                           if (value === "" || /^\d+$/.test(value)) {
                             setCouponForm({
                               ...couponForm,
-                              discountValue:
-                                value === "" ? 0 : parseInt(value),
+                              discountValue: value === "" ? 0 : parseInt(value),
                             });
                           }
                         }}
@@ -680,4 +657,3 @@ export const AdminPage = ({
     </div>
   );
 };
-
