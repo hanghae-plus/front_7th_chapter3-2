@@ -1,16 +1,18 @@
 import { CartItem, Product } from "../types";
+import { formatDiscount } from "../utils/formatDiscount";
+import { formatPriceWon } from "../utils/formatPriceWon";
 import { IconClose } from "./icons";
 
 export function CartListItem({
   item,
   itemTotal,
-  removeFromCart,
-  updateQuantity,
+  onRemove,
+  onChangeQuantity,
 }: {
   item: CartItem;
   itemTotal: number;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (product: Product, newQuantity: number) => void;
+  onRemove: (productId: string) => void;
+  onChangeQuantity: (product: Product, newQuantity: number) => void;
 }) {
   const originalPrice = item.product.price * item.quantity;
   const hasDiscount = itemTotal < originalPrice;
@@ -25,7 +27,7 @@ export function CartListItem({
           {item.product.name}
         </h4>
         <button
-          onClick={() => removeFromCart(item.product.id)}
+          onClick={() => onRemove(item.product.id)}
           className="text-gray-400 hover:text-red-500 ml-2"
         >
           <IconClose className="w-4 h-4" />
@@ -34,7 +36,7 @@ export function CartListItem({
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <button
-            onClick={() => updateQuantity(item.product, item.quantity - 1)}
+            onClick={() => onChangeQuantity(item.product, item.quantity - 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">−</span>
@@ -43,7 +45,7 @@ export function CartListItem({
             {item.quantity}
           </span>
           <button
-            onClick={() => updateQuantity(item.product, item.quantity + 1)}
+            onClick={() => onChangeQuantity(item.product, item.quantity + 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">+</span>
@@ -52,11 +54,11 @@ export function CartListItem({
         <div className="text-right">
           {hasDiscount && (
             <span className="text-xs text-red-500 font-medium block">
-              -{discountRate}%
+              -{formatDiscount(discountRate)}
             </span>
           )}
           <p className="text-sm font-medium text-gray-900">
-            {Math.round(itemTotal).toLocaleString()}원
+            {formatPriceWon(itemTotal)}
           </p>
         </div>
       </div>

@@ -2,15 +2,15 @@ import { ProductWithUI } from "../types";
 import { IconImage } from "./icons";
 
 export function ProductCard({
+  formattedPrice,
   product,
   remainingStock,
-  addToCart,
-  formatPrice,
+  onAddToCart,
 }: {
+  formattedPrice: string;
   product: ProductWithUI;
   remainingStock: number;
-  addToCart: (product: ProductWithUI) => void;
-  formatPrice: (product: ProductWithUI) => string;
+  onAddToCart: (product: ProductWithUI) => void;
 }) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
@@ -42,9 +42,7 @@ export function ProductCard({
 
         {/* 가격 정보 */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-gray-900">
-            {formatPrice(product)}
-          </p>
+          <p className="text-lg font-bold text-gray-900">{formattedPrice}</p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
               {product.discounts[0].quantity}개 이상 구매시 할인{" "}
@@ -67,7 +65,7 @@ export function ProductCard({
 
         {/* 장바구니 버튼 */}
         <button
-          onClick={() => addToCart(product)}
+          onClick={() => onAddToCart(product)}
           disabled={remainingStock <= 0}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
             remainingStock <= 0

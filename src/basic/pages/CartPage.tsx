@@ -66,8 +66,8 @@ export function CartPage({
                   key={product.id}
                   product={product}
                   remainingStock={calculateRemainingStock(product, cart)}
-                  addToCart={addToCart}
-                  formatPrice={formatPrice}
+                  onAddToCart={addToCart}
+                  formattedPrice={formatPrice(product)}
                 />
               ))}
             </div>
@@ -94,8 +94,8 @@ export function CartPage({
                     key={item.product.id}
                     item={item}
                     itemTotal={calculateItemTotal(cart, item)}
-                    removeFromCart={removeFromCart}
-                    updateQuantity={updateQuantity}
+                    onRemove={removeFromCart}
+                    onChangeQuantity={updateQuantity}
                   />
                 ))}
               </div>

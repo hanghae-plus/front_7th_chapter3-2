@@ -1,4 +1,6 @@
 import { Coupon } from "../types";
+import { formatDiscount } from "../utils/formatDiscount";
+import { formatPriceWon } from "../utils/formatPriceWon";
 
 export function CouponSelector({
   coupons,
@@ -11,6 +13,12 @@ export function CouponSelector({
   setSelectedCoupon: (coupon: Coupon | null) => void;
   applyCoupon: (coupon: Coupon) => void;
 }) {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const coupon = coupons.find((c) => c.code === e.target.value);
+    if (coupon) applyCoupon(coupon);
+    else setSelectedCoupon(null);
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -23,19 +31,15 @@ export function CouponSelector({
         <select
           className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
           value={selectedCoupon?.code || ""}
-          onChange={(e) => {
-            const coupon = coupons.find((c) => c.code === e.target.value);
-            if (coupon) applyCoupon(coupon);
-            else setSelectedCoupon(null);
-          }}
+          onChange={handleChange}
         >
           <option value="">쿠폰 선택</option>
           {coupons.map((coupon) => (
             <option key={coupon.code} value={coupon.code}>
               {coupon.name} (
               {coupon.discountType === "amount"
-                ? `${coupon.discountValue.toLocaleString()}원`
-                : `${coupon.discountValue}%`}
+                ? formatPriceWon(coupon.discountValue)
+                : formatDiscount(coupon.discountValue)}
               )
             </option>
           ))}
