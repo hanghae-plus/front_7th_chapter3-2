@@ -87,11 +87,6 @@ const App = () => {
   // 이건 전역 관리 필요 => 이거 설정에 따라 페이지 레이아웃이 달라짐
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // 이건 admin 내에서만 다뤄도 됨 => 어드민 페이지에서만 쓰이는 기능
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
-    'products',
-  );
-
   // 이건 좀 애매한데.. 헤더에서 검색하고 그 내용이 product List에 반영되어야 함... 흠 ... hook으로 분리?
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -204,8 +199,6 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <Admin
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
             products={products}
             setProducts={setProducts}
             addNotification={addNotification}

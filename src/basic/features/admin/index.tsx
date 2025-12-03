@@ -4,14 +4,10 @@ import { useManageCoupon } from './hooks/useManageCoupon';
 import { Coupon } from '../../../types';
 
 export const Admin = ({
-  activeTab,
-  setActiveTab,
   products,
   setProducts,
   addNotification,
 }: {
-  activeTab: 'products' | 'coupons';
-  setActiveTab: (tab: 'products' | 'coupons') => void;
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
   addNotification: (
@@ -27,6 +23,9 @@ export const Admin = ({
     setSelectedCoupon,
   } = useManageCoupon();
 
+  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
+    'products',
+  );
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showCouponForm, setShowCouponForm] = useState(false);
 
