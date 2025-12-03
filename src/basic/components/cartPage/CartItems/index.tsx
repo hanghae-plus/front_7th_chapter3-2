@@ -1,7 +1,7 @@
 import { type FC } from "react";
-import { CartItem as TCartItem } from "../../../../types"; // 타입 이름 변경
+import { CartItem as TCartItem } from "../../../../types";
 import CartItemRow from "./CartItem";
-import { calculateItemTotal } from "../../../models/cart";
+import { calculateItemTotal, getCartItemDiscount } from "../../../models/cart";
 
 interface IProps {
   cart: TCartItem[];
@@ -14,11 +14,7 @@ const CartItems: FC<IProps> = ({ cart, onRemove, onUpdateQuantity }) => {
     <div className="space-y-3">
       {cart.map((item) => {
         const itemTotal = calculateItemTotal(cart, item);
-        const originalPrice = item.product.price * item.quantity;
-        const hasDiscount = itemTotal < originalPrice;
-        const discountRate = hasDiscount
-          ? Math.round((1 - itemTotal / originalPrice) * 100)
-          : 0;
+        const { hasDiscount, discountRate } = getCartItemDiscount(cart, item);
 
         return (
           <CartItemRow

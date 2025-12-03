@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import CloseIcon from "../../icons/CloseIcon";
+import CloseIcon from "../../_icons/CloseIcon";
 
 export type Notification = {
   id: string;

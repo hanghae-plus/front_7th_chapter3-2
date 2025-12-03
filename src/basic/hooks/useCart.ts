@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import { CartItem, ProductWithUI } from "../../types";
+import {
+  addItemToCart,
+  getRemainingStock,
+  removeItemFromCart,
+  updateCartItemQuantity,
+} from "../models/cart";
 
 export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -7,85 +13,45 @@ export const useCart = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // localStorage 변경 감지 (다른 컴포넌트에서 변경 시)
+  // cart 변경 시 localStorage 자동 저장
   useEffect(() => {
-    const handleStorageChange = () => {
-      const saved = localStorage.getItem("cart");
-      setCart(saved ? JSON.parse(saved) : []);
-    };
-
-    // 커스텀 이벤트 리스너
-    window.addEventListener("cart-updated", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("cart-updated", handleStorageChange);
-    };
-  }, []);
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (product: ProductWithUI) => {
     setCart((prev) => {
-      const existingItem = prev.find((item) => item.product.id === product.id);
+      const newCart = addItemToCart(prev, product);
 
-      if (existingItem) {
-        // 이미 장바구니에 있는 경우 수량 증가
-        const newQuantity = existingItem.quantity + 1;
-
-        // 재고 확인
-        if (newQuantity > product.stock) {
-          alert(`재고는 ${product.stock}개까지만 있습니다.`);
-          return prev;
-        }
-
-        const updated = prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: newQuantity }
-            : item
-        );
-        localStorage.setItem("cart", JSON.stringify(updated));
-        window.dispatchEvent(new Event("cart-updated")); // 이벤트 발생
-        return updated;
+      if (newCart === prev) {
+        alert(`재고는 ${product.stock}개까지만 있습니다.`);
       }
 
-      // 새로운 상품 추가
-      const updated = [...prev, { product, quantity: 1 }];
-      localStorage.setItem("cart", JSON.stringify(updated));
-      window.dispatchEvent(new Event("cart-updated")); // 이벤트 발생
-      return updated;
+      return newCart;
     });
   };
 
   const removeFromCart = (productId: string) => {
-    setCart((prev) => {
-      const updated = prev.filter((item) => item.product.id !== productId);
-      localStorage.setItem("cart", JSON.stringify(updated));
-      window.dispatchEvent(new Event("cart-updated")); // 이벤트 발생
-      return updated;
-    });
+    setCart((prev) => removeItemFromCart(prev, productId));
+  };
+
+  const updateQuantity = (productId: string, newQuantity: number) => {
+    setCart((prev) => updateCartItemQuantity(prev, productId, newQuantity));
   };
 
   const emptyCart = () => {
     setCart([]);
-    localStorage.removeItem("cart");
-    window.dispatchEvent(new Event("cart-updated")); // 이벤트 발생
   };
 
-  const updateQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-
-    setCart((prev) => {
-      const updated = prev.map((item) =>
-        item.product.id === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      );
-      localStorage.setItem("cart", JSON.stringify(updated));
-      window.dispatchEvent(new Event("cart-updated")); // 이벤트 발생
-      return updated;
-    });
+  const getStock = (product: ProductWithUI) => {
+    return getRemainingStock(cart, product);
   };
 
-  return { cart, addToCart, removeFromCart, updateQuantity, emptyCart };
+  return {
+    cart,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    emptyCart,
+    getStock,
+  };
 };

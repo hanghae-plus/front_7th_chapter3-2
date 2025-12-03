@@ -1,5 +1,6 @@
 import { type FC } from "react";
-import Button from "../Common/Button";
+import { calculateDiscountAmount } from "../../models/cart";
+import Button from "../_common/Button";
 
 interface IProps {
   totals: {
@@ -10,6 +11,11 @@ interface IProps {
 }
 
 const PayItem: FC<IProps> = ({ totals, onCheckout }) => {
+  const discountAmount = calculateDiscountAmount(
+    totals.totalBeforeDiscount,
+    totals.totalAfterDiscount
+  );
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
@@ -20,16 +26,10 @@ const PayItem: FC<IProps> = ({ totals, onCheckout }) => {
             {totals.totalBeforeDiscount.toLocaleString()}원
           </span>
         </div>
-        {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
+        {discountAmount > 0 && (
           <div className="flex justify-between text-red-500">
             <span>할인 금액</span>
-            <span>
-              -
-              {(
-                totals.totalBeforeDiscount - totals.totalAfterDiscount
-              ).toLocaleString()}
-              원
-            </span>
+            <span>-{discountAmount.toLocaleString()}원</span>
           </div>
         )}
         <div className="flex justify-between py-2 border-t border-gray-200">

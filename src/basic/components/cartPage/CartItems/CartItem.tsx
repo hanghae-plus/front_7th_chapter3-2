@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { CartItem as TCartItem } from "../../../../types";
-import Button from "../../Common/Button";
-import CloseIcon from "../../icons/CloseIcon";
+import Button from "../../_common/Button";
+import CloseIcon from "../../_icons/CloseIcon";
 
 interface IProps {
   item: TCartItem;

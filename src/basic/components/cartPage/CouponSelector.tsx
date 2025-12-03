@@ -1,5 +1,6 @@
 import { type FC } from "react";
 import { Coupon } from "../../../types";
+import { getCouponOptionText } from "../../models/coupon";
 
 interface IProps {
   coupons: Coupon[];
@@ -29,11 +30,7 @@ const CouponSelector: FC<IProps> = ({ coupons, selectedCoupon, onApply, setSelec
           <option value="">쿠폰 선택</option>
           {coupons.map((coupon) => (
             <option key={coupon.code} value={coupon.code}>
-              {coupon.name} (
-              {coupon.discountType === "amount"
-                ? `${coupon.discountValue.toLocaleString()}원`
-                : `${coupon.discountValue}%`}
-              )
+              {getCouponOptionText(coupon)}
             </option>
           ))}
         </select>

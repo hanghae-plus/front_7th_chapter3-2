@@ -1,21 +1,16 @@
 import { type FC } from "react";
-import { ProductWithUI } from "../../../types";
 import { useProducts } from "../../hooks/useProducts";
-import { useCart } from "../../hooks/useCart";
-import ProductCard from "./ProductCard";
+import ProductCard from "../../components/cartPage/ProductCard";
+import { ProductWithUI } from "../../../types";
 
 interface IProps {
   searchTerm?: string;
+  addToCart: (product: ProductWithUI) => void;
+  getStock: (product: ProductWithUI) => number;
 }
 
-const ProductCards: FC<IProps> = ({ searchTerm }) => {
+const ProductCards: FC<IProps> = ({ searchTerm, addToCart, getStock }) => {
   const { products } = useProducts();
-  const { cart, addToCart } = useCart();
-
-  const getRemainingStock = (product: ProductWithUI) => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    return product.stock - (cartItem?.quantity || 0);
-  };
 
   const filteredProducts = searchTerm
     ? products.filter(
@@ -46,7 +41,7 @@ const ProductCards: FC<IProps> = ({ searchTerm }) => {
             <ProductCard
               key={product.id}
               product={product}
-              remainingStock={getRemainingStock(product)}
+              remainingStock={getStock(product)}
               onAddToCart={addToCart}
             />
           ))}

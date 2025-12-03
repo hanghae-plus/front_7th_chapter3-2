@@ -1,14 +1,25 @@
 import { type FC } from "react";
-import CartItems from "./CartItems";
-import PayItem from "./PayItem";
-import ShoppingBagIcon from "../icons/ShoppingBagIcon";
-import { useCart } from "../../hooks/useCart";
+import CartItems from "../../components/cartPage/CartItems";
+import PayItem from "../../components/cartPage/PayItem";
+import ShoppingBagIcon from "../../components/_icons/ShoppingBagIcon";
 import { useCoupons } from "../../hooks/useCoupons";
-import CouponSelector from "./CouponSelector";
+import CouponSelector from "../../components/cartPage/CouponSelector";
 import { calculateCartTotal } from "../../models/cart";
+import { CartItem } from "../../../types";
 
-const CartArea: FC = () => {
-  const { cart, removeFromCart, updateQuantity, emptyCart } = useCart();
+interface IProps {
+  cart: CartItem[];
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQuantity: number) => void;
+  emptyCart: () => void;
+}
+
+const CartSummary: FC<IProps> = ({
+  cart,
+  removeFromCart,
+  updateQuantity,
+  emptyCart,
+}) => {
   const {
     coupons,
     applyCoupon,
@@ -62,4 +73,4 @@ const CartArea: FC = () => {
   );
 };
 
-export default CartArea;
+export default CartSummary;
