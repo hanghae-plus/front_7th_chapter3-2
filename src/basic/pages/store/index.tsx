@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import Button from '../../components/button';
 import { ImageIcon, ShoppingBagIcon, XIcon } from '../../components/icons';
+import { AddNotification } from '../../hooks/notifications';
 import { CartItem } from '../../types/carts';
 import { Coupon } from '../../types/coupons';
 import { Product, ProductWithUI } from '../../types/products';
@@ -13,7 +14,7 @@ interface StorePageProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-  addNotification: (message: string, type?: 'success' | 'error' | 'warning') => void;
+  addNotification: AddNotification;
 }
 
 const StorePage = ({ products, debouncedSearchTerm, cart, setCart, coupons, selectedCoupon, setSelectedCoupon, addNotification }: StorePageProps) => {
