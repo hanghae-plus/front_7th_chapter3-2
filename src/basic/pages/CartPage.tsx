@@ -1,8 +1,6 @@
 import { ProductList } from "../widgets/product/ui/ProductList";
 import { CartItem, Coupon, Product, ProductWithUI } from "../types";
-import { CouponSelector } from "../widgets/coupon/ui/CouponSelector";
-import { CartList } from "../widgets/cart/ui/CartList";
-import { CartPayment } from "../widgets/cart/ui/CartPayment";
+import { PaymentBanner } from "../widgets/payment/ui/PaymentBanner";
 
 export function CartPage({
   products,
@@ -58,24 +56,18 @@ export function CartPage({
 
       <div className="lg:col-span-1">
         <div className="sticky top-24 space-y-4">
-          <CartList
+          <PaymentBanner
             cart={cart}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
             calculateItemTotal={calculateItemTotal}
+            coupons={coupons}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+            applyCoupon={applyCoupon}
+            totals={totals}
+            completeOrder={completeOrder}
           />
-
-          {cart.length > 0 && (
-            <>
-              <CouponSelector
-                coupons={coupons}
-                selectedCoupon={selectedCoupon}
-                setSelectedCoupon={setSelectedCoupon}
-                applyCoupon={applyCoupon}
-              />
-              <CartPayment totals={totals} completeOrder={completeOrder} />
-            </>
-          )}
         </div>
       </div>
     </div>

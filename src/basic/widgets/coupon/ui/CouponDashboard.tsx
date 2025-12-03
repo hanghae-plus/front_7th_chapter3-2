@@ -1,7 +1,7 @@
 import { IconPlus } from "../../../components/icons";
 import { Coupon } from "../../../types";
-import { CouponCard } from "./CouponCard";
-import { CouponCreateForm } from "./CouponCreateForm";
+import { CouponCard } from "../../../entities/coupon/ui/CouponCard";
+import { CouponForm } from "../../../features/control-coupon-form/ui/CouponForm";
 
 export function CouponDashboard({
   coupons,
@@ -52,7 +52,7 @@ export function CouponDashboard({
         </div>
 
         {showCouponForm && (
-          <CouponCreateForm
+          <CouponForm
             handleCouponSubmit={handleCouponSubmit}
             couponForm={couponForm}
             setCouponForm={setCouponForm}

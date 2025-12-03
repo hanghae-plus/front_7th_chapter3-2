@@ -1,5 +1,5 @@
 import { CartItem, Product } from "../../../types";
-import { CartListItem } from "../../../features/control-cart/ui/CartListItem";
+import { CartListItem } from "./CartListItem";
 import { IconCart } from "../../../components/icons";
 
 export function CartList({

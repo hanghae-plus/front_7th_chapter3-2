@@ -1,6 +1,6 @@
 import { Coupon } from "../../../types";
 
-export function CouponCreateForm({
+export function CouponForm({
   handleCouponSubmit,
   couponForm,
   setCouponForm,

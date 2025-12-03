@@ -1,7 +1,7 @@
 import { IconClose } from "../../../components/icons";
-import { ProductForm } from "../../../types";
+import { ProductForm as ProductFormType } from "../../../types";
 
-export function ProductCreateForm({
+export function ProductForm({
   handleProductSubmit,
   editingProduct,
   productForm,
@@ -12,8 +12,8 @@ export function ProductCreateForm({
 }: {
   handleProductSubmit: (e: React.FormEvent) => void;
   editingProduct: string | null;
-  productForm: ProductForm;
-  setProductForm: (product: ProductForm) => void;
+  productForm: ProductFormType;
+  setProductForm: (product: ProductFormType) => void;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"

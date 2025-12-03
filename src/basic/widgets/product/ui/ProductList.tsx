@@ -1,5 +1,5 @@
 import { ProductWithUI } from "../../../types";
-import { ProductCard } from "./ProductCard";
+import { ProductCard } from "../../../entities/product/ui/ProductCard";
 
 export function ProductList({
   products,

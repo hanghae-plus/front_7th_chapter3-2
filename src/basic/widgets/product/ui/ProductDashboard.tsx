@@ -1,6 +1,6 @@
-import { ProductForm, ProductWithUI } from "../../../types";
-import { ProductCreateForm } from "./ProductCreateForm";
-import { ProductTable } from "./ProductTable";
+import { ProductForm as ProductFormType, ProductWithUI } from "../../../types";
+import { ProductForm } from "../../../features/control-product-form/ui/ProductForm";
+import { ProductTable } from "../../../entities/product/ui/ProductTable";
 
 export function ProductDashboard({
   setEditingProduct,
@@ -17,7 +17,7 @@ export function ProductDashboard({
   addNotification,
 }: {
   setEditingProduct: (id: string | null) => void;
-  setProductForm: (product: ProductForm) => void;
+  setProductForm: (product: ProductFormType) => void;
   setShowProductForm: (show: boolean) => void;
   products: ProductWithUI[];
   formatPrice: (price: number, productId?: string) => string;
@@ -26,7 +26,7 @@ export function ProductDashboard({
   showProductForm: boolean;
   handleProductSubmit: (e: React.FormEvent) => void;
   editingProduct: string | null;
-  productForm: ProductForm;
+  productForm: ProductFormType;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -65,7 +65,7 @@ export function ProductDashboard({
         />
       </div>
       {showProductForm && (
-        <ProductCreateForm
+        <ProductForm
           handleProductSubmit={handleProductSubmit}
           editingProduct={editingProduct}
           productForm={productForm}
