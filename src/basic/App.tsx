@@ -1,11 +1,9 @@
 import { useState, useCallback } from "react";
-import { Coupon, Product } from "../types";
-import { getRemainingStock } from "./models/cart";
+import { Coupon } from "../types";
 import { formatPriceKorean } from "./utils/formatter";
 import { useDebounce } from "./hooks/useDebounce";
 import { useProducts, ProductWithUI } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
-import { useCart } from "./hooks/useCart";
 import { useNotification } from "./hooks/useNotification";
 import { Header } from "./components/Header";
 import { SearchInput, CartIcon } from "./features";
@@ -19,20 +17,16 @@ const App = () => {
     deleteCoupon: deleteCouponFromList,
     getCoupon,
   } = useCoupons();
-  const {
-    cart,
-    selectedCoupon,
-    totalItemCount,
-    totals,
-    addToCart: addToCartAction,
-    removeFromCart,
-    updateQuantity: updateQuantityAction,
-    applyCoupon: applyCouponAction,
-    removeCoupon,
-    completeOrder: completeOrderAction,
-  } = useCart(products);
   const { notifications, addNotification, removeNotification } =
     useNotification();
+
+  // MainPage에서 Callback Props로 전달받는 상태
+  const [totalItemCount, setTotalItemCount] = useState(0);
+
+  // Callback Props - MainPage에서 호출
+  const handleTotalItemCountChange = useCallback((count: number) => {
+    setTotalItemCount(count);
+  }, []);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -61,42 +55,6 @@ const App = () => {
     discountValue: 0,
   });
 
-  // 순수 함수 래퍼 - cart를 클로저로 캡처
-  const getRemainingStockForProduct = (product: Product): number => {
-    return getRemainingStock(product, cart);
-  };
-
-  // useCart 래퍼 함수들 (notification 처리)
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const result = addToCartAction(product);
-      addNotification(result.message, result.success ? "success" : "error");
-    },
-    [addToCartAction, addNotification]
-  );
-
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      const result = updateQuantityAction(productId, newQuantity);
-      if (result) {
-        addNotification(result.message, result.success ? "success" : "error");
-      }
-    },
-    [updateQuantityAction, addNotification]
-  );
-
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const result = applyCouponAction(coupon);
-      addNotification(result.message, result.success ? "success" : "error");
-    },
-    [applyCouponAction, addNotification]
-  );
-
-  const completeOrder = useCallback(() => {
-    const result = completeOrderAction();
-    addNotification(result.message, result.success ? "success" : "error");
-  }, [completeOrderAction, addNotification]);
 
   // useCoupons의 함수를 래핑하여 notification 처리
   const addCoupon = useCallback(
@@ -110,12 +68,9 @@ const App = () => {
   const deleteCoupon = useCallback(
     (couponCode: string) => {
       const result = deleteCouponFromList(couponCode);
-      if (selectedCoupon?.code === couponCode) {
-        removeCoupon();
-      }
       addNotification(result.message, "success");
     },
-    [deleteCouponFromList, selectedCoupon, removeCoupon, addNotification]
+    [deleteCouponFromList, addNotification]
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
@@ -836,17 +791,9 @@ const App = () => {
             products={products}
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
-            getRemainingStock={getRemainingStockForProduct}
-            addToCart={addToCart}
-            cart={cart}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
             coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            applyCoupon={applyCoupon}
-            removeCoupon={removeCoupon}
-            totals={totals}
-            completeOrder={completeOrder}
+            onTotalItemCountChange={handleTotalItemCountChange}
+            addNotification={addNotification}
           />
         )}
       </main>
