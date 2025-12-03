@@ -15,3 +15,4 @@ export { IconImage } from "./IconImage";
 export { IconClose } from "./IconClose";
 export { IconPlus } from "./IconPlus";
 export { IconTrash } from "./IconTrash";
+export { IconShopping } from "./IconShopping";

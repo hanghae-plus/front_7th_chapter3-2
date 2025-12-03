@@ -7,6 +7,8 @@ import { Toast } from "./components/ui/Toast";
 import { useCart } from "./features/control-cart/model/useCart";
 import { useProduct } from "./features/control-product/model/useProduct";
 import { useCoupon } from "./features/control-coupon/model/useCoupon";
+import { CartCounter } from "./entities/cart/ui/CartCounter";
+import { ProductSearchBar } from "./entities/product/ui/ProductSearchBar";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -198,14 +200,27 @@ const App = () => {
           ))}
         </div>
       )}
-      <Header
-        isAdmin={isAdmin}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        setIsAdmin={setIsAdmin}
-        cart={cart}
-        totalItemCount={totalItemCount}
-      />
+      <Header>
+        {!isAdmin && (
+          <ProductSearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
+        )}
+        <nav className="flex ml-auto items-center space-x-4">
+          <button
+            onClick={() => setIsAdmin(!isAdmin)}
+            className={`px-3 py-1.5 text-sm rounded transition-colors ${
+              isAdmin
+                ? "bg-gray-800 text-white"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            {isAdmin ? "쇼핑몰로 돌아가기" : "관리자 페이지로"}
+          </button>
+          {!isAdmin && <CartCounter totalItemCount={totalItemCount} />}
+        </nav>
+      </Header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
