@@ -1,10 +1,5 @@
 import { HTMLAttributes, ReactNode } from 'react';
-
-interface ToastProps extends HTMLAttributes<HTMLDivElement> {
-  variant: keyof typeof variants;
-  children: ReactNode;
-  onClose?: () => void;
-}
+import { cn } from '../lib/styles';
 
 const variants = {
   success: 'bg-green-600',
@@ -12,21 +7,41 @@ const variants = {
   warning: 'bg-yellow-600',
 };
 
-const Toast = ({
+interface ToastProps extends HTMLAttributes<HTMLDivElement> {
+  variant: keyof typeof variants;
+  children: ReactNode;
+  onClose?: () => void;
+}
+
+export const Toast = ({
   variant,
   children,
   onClose,
-  className = '',
+  className,
   ...props
 }: ToastProps) => {
   return (
     <div
-      className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${variants[variant]} ${className}`}
+      className={cn(
+        // 1. 베이스 스타일 (패딩, 둥근 모서리, 그림자, 흰색 글씨, 플렉스 배치)
+        'p-4 rounded-md shadow-md text-white flex justify-between items-center',
+
+        // 2. 변형 스타일 (배경색)
+        variants[variant],
+
+        // 3. 외부 커스텀 스타일
+        className,
+      )}
       {...props}
     >
       <span className="mr-2">{children}</span>
+
       {onClose && (
-        <button onClick={onClose} className="text-white hover:text-gray-200">
+        <button
+          onClick={onClose}
+          className="text-white hover:text-gray-200 transition-colors"
+          aria-label="닫기"
+        >
           <svg
             className="w-4 h-4"
             fill="none"
@@ -45,5 +60,3 @@ const Toast = ({
     </div>
   );
 };
-
-export default Toast;
