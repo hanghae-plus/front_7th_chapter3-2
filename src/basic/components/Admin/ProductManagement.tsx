@@ -24,6 +24,10 @@ type Props = {
   editingProduct: string | null;
   setEditingProduct: React.Dispatch<React.SetStateAction<string | null>>;
   addNotification: (message: string, type?: "error" | "success" | "warning") => void;
+  handlePriceChange: (value: string) => void;
+  handlePriceBlur: (value: string) => void;
+  handleStockChange: (value: string) => void;
+  handleStockBlur: (value: string) => void;
 };
 
 const ProductManagement = ({
@@ -41,6 +45,10 @@ const ProductManagement = ({
   editingProduct,
   setEditingProduct,
   addNotification,
+  handlePriceChange,
+  handlePriceBlur,
+  handleStockChange,
+  handleStockBlur,
 }: Props) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -139,21 +147,8 @@ const ProductManagement = ({
                 <input
                   type="text"
                   value={productForm.price === 0 ? "" : productForm.price}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "" || /^\d+$/.test(value)) {
-                      setProductForm({ ...productForm, price: value === "" ? 0 : parseInt(value) });
-                    }
-                  }}
-                  onBlur={(e) => {
-                    const value = e.target.value;
-                    if (value === "") {
-                      setProductForm({ ...productForm, price: 0 });
-                    } else if (parseInt(value) < 0) {
-                      addNotification("가격은 0보다 커야 합니다", "error");
-                      setProductForm({ ...productForm, price: 0 });
-                    }
-                  }}
+                  onChange={(e) => handlePriceChange(e.target.value)}
+                  onBlur={(e) => handlePriceBlur(e.target.value)}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                   placeholder="숫자만 입력"
                   required
@@ -164,24 +159,8 @@ const ProductManagement = ({
                 <input
                   type="text"
                   value={productForm.stock === 0 ? "" : productForm.stock}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "" || /^\d+$/.test(value)) {
-                      setProductForm({ ...productForm, stock: value === "" ? 0 : parseInt(value) });
-                    }
-                  }}
-                  onBlur={(e) => {
-                    const value = e.target.value;
-                    if (value === "") {
-                      setProductForm({ ...productForm, stock: 0 });
-                    } else if (parseInt(value) < 0) {
-                      addNotification("재고는 0보다 커야 합니다", "error");
-                      setProductForm({ ...productForm, stock: 0 });
-                    } else if (parseInt(value) > 9999) {
-                      addNotification("재고는 9999개를 초과할 수 없습니다", "error");
-                      setProductForm({ ...productForm, stock: 9999 });
-                    }
-                  }}
+                  onChange={(e) => handleStockChange(e.target.value)}
+                  onBlur={(e) => handleStockBlur(e.target.value)}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                   placeholder="숫자만 입력"
                   required

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { Coupon } from "../../types";
+import { validateCouponDiscount, isNumericInput } from "../utils/validators";
 
 type CouponFormData = {
   name: string;
@@ -10,9 +11,10 @@ type CouponFormData = {
 
 type Props = {
   addCoupon: (newCoupon: Coupon) => void;
+  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
 };
 
-export const useCouponForm = ({ addCoupon }: Props) => {
+export const useCouponForm = ({ addCoupon, addNotification }: Props) => {
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [couponForm, setCouponForm] = useState<CouponFormData>({
     name: "",
@@ -45,6 +47,27 @@ export const useCouponForm = ({ addCoupon }: Props) => {
     [couponForm, addCoupon, resetForm]
   );
 
+  const handleDiscountValueChange = useCallback((value: string) => {
+    if (isNumericInput(value)) {
+      setCouponForm((prev) => ({ ...prev, discountValue: value === "" ? 0 : parseInt(value) }));
+    }
+  }, []);
+
+  const handleDiscountValueBlur = useCallback(
+    (value: string, discountType: "amount" | "percentage") => {
+      const numValue = parseInt(value) || 0;
+      const result = validateCouponDiscount(discountType, numValue);
+
+      if (!result.isValid && result.correctedValue !== undefined) {
+        if (result.errorMessage) {
+          addNotification(result.errorMessage, "error");
+        }
+        setCouponForm((prev) => ({ ...prev, discountValue: result.correctedValue! }));
+      }
+    },
+    [addNotification]
+  );
+
   return {
     showCouponForm,
     setShowCouponForm,
@@ -52,6 +75,8 @@ export const useCouponForm = ({ addCoupon }: Props) => {
     setCouponForm,
     startAddCoupon,
     handleCouponSubmit,
+    handleDiscountValueChange,
+    handleDiscountValueBlur,
     resetForm,
   };
 };

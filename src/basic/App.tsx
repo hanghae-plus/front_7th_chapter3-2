@@ -15,7 +15,6 @@ const App = () => {
   const {
     cart,
     totalItemCount,
-    setCart,
     addToCart,
     calculateCartTotal,
     calculateItemTotal,

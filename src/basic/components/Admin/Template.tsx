@@ -42,10 +42,23 @@ const Template = ({
     setProductForm,
     startEditProduct,
     handleProductSubmit,
-  } = useProductForm({ addProduct, updateProduct });
+    handlePriceChange,
+    handlePriceBlur,
+    handleStockChange,
+    handleStockBlur,
+  } = useProductForm({ addProduct, updateProduct, addNotification });
 
-  const { showCouponForm, setShowCouponForm, couponForm, setCouponForm, handleCouponSubmit } = useCouponForm({
+  const {
+    showCouponForm,
+    setShowCouponForm,
+    couponForm,
+    setCouponForm,
+    handleCouponSubmit,
+    handleDiscountValueChange,
+    handleDiscountValueBlur,
+  } = useCouponForm({
     addCoupon,
+    addNotification,
   });
 
   return (
@@ -73,6 +86,10 @@ const Template = ({
           editingProduct={editingProduct}
           setEditingProduct={setEditingProduct}
           addNotification={addNotification}
+          handlePriceChange={handlePriceChange}
+          handlePriceBlur={handlePriceBlur}
+          handleStockChange={handleStockChange}
+          handleStockBlur={handleStockBlur}
         />
       ) : (
         <CouponManagement
@@ -84,6 +101,8 @@ const Template = ({
           couponForm={couponForm}
           setCouponForm={setCouponForm}
           addNotification={addNotification}
+          handleDiscountValueChange={handleDiscountValueChange}
+          handleDiscountValueBlur={handleDiscountValueBlur}
         />
       )}
     </div>
