@@ -1,7 +1,8 @@
 import { useCallback } from "react";
-import { CartItem, Coupon, Product } from "../../../types";
+import { CartItem, Coupon, Product, ProductWithUI } from "../../../types";
 
 type Props = {
+  products: ProductWithUI[];
   cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: any;
@@ -12,13 +13,14 @@ type Props = {
   applyCoupon: (couponId: number) => void;
   setSelectedCoupon: (couponId: number) => void;
   calculateItemTotal: (product: any) => number;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (products: Product[], productId: number, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (products: Product[], productId: string, quantity: number) => void;
   addNotification: (message: string) => void;
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
 };
 
 const Cart = ({
+  products,
   cart,
   setCart,
   coupons,
@@ -36,7 +38,7 @@ const Cart = ({
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
     setCart([]);
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [addNotification, setCart, setSelectedCoupon]);
 
   return (
     <div className="lg:col-span-1">

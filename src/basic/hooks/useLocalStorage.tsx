@@ -16,8 +16,8 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
 
   // 2. 값 설정 함수 (함수형 업데이트 지원)
   const setValue = (value: T | ((val: T) => T)) => {
-    const valueToStore = value instanceof Function ? value(storedValue) : value;
-    setStoredValue(valueToStore);
+    // React의 함수형 업데이트를 그대로 전달
+    setStoredValue(value);
   };
 
   // 3. localStorage와 React state 동기화
