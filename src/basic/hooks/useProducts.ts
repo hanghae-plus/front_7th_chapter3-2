@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Product } from '../../types';
 import { useLocalStorage } from './useLocalStorage';
+import { STORAGE_KEYS } from '../constants';
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -43,7 +44,7 @@ const initialProducts: ProductWithUI[] = [
 
 export function useProducts() {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    'products',
+    STORAGE_KEYS.PRODUCTS,
     initialProducts
   );
 
