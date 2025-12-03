@@ -1,5 +1,4 @@
-import { CartItem } from "../../../shared/model/types";
-
+import { CartItem } from "../../../entities/cart/model/types";
 interface Props {
   // 1. 데이터 (Data)
   cart: CartItem[];

@@ -1,4 +1,5 @@
-import { ProductWithUI, CartItem } from "../../../shared/model/types";
+import { ProductWithUI} from "../../../entities/product/model/types";
+import { CartItem } from "../../../entities/cart/model/types";
 import { formatCurrencyWithSymbol } from "../../../shared/lib/format";
 import { getRemainingStock } from "../lib";
 

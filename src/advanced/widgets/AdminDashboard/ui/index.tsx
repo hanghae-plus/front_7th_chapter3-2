@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ProductWithUI, Coupon } from "../../../shared/model/types";
+import { ProductWithUI} from "../../../entities/product/model/types";
+import { Coupon } from "../../../entities/coupon/model/types";
 import { formatCurrency } from "../../../shared/lib/format";
 
 interface Props {

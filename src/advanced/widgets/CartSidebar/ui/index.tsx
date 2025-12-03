@@ -1,4 +1,5 @@
-import { CartItem, Coupon } from "../../../shared/model/types";
+import { CartItem } from "../../../entities/cart/model/types";
+import { Coupon } from "../../../entities/coupon/model/types";
 import {
   calculateItemTotal,
   calculateCartTotal,

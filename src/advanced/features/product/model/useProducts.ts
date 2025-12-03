@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { ProductWithUI } from "../../../shared/model/types";
+import {useCallback } from "react";
+import { ProductWithUI} from "../../../entities/product/model/types";
 import { useLocalStorage } from "../../../shared/lib/useLocalStorage"
 
 // 초기 데이터 (실제로는 API에서 가져오거나 상수로 관리)
