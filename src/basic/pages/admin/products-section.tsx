@@ -5,6 +5,7 @@ import { ToastProps } from '../../shared/ui/toast';
 import { ProductsTable } from './products-table';
 import { CreateProductForm } from '../../features/product/create-product';
 import { EditProductForm } from '../../features/product/edit-product';
+import { ConditionalRender } from '../../shared/ui/conditional-render';
 
 interface ProductsSectionProps {
   products: ProductWithUI[];
@@ -48,7 +49,8 @@ export function ProductsSection({
   };
 
   const showCreateProductForm = openProductFormType === 'create';
-  const showEditProductForm = openProductFormType === 'edit' && selectedProduct;
+  const showEditProductForm =
+    openProductFormType === 'edit' && !!selectedProduct;
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -72,21 +74,22 @@ export function ProductsSection({
         />
       </div>
 
-      {showCreateProductForm && (
+      <ConditionalRender condition={showCreateProductForm}>
         <CreateProductForm
           onAddProduct={onAddProduct}
           onCloseProductForm={handleCloseCreateProductForm}
           toast={toast}
         />
-      )}
-      {showEditProductForm && (
+      </ConditionalRender>
+
+      <ConditionalRender condition={showEditProductForm}>
         <EditProductForm
-          product={selectedProduct}
+          product={selectedProduct!}
           onUpdateProduct={onUpdateProduct}
           onCloseProductForm={handleCloseEditProductForm}
           toast={toast}
         />
-      )}
+      </ConditionalRender>
     </section>
   );
 }

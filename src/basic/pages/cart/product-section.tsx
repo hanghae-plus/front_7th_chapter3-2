@@ -1,5 +1,6 @@
 import { CartItem } from '../../../types';
 import { ProductWithUI } from '../../entities/product';
+import { ConditionalRender } from '../../shared/ui/conditional-render';
 import { ProductCardList } from './product-card-list';
 import { ProductEmptyFallback } from './product-empty-fallback';
 
@@ -34,15 +35,16 @@ export function ProductSection({
         <div className="text-sm text-gray-600">총 {products.length}개 상품</div>
       </div>
 
-      {filteredProducts.length === 0 ? (
-        <ProductEmptyFallback searchTerm={searchTerm} />
-      ) : (
+      <ConditionalRender
+        condition={filteredProducts.length > 0}
+        fallback={<ProductEmptyFallback searchTerm={searchTerm} />}
+      >
         <ProductCardList
           products={filteredProducts}
           cart={cart}
           onAddToCart={onAddToCart}
         />
-      )}
+      </ConditionalRender>
     </section>
   );
 }

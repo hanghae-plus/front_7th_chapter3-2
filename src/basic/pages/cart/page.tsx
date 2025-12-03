@@ -27,6 +27,7 @@ import { ProductSection } from './product-section';
 import { CartSection } from './cart-section';
 import { CouponSection } from './coupon-section';
 import { OrderSection } from './order-section';
+import { ConditionalRender } from '../../shared/ui/conditional-render';
 
 interface PropsType {
   products: ProductWithUI[];
@@ -97,21 +98,19 @@ export function CartPage({
               onUpdateQuantity={onUpdateQuantity}
             />
 
-            {cart.length > 0 && (
-              <>
-                <CouponSection
-                  coupons={coupons}
-                  selectedCoupon={selectedCoupon}
-                  onApplyCoupon={onApplyCoupon}
-                />
+            <ConditionalRender condition={cart.length > 0}>
+              <CouponSection
+                coupons={coupons}
+                selectedCoupon={selectedCoupon}
+                onApplyCoupon={onApplyCoupon}
+              />
 
-                <OrderSection
-                  cart={cart}
-                  selectedCoupon={selectedCoupon}
-                  onClearCart={onClearCart}
-                />
-              </>
-            )}
+              <OrderSection
+                cart={cart}
+                selectedCoupon={selectedCoupon}
+                onClearCart={onClearCart}
+              />
+            </ConditionalRender>
           </div>
         </div>
       </div>

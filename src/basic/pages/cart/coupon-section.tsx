@@ -1,4 +1,5 @@
 import { Coupon } from '../../../types';
+import { ConditionalRender } from '../../shared/ui/conditional-render';
 import { CouponList } from './coupon-list';
 
 interface PropsType {
@@ -20,11 +21,13 @@ export function CouponSection({
           쿠폰 등록
         </button>
       </div>
-      <CouponList
-        coupons={coupons}
-        selectedCoupon={selectedCoupon}
-        onApplyCoupon={onApplyCoupon}
-      />
+      <ConditionalRender condition={coupons.length > 0}>
+        <CouponList
+          coupons={coupons}
+          selectedCoupon={selectedCoupon}
+          onApplyCoupon={onApplyCoupon}
+        />
+      </ConditionalRender>
     </section>
   );
 }

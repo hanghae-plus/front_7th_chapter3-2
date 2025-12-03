@@ -1,6 +1,7 @@
 import { CartItem } from '../../../types';
 import { ProductWithUI } from '../../entities/product';
 import { ToastProps } from '../../shared/ui/toast';
+import { ConditionalRender } from '../../shared/ui/conditional-render/conditional-render';
 import { CartEmptyFallback } from './cart-empty-fallback';
 import { CartItemList } from './cart-item-list';
 
@@ -37,9 +38,10 @@ export function CartSection({
         </svg>
         장바구니
       </h2>
-      {cart.length === 0 ? (
-        <CartEmptyFallback />
-      ) : (
+      <ConditionalRender
+        condition={cart.length > 0}
+        fallback={<CartEmptyFallback />}
+      >
         <CartItemList
           cart={cart}
           products={products}
@@ -47,7 +49,7 @@ export function CartSection({
           onRemoveFromCart={onRemoveFromCart}
           onUpdateQuantity={onUpdateQuantity}
         />
-      )}
+      </ConditionalRender>
     </section>
   );
 }
