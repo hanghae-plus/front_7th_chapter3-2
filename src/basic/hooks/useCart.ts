@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { CartItem, Product } from "../../types";
+import { getRemainingStock } from "../models/cart";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -37,17 +38,9 @@ export const useCart = ({ products, addNotification }: UseCartParams) => {
     return cart.reduce((sum, item) => sum + item.quantity, 0);
   }, [cart]);
 
-  const getRemainingStock = useCallback(
-    (product: Product): number => {
-      const cartItem = cart.find((item) => item.product.id === product.id);
-      return product.stock - (cartItem?.quantity || 0);
-    },
-    [cart]
-  );
-
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
+      const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         addNotification("재고가 부족합니다!", "error");
         return;

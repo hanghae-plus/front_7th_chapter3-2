@@ -15,7 +15,8 @@
 // - 외부 상태에 의존하지 않음
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
-import { CartItem, Coupon } from "../../types";
+import { useCallback } from "react";
+import { CartItem, Coupon, Product } from "../../types";
 
 // TODO: 구현
 const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
@@ -80,4 +81,23 @@ export const calculateCartTotal = (
     totalBeforeDiscount: Math.round(totalBeforeDiscount),
     totalAfterDiscount: Math.round(totalAfterDiscount),
   };
+};
+
+export const getRemainingStock = (
+  product: Product,
+  cart: CartItem[]
+): number => {
+  const cartItem = cart.find((item) => item.product.id === product.id);
+  return product.stock - (cartItem?.quantity || 0);
+};
+
+export const isSoldOut = (
+  products: Product[],
+  cart: CartItem[],
+  productId: string
+) => {
+  const product = products.find((p) => p.id === productId);
+  if (product && getRemainingStock(product, cart) <= 0) {
+    return "SOLD OUT";
+  }
 };

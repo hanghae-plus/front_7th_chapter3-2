@@ -4,7 +4,13 @@ import { useProducts } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
 import { useNotification } from "./hooks/useNotification";
-import { calculateCartTotal, calculateItemTotal } from "./models/cart";
+import {
+  calculateCartTotal,
+  calculateItemTotal,
+  getRemainingStock,
+  isSoldOut,
+} from "./models/cart";
+import { formatPriceKor, formatPriceUnit } from "./utils/formatters";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -21,7 +27,6 @@ const App = () => {
   const {
     cart,
     totalItemCount,
-    getRemainingStock,
     addToCart,
     removeFromCart,
     updateQuantity,
@@ -62,21 +67,6 @@ const App = () => {
     discountType: "amount" as "amount" | "percentage",
     discountValue: 0,
   });
-
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -339,7 +329,9 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {formatPrice(product.price, product.id)}
+                              {isSoldOut(products, cart, product.id)
+                                ? "SOLD OUT"
+                                : formatPriceKor(product.price)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <span
@@ -871,7 +863,7 @@ const App = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
+                      const remainingStock = getRemainingStock(product, cart);
 
                       return (
                         <div
@@ -925,7 +917,9 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className="mb-3">
                               <p className="text-lg font-bold text-gray-900">
-                                {formatPrice(product.price, product.id)}
+                                {isSoldOut(products, cart, product.id)
+                                  ? "SOLD OUT"
+                                  : formatPriceUnit(product.price)}
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className="text-xs text-gray-500">
