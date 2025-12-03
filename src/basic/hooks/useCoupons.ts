@@ -1,13 +1,30 @@
-// TODO: 쿠폰 관리 Hook
-// 힌트:
-// 1. 쿠폰 목록 상태 관리 (localStorage 연동 고려)
-// 2. 쿠폰 추가/삭제
-//
-// 반환할 값:
-// - coupons: 쿠폰 배열
-// - addCoupon: 새 쿠폰 추가
-// - removeCoupon: 쿠폰 삭제
+import { useCallback, useState } from "react"
+import { Coupon } from "../../types";
 
-export function useCoupons() {
-  // TODO: 구현
+export const useCoupons = () => {
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+
+  // 새 쿠폰 추가
+  const addCoupon = useCallback((newCoupon: Coupon) => {
+    const existingCoupon = coupons.find(c => c.code === newCoupon.code);
+    if (existingCoupon) {
+      console.log('이미 존재하는 쿠폰 코드입니다.');
+      //addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
+      return;
+    }
+    setCoupons([...coupons, newCoupon])
+    console.log('쿠폰이 추가되었습니다.');
+    //addNotification('쿠폰이 추가되었습니다.', 'success');
+  }, [coupons]);
+
+  // 쿠폰 삭제
+  const removeCoupon = useCallback((couponCode: string) => {
+    setCoupons(coupons.filter(coupon => coupon.code !== couponCode));
+  }, [coupons]);
+
+  return {
+    coupons,
+    addCoupon,
+    removeCoupon,
+  }
 }
