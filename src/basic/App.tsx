@@ -51,7 +51,7 @@ const App = () => {
       <Header.Root>
         <Header.Left>
           <Header.Logo />
-              {!isAdmin && (
+          {!isAdmin && (
             <SearchInput value={searchTerm} onChange={setSearchTerm} />
           )}
         </Header.Left>
