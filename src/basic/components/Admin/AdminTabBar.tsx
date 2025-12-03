@@ -1,8 +1,8 @@
 import React from "react";
 
 type Props = {
-  activeTab: string;
-  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  activeTab: "products" | "coupons";
+  setActiveTab: React.Dispatch<React.SetStateAction<"products" | "coupons">>;
 };
 
 const AdminTabBar = ({ activeTab, setActiveTab }: Props) => {

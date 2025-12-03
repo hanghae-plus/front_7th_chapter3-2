@@ -10,9 +10,9 @@ type Props = {
   products: ProductWithUI[];
   coupons: Coupon[];
   deleteCoupon: (id: string) => void;
-  activeTab: string;
+  activeTab: "products" | "coupons";
   getRemainingStock: (product: ProductWithUI) => number;
-  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  setActiveTab: React.Dispatch<React.SetStateAction<"products" | "coupons">>;
   deleteProduct: (id: string) => void;
   addNotification: (message: string, type?: "error" | "success" | "warning") => void;
   addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
