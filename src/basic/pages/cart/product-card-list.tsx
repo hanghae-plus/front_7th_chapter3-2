@@ -65,7 +65,8 @@ export function ProductCardList({ products, cart, onAddToCart }: PropsType) {
               )}
               {product.discounts.length > 0 && (
                 <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                  ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+                  {/* REFACTOR */}~
+                  {Math.max(...product.discounts.map((d) => d.rate)) * 100}%
                 </span>
               )}
             </div>
@@ -86,6 +87,7 @@ export function ProductCardList({ products, cart, onAddToCart }: PropsType) {
                 </p>
                 {product.discounts.length > 0 && (
                   <p className="text-xs text-gray-500">
+                    {/* REFACTOR */}
                     {product.discounts[0].quantity}개 이상 구매시 할인{' '}
                     {product.discounts[0].rate * 100}%
                   </p>
@@ -94,6 +96,7 @@ export function ProductCardList({ products, cart, onAddToCart }: PropsType) {
 
               {/* 재고 상태 */}
               <div className="mb-3">
+                {/* REFACTOR */}
                 {remainingStock <= 5 && remainingStock > 0 && (
                   <p className="text-xs text-red-600 font-medium">
                     품절임박! {remainingStock}개 남음
@@ -107,6 +110,7 @@ export function ProductCardList({ products, cart, onAddToCart }: PropsType) {
               </div>
 
               {/* 장바구니 버튼 */}
+              {/* REFACTOR */}
               <button
                 onClick={() => onAddToCart(product)}
                 disabled={remainingStock <= 0}

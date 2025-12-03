@@ -66,6 +66,7 @@ export function CartItemList({
   return (
     <div className="space-y-3">
       {cart.map((item) => {
+        /* REFACTOR */
         const itemTotal = calculateItemTotal(cart, item);
         const originalPrice = item.product.price * item.quantity;
         const hasDiscount = itemTotal < originalPrice;
@@ -121,6 +122,7 @@ export function CartItemList({
                 </button>
               </div>
               <div className="text-right">
+                {/* REFACTOR */}
                 {hasDiscount && (
                   <span className="text-xs text-red-500 font-medium block">
                     -{discountRate}%

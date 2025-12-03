@@ -23,7 +23,7 @@ export function CouponList({
       <option value="">쿠폰 선택</option>
       {coupons.map((coupon) => (
         <option key={coupon.code} value={coupon.code}>
-          {coupon.name} (
+          {coupon.name} ({/* REFACTOR */}
           {coupon.discountType === 'amount'
             ? `${coupon.discountValue.toLocaleString()}원`
             : `${coupon.discountValue}%`}

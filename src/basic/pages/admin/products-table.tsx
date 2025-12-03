@@ -13,11 +13,11 @@ export function ProductsTable({
   onDeleteProduct,
   onOpenProductForm,
 }: ProductsTableProps) {
-  // REFACTOR : 유틸로 이동
+  /* REFACTOR */
   const getRemainingStock = (product: Product): boolean => {
     return product.stock > 0;
   };
-  // REFACTOR : 유틸로 이동
+  /* REFACTOR */
   const getProductPrice = (product: Product): string => {
     if (!getRemainingStock(product)) {
       return 'SOLD OUT';
@@ -55,6 +55,7 @@ export function ProductsTable({
               {getProductPrice(product)}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {/* REFACTOR */}
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   product.stock > 10
@@ -68,6 +69,7 @@ export function ProductsTable({
               </span>
             </td>
             <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+              {/* REFACTOR */}
               {product.description || '-'}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

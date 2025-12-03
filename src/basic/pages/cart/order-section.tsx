@@ -23,7 +23,7 @@ export function OrderSection({ cart, selectedCoupon, onClearCart }: PropsType) {
           <div className="flex justify-between text-red-500">
             <span>할인 금액</span>
             <span>
-              -
+              -{/* REFACTOR */}
               {(
                 totals.totalBeforeDiscount - totals.totalAfterDiscount
               ).toLocaleString()}
@@ -34,6 +34,7 @@ export function OrderSection({ cart, selectedCoupon, onClearCart }: PropsType) {
         <div className="flex justify-between py-2 border-t border-gray-200">
           <span className="font-semibold">결제 예정 금액</span>
           <span className="font-bold text-lg text-gray-900">
+            {/* REFACTOR */}
             {totals.totalAfterDiscount.toLocaleString()}원
           </span>
         </div>
@@ -43,6 +44,7 @@ export function OrderSection({ cart, selectedCoupon, onClearCart }: PropsType) {
         onClick={onClearCart}
         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
       >
+        {/* REFACTOR */}
         {totals.totalAfterDiscount.toLocaleString()}원 결제하기
       </button>
 

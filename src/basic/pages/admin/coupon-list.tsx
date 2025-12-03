@@ -26,6 +26,7 @@ export function CouponList({
               </p>
               <div className="mt-2">
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
+                  {/* REFACTOR */}
                   {coupon.discountType === 'amount'
                     ? `${coupon.discountValue.toLocaleString()}원 할인`
                     : `${coupon.discountValue}% 할인`}
