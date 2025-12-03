@@ -4,9 +4,10 @@ import { initialCoupons } from "../constants";
 
 type Props = {
   addNotification: (message: string, type?: "error" | "success" | "warning") => void;
+  calculateCartTotal: (selectedCoupon: Coupon | null) => { totalBeforeDiscount: number; totalAfterDiscount: number };
 };
 
-const useCoupons = ({ addNotification }: Props) => {
+const useCoupons = ({ addNotification, calculateCartTotal }: Props) => {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem("coupons");
     if (saved) {
@@ -33,6 +34,32 @@ const useCoupons = ({ addNotification }: Props) => {
     [coupons, addNotification]
   );
 
+  const applyCoupon = useCallback(
+    (coupon: Coupon) => {
+      const currentTotal = calculateCartTotal(selectedCoupon).totalAfterDiscount;
+
+      if (currentTotal < 10000 && coupon.discountType === "percentage") {
+        addNotification("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.", "error");
+        return;
+      }
+
+      setSelectedCoupon(coupon);
+      addNotification("쿠폰이 적용되었습니다.", "success");
+    },
+    [addNotification, calculateCartTotal]
+  );
+
+  const deleteCoupon = useCallback(
+    (couponCode: string) => {
+      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      if (selectedCoupon?.code === couponCode) {
+        setSelectedCoupon(null);
+      }
+      addNotification("쿠폰이 삭제되었습니다.", "success");
+    },
+    [selectedCoupon, addNotification]
+  );
+
   useEffect(() => {
     localStorage.setItem("coupons", JSON.stringify(coupons));
   }, [coupons]);
@@ -40,9 +67,11 @@ const useCoupons = ({ addNotification }: Props) => {
   return {
     coupons,
     selectedCoupon,
+    applyCoupon,
     setCoupons,
     setSelectedCoupon,
     addCoupon,
+    deleteCoupon,
   };
 };
 

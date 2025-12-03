@@ -1,3 +1,4 @@
+import { Product } from "../../../types";
 import { formatPrice } from "../../utils/formatters";
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   addToCart: (product: any) => void;
   calculateItemTotal: (product: any) => number;
   removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  updateQuantity: (products: Product[], productId: number, quantity: number) => void;
   selectedCoupon: any;
   applyCoupon: (couponId: number) => void;
   setSelectedCoupon: (couponId: number) => void;
@@ -193,14 +194,14 @@ const ShoppingMallTemplate = ({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(products, item.product.id, item.quantity - 1)}
                             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             <span className="text-xs">−</span>
                           </button>
                           <span className="mx-3 text-sm font-medium w-8 text-center">{item.quantity}</span>
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(products, item.product.id, item.quantity + 1)}
                             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             <span className="text-xs">+</span>
