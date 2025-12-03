@@ -95,6 +95,21 @@ export const calculateCartTotal = (
   };
 };
 
+// "총 금액 + 할인 여부 + 할인율” 같은 세부 정보를 반환하는 함수
+export const calculateItemPriceDetails = (item: CartItem, cart: CartItem[]) => {
+  const itemTotal = calculateItemTotal(
+    item.product.price,
+    item.quantity,
+    getMaxApplicableDiscount(item, cart)
+  );
+  const originalPrice = item.product.price * item.quantity;
+  const hasDiscount = itemTotal < originalPrice;
+  const discountRate = hasDiscount
+    ? Math.round((1 - itemTotal / originalPrice) * 100)
+    : 0;
+  return { itemTotal, hasDiscount, discountRate };
+};
+
 /** =============================
  * 쿠폰 적용 함수
  * ============================== */
