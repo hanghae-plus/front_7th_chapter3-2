@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { Coupon } from '../../../../../types';
 import { checkCouponAvailability } from '../../cart.service';
 import { formatPrice } from '../../../../shared/utils/priceUtils';
+import { useNotification } from '../../../../shared/hooks/useNotification';
 
 export const CouponSelector = ({
   selectedCoupon,
@@ -9,7 +10,6 @@ export const CouponSelector = ({
   coupons,
   cartTotalPrice,
   applyCoupon,
-  addNotification,
 }: {
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
@@ -19,11 +19,9 @@ export const CouponSelector = ({
     coupon: Coupon,
     { onSuccess }: { onSuccess?: () => void },
   ) => void;
-  addNotification: (
-    message: string,
-    type: 'success' | 'error' | 'warning',
-  ) => void;
 }) => {
+  const { addNotification } = useNotification();
+
   const onCouponChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const coupon = coupons.find((c) => c.code === e.target.value);

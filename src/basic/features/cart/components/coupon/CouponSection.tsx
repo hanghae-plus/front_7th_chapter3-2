@@ -7,7 +7,6 @@ export const CouponSection = ({
   setSelectedCoupon,
   cartTotalPrice,
   applyCoupon,
-  addNotification,
 }: {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
@@ -16,10 +15,6 @@ export const CouponSection = ({
   applyCoupon: (
     coupon: Coupon,
     { onSuccess }: { onSuccess?: () => void },
-  ) => void;
-  addNotification: (
-    message: string,
-    type: 'success' | 'error' | 'warning',
   ) => void;
 }) => {
   return (
@@ -37,7 +32,6 @@ export const CouponSection = ({
           coupons={coupons}
           cartTotalPrice={cartTotalPrice}
           applyCoupon={applyCoupon}
-          addNotification={addNotification}
         />
       )}
     </section>
