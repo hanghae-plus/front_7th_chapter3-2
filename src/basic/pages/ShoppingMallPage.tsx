@@ -5,7 +5,7 @@ import { CouponSelector } from '../components/ui/CouponSelector';
 import { OrderSummary } from '../components/ui/OrderSummary';
 import { ProductWithUI } from '../hooks/useProducts';
 import { CartItem, Coupon } from '../../types';
-import { calculateItemTotal } from '../utils/calculators';
+import { calculateItemTotal } from '../models/cart';
 
 interface ShoppingMallPageProps {
   products: ProductWithUI[];
@@ -91,7 +91,7 @@ export const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({
             ) : (
               <div className="space-y-3">
                 {cart.map((item) => {
-                  const itemTotal = calculateItemTotal(item, cart);
+                  const itemTotal = calculateItemTotal({ item, cart });
                   const originalPrice = item.product.price * item.quantity;
 
                   return (

@@ -9,7 +9,7 @@ import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
 import { useNotifications } from './hooks/useNotifications';
 import { useDebounce } from './hooks/useDebounce';
-import { calculateCartTotal } from './utils/calculators';
+import { calculateCartTotal } from './models/cart';
 import { formatCurrency, formatCurrencyKRW } from './utils/formatters';
 import { getRemainingStock } from './models/cart';
 import { isOutOfStock } from './models/product';
@@ -112,7 +112,10 @@ const App = () => {
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal(cart, null).totalAfterDiscount;
+      const currentTotal = calculateCartTotal({
+        cart,
+        selectedCoupon: null,
+      }).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === 'percentage') {
         addNotification(
@@ -233,7 +236,7 @@ const App = () => {
   };
 
   const totals = useMemo(
-    () => calculateCartTotal(cart, selectedCoupon),
+    () => calculateCartTotal({ cart, selectedCoupon }),
     [cart, selectedCoupon]
   );
 

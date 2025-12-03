@@ -1,5 +1,6 @@
-import { CartItem, Product } from '../../types';
+import { CartItem, Product, Coupon } from '../../types';
 import { getMaxApplicableDiscount } from './discount';
+import { applyCouponDiscount } from './coupon';
 
 /**
  * 개별 아이템의 할인 적용 후 총액 계산
@@ -101,4 +102,39 @@ export const isCartEmpty = (cart: CartItem[]) => {
  */
 export const getTotalItemCount = (cart: CartItem[]) => {
   return cart.reduce((sum, item) => sum + item.quantity, 0);
+};
+
+/**
+ * 장바구니 전체의 할인 전/후 총 금액을 계산
+ */
+export const calculateCartTotal = ({
+  cart,
+  selectedCoupon,
+}: {
+  cart: CartItem[];
+  selectedCoupon: Coupon | null;
+}): {
+  totalBeforeDiscount: number;
+  totalAfterDiscount: number;
+} => {
+  let totalBeforeDiscount = 0;
+  let totalAfterDiscount = 0;
+
+  cart.forEach((item) => {
+    const itemPrice = item.product.price * item.quantity;
+    totalBeforeDiscount += itemPrice;
+    totalAfterDiscount += calculateItemTotal({ item, cart });
+  });
+
+  if (selectedCoupon) {
+    totalAfterDiscount = applyCouponDiscount({
+      coupon: selectedCoupon,
+      totalAmount: totalAfterDiscount,
+    });
+  }
+
+  return {
+    totalBeforeDiscount: Math.round(totalBeforeDiscount),
+    totalAfterDiscount: Math.round(totalAfterDiscount),
+  };
 };
