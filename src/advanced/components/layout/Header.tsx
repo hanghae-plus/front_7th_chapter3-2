@@ -1,8 +1,8 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { CartIcon } from '../icons';
-import { isAdminAtom, toggleAdminAtom } from '../../atoms/adminAtoms';
-import { searchTermAtom } from '../../atoms/productAtoms';
-import { totalItemCountAtom } from '../../atoms/cartAtoms';
+import { CartIcon } from '../icons'; //아이콘
+import { isAdminAtom, toggleAdminAtom } from '../../atoms/adminAtoms'; //어드민 상태관리
+import { searchTermAtom } from '../../atoms/productAtoms'; //상품 상태관리
+import { totalItemCountAtom } from '../../atoms/cartAtoms'; //카트 상태관리
 
 // 헤더 영역 컴포넌트
 export const Header = () => {
