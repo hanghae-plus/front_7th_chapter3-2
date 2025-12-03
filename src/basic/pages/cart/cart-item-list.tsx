@@ -1,15 +1,16 @@
 import { CartItem } from '../../../types';
-import { ProductWithUI } from '../../entities/product';
+import { useDeleteCart } from '../../features/cart/delete-cart';
+import { useUpdateQuantity } from '../../features/cart/update-quantitiy';
 import { ToastProps } from '../../shared/ui/toast';
 
 interface PropsType {
   cart: CartItem[];
-  products: ProductWithUI[];
   toast: (notification: ToastProps) => void;
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, newQuantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQuantity: number) => void;
 }
 
+/* REFACTOR */
 const getMaxApplicableDiscount = (cart: CartItem[], item: CartItem): number => {
   const { discounts } = item.product;
   const { quantity } = item;
@@ -28,6 +29,7 @@ const getMaxApplicableDiscount = (cart: CartItem[], item: CartItem): number => {
   return baseDiscount;
 };
 
+/* REFACTOR */
 const calculateItemTotal = (cart: CartItem[], item: CartItem): number => {
   const { price } = item.product;
   const { quantity } = item;
@@ -38,31 +40,18 @@ const calculateItemTotal = (cart: CartItem[], item: CartItem): number => {
 
 export function CartItemList({
   cart,
-  products,
   toast,
-  onRemoveFromCart,
-  onUpdateQuantity,
+  removeFromCart,
+  updateQuantity,
 }: PropsType) {
-  const updateQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      onRemoveFromCart(productId);
-      return;
-    }
+  const { onDeleteCart } = useDeleteCart({ removeFromCart, toast });
 
-    const product = products.find((p) => p.id === productId);
-    if (!product) return;
+  const { onIncreaseQuantity, onDecreaseQuantity } = useUpdateQuantity({
+    updateQuantity,
+    removeFromCart,
+    toast,
+  });
 
-    const maxStock = product.stock;
-    if (newQuantity > maxStock) {
-      toast({
-        message: `재고는 ${maxStock}개까지만 있습니다.`,
-        type: 'error',
-      });
-      return;
-    }
-
-    onUpdateQuantity(productId, newQuantity);
-  };
   return (
     <div className="space-y-3">
       {cart.map((item) => {
@@ -81,7 +70,7 @@ export function CartItemList({
                 {item.product.name}
               </h4>
               <button
-                onClick={() => onRemoveFromCart(item.product.id)}
+                onClick={() => onDeleteCart(item.product.id)}
                 className="text-gray-400 hover:text-red-500 ml-2"
               >
                 <svg
@@ -102,9 +91,7 @@ export function CartItemList({
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <button
-                  onClick={() =>
-                    updateQuantity(item.product.id, item.quantity - 1)
-                  }
+                  onClick={() => onDecreaseQuantity(item)}
                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                 >
                   <span className="text-xs">−</span>
@@ -113,9 +100,7 @@ export function CartItemList({
                   {item.quantity}
                 </span>
                 <button
-                  onClick={() =>
-                    updateQuantity(item.product.id, item.quantity + 1)
-                  }
+                  onClick={() => onIncreaseQuantity(item)}
                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                 >
                   <span className="text-xs">+</span>
@@ -129,6 +114,7 @@ export function CartItemList({
                   </span>
                 )}
                 <p className="text-sm font-medium text-gray-900">
+                  {/* REFACTOR */}
                   {Math.round(itemTotal).toLocaleString()}원
                 </p>
               </div>

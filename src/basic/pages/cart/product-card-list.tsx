@@ -1,12 +1,16 @@
 import { CartItem, Product } from '../../../types';
 import { ProductWithUI } from '../../entities/product';
+import { useAddCart } from '../../features/cart/add-cart';
+import { ToastProps } from '../../shared/ui/toast';
 
 interface PropsType {
   products: ProductWithUI[];
   cart: CartItem[];
-  onAddToCart: (product: ProductWithUI) => void;
+  addToCart: (product: ProductWithUI) => void;
+  toast: (notification: ToastProps) => void;
 }
 
+// REFACTOR
 const getRemainingStock = (cart: CartItem[], product: Product): number => {
   const cartItem = cart.find((item) => item.product.id === product.id);
   const remaining = product.stock - (cartItem?.quantity || 0);
@@ -14,6 +18,7 @@ const getRemainingStock = (cart: CartItem[], product: Product): number => {
   return remaining;
 };
 
+// REFACTOR
 const formatPrice = (
   products: ProductWithUI[],
   cart: CartItem[],
@@ -30,7 +35,14 @@ const formatPrice = (
   return `₩${price.toLocaleString()}`;
 };
 
-export function ProductCardList({ products, cart, onAddToCart }: PropsType) {
+export function ProductCardList({
+  products,
+  cart,
+  addToCart,
+  toast,
+}: PropsType) {
+  const { handleAddCart } = useAddCart({ addToCart, toast });
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products.map((product) => {
@@ -112,7 +124,7 @@ export function ProductCardList({ products, cart, onAddToCart }: PropsType) {
               {/* 장바구니 버튼 */}
               {/* REFACTOR */}
               <button
-                onClick={() => onAddToCart(product)}
+                onClick={() => handleAddCart(product)}
                 disabled={remainingStock <= 0}
                 className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
                   remainingStock <= 0

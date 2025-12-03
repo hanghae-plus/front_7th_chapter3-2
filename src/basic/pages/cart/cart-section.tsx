@@ -1,5 +1,4 @@
 import { CartItem } from '../../../types';
-import { ProductWithUI } from '../../entities/product';
 import { ToastProps } from '../../shared/ui/toast';
 import { ConditionalRender } from '../../shared/ui/conditional-render/conditional-render';
 import { CartEmptyFallback } from './cart-empty-fallback';
@@ -7,18 +6,16 @@ import { CartItemList } from './cart-item-list';
 
 interface PropsType {
   cart: CartItem[];
-  products: ProductWithUI[];
   toast: (notification: ToastProps) => void;
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, newQuantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQuantity: number) => void;
 }
 
 export function CartSection({
   cart,
-  products,
   toast,
-  onRemoveFromCart,
-  onUpdateQuantity,
+  removeFromCart,
+  updateQuantity,
 }: PropsType) {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
@@ -44,10 +41,9 @@ export function CartSection({
       >
         <CartItemList
           cart={cart}
-          products={products}
           toast={toast}
-          onRemoveFromCart={onRemoveFromCart}
-          onUpdateQuantity={onUpdateQuantity}
+          removeFromCart={removeFromCart}
+          updateQuantity={updateQuantity}
         />
       </ConditionalRender>
     </section>

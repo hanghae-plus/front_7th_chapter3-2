@@ -1,14 +1,24 @@
 import { CartItem, Coupon } from '../../../types';
 import { calculateTotal } from '../../entities/cart';
+import { useOrderCart } from '../../features/cart/order-cart';
+import { ToastProps } from '../../shared/ui/toast';
 
 interface PropsType {
   cart: CartItem[];
   selectedCoupon: Coupon | null;
-  onClearCart: () => void;
+  clearCart: () => void;
+  toast: (notification: ToastProps) => void;
 }
 
-export function OrderSection({ cart, selectedCoupon, onClearCart }: PropsType) {
+export function OrderSection({
+  cart,
+  selectedCoupon,
+  clearCart,
+  toast,
+}: PropsType) {
   const totals = calculateTotal(cart, selectedCoupon);
+  const { onOrderCart } = useOrderCart({ clearCart, toast });
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
@@ -41,7 +51,7 @@ export function OrderSection({ cart, selectedCoupon, onClearCart }: PropsType) {
       </div>
 
       <button
-        onClick={onClearCart}
+        onClick={onOrderCart}
         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
       >
         {/* REFACTOR */}

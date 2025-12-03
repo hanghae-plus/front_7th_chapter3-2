@@ -2,13 +2,9 @@ import { useState } from 'react';
 import { CartItem, Coupon, Product } from '../../../types';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { CART_STORAGE_KEY } from './cart-constants.config';
-import { ToastProps } from '../../shared/ui/toast';
 import { ProductWithUI } from '../product';
 
-interface UseCartProps {
-  toast: (notification: ToastProps) => void;
-}
-
+// REFACTOR
 const getMaxApplicableDiscount = (cart: CartItem[], item: CartItem): number => {
   const { discounts } = item.product;
   const { quantity } = item;
@@ -27,6 +23,7 @@ const getMaxApplicableDiscount = (cart: CartItem[], item: CartItem): number => {
   return baseDiscount;
 };
 
+// REFACTOR
 const calculateItemTotal = (cart: CartItem[], item: CartItem): number => {
   const { price } = item.product;
   const { quantity } = item;
@@ -35,6 +32,7 @@ const calculateItemTotal = (cart: CartItem[], item: CartItem): number => {
   return Math.round(price * quantity * (1 - discount));
 };
 
+// REFACTOR
 export const calculateTotal = (
   cart: CartItem[],
   selectedCoupon: Coupon | null
@@ -67,7 +65,7 @@ export const calculateTotal = (
   };
 };
 
-export function useCart({ toast }: UseCartProps) {
+export function useCart() {
   const [cart, setCart] = useLocalStorage<CartItem[]>(CART_STORAGE_KEY, []);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
@@ -83,42 +81,28 @@ export function useCart({ toast }: UseCartProps) {
     const remainingStock = getRemainingStock(product);
 
     if (remainingStock <= 0) {
-      toast({
-        message: '재고가 부족합니다!',
-        type: 'error',
-      });
+      throw new Error('재고가 부족합니다!');
+    }
+
+    const existingItem = cart.find((item) => item.product.id === product.id);
+
+    if (!existingItem) {
+      setCart((prevCart) => [...prevCart, { product, quantity: 1 }]);
       return;
     }
 
+    const newQuantity = existingItem.quantity + 1;
+
+    if (newQuantity > product.stock) {
+      throw new Error(`재고는 ${product.stock}개까지만 있습니다.`);
+    }
+
     setCart((prevCart) => {
-      const existingItem = prevCart.find(
-        (item) => item.product.id === product.id
+      return prevCart.map((item) =>
+        item.product.id === product.id
+          ? { ...item, quantity: newQuantity }
+          : item
       );
-
-      if (existingItem) {
-        const newQuantity = existingItem.quantity + 1;
-
-        if (newQuantity > product.stock) {
-          toast({
-            message: `재고는 ${product.stock}개까지만 있습니다.`,
-            type: 'error',
-          });
-          return prevCart;
-        }
-
-        return prevCart.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: newQuantity }
-            : item
-        );
-      }
-
-      return [...prevCart, { product, quantity: 1 }];
-    });
-
-    toast({
-      message: '장바구니에 담았습니다',
-      type: 'success',
     });
   };
 
@@ -127,11 +111,6 @@ export function useCart({ toast }: UseCartProps) {
     setCart((prevCart) =>
       prevCart.filter((item) => item.product.id !== productId)
     );
-
-    toast({
-      message: '장바구니에서 제거되었습니다',
-      type: 'success',
-    });
   };
 
   /** 수량 변경 */
@@ -153,32 +132,18 @@ export function useCart({ toast }: UseCartProps) {
     ).totalAfterDiscount;
 
     if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-      toast({
-        message: 'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
-        type: 'error',
-      });
+      throw new Error(
+        'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.'
+      );
     }
 
-    console.log('coupon', coupon);
     setSelectedCoupon(coupon);
-
-    toast({
-      message: '쿠폰이 적용되었습니다.',
-      type: 'success',
-    });
   };
 
   /** 장바구니 비우기 */
   const clearCart = () => {
-    const orderNumber = `ORD-${Date.now()}`;
-
     setCart([]);
     setSelectedCoupon(null);
-
-    toast({
-      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      type: 'success',
-    });
   };
 
   return {

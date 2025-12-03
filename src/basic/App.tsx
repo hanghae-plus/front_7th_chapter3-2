@@ -22,9 +22,7 @@ const App = () => {
     applyCoupon,
     getRemainingStock,
     clearCart,
-  } = useCart({
-    toast: addNotification,
-  });
+  } = useCart();
 
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -54,12 +52,12 @@ const App = () => {
           coupons={coupons}
           selectedCoupon={selectedCoupon}
           toast={addNotification}
-          onAddToCart={addToCart}
-          onRemoveFromCart={removeFromCart}
-          onUpdateQuantity={updateQuantity}
-          onApplyCoupon={applyCoupon}
-          onGetRemainingStock={getRemainingStock}
-          onClearCart={clearCart}
+          addToCart={addToCart}
+          removeFromCart={removeFromCart}
+          updateQuantity={updateQuantity}
+          applyCoupon={applyCoupon}
+          getRemainingStock={getRemainingStock}
+          clearCart={clearCart}
           onToggleAdmin={() => setIsAdmin(!isAdmin)}
         />
       )}

@@ -1,6 +1,7 @@
 import { CartItem } from '../../../types';
 import { ProductWithUI } from '../../entities/product';
 import { ConditionalRender } from '../../shared/ui/conditional-render';
+import { ToastProps } from '../../shared/ui/toast';
 import { ProductCardList } from './product-card-list';
 import { ProductEmptyFallback } from './product-empty-fallback';
 
@@ -8,15 +9,18 @@ interface PropsType {
   products: ProductWithUI[];
   cart: CartItem[];
   searchTerm: string;
-  onAddToCart: (product: ProductWithUI) => void;
+  addToCart: (product: ProductWithUI) => void;
+  toast: (notification: ToastProps) => void;
 }
 
 export function ProductSection({
   products,
   cart,
   searchTerm,
-  onAddToCart,
+  addToCart,
+  toast,
 }: PropsType) {
+  // REFACTOR
   const filteredProducts = searchTerm
     ? products.filter(
         (product) =>
@@ -42,7 +46,8 @@ export function ProductSection({
         <ProductCardList
           products={filteredProducts}
           cart={cart}
-          onAddToCart={onAddToCart}
+          addToCart={addToCart}
+          toast={toast}
         />
       </ConditionalRender>
     </section>

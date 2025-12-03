@@ -1,17 +1,20 @@
 import { Coupon } from '../../../types';
 import { ConditionalRender } from '../../shared/ui/conditional-render';
+import { ToastProps } from '../../shared/ui/toast';
 import { CouponList } from './coupon-list';
 
 interface PropsType {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  onApplyCoupon: (coupon: Coupon) => void;
+  applyCoupon: (coupon: Coupon) => void;
+  toast: (notification: ToastProps) => void;
 }
 
 export function CouponSection({
   coupons,
   selectedCoupon,
-  onApplyCoupon,
+  applyCoupon,
+  toast,
 }: PropsType) {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
@@ -25,7 +28,8 @@ export function CouponSection({
         <CouponList
           coupons={coupons}
           selectedCoupon={selectedCoupon}
-          onApplyCoupon={onApplyCoupon}
+          applyCoupon={applyCoupon}
+          toast={toast}
         />
       </ConditionalRender>
     </section>

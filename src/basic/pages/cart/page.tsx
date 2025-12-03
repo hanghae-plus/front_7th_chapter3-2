@@ -35,12 +35,12 @@ interface PropsType {
   cart: CartItem[];
   selectedCoupon: Coupon | null;
   toast: (notification: ToastProps) => void;
-  onAddToCart: (product: ProductWithUI) => void;
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, newQuantity: number) => void;
-  onApplyCoupon: (coupon: Coupon) => void;
-  onGetRemainingStock: (product: Product) => number;
-  onClearCart: () => void;
+  addToCart: (product: ProductWithUI) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQuantity: number) => void;
+  applyCoupon: (coupon: Coupon) => void;
+  getRemainingStock: (product: Product) => number;
+  clearCart: () => void;
   onToggleAdmin: () => void;
 }
 
@@ -50,11 +50,11 @@ export function CartPage({
   cart,
   selectedCoupon,
 
-  onAddToCart,
-  onRemoveFromCart,
-  onUpdateQuantity,
-  onApplyCoupon,
-  onClearCart,
+  addToCart,
+  removeFromCart,
+  updateQuantity,
+  applyCoupon,
+  clearCart,
   toast,
   onToggleAdmin,
 }: PropsType) {
@@ -84,7 +84,8 @@ export function CartPage({
             products={products}
             cart={cart}
             searchTerm={debouncedSearchTerm}
-            onAddToCart={onAddToCart}
+            addToCart={addToCart}
+            toast={toast}
           />
         </div>
 
@@ -92,23 +93,24 @@ export function CartPage({
           <div className="sticky top-24 space-y-4">
             <CartSection
               cart={cart}
-              products={products}
               toast={toast}
-              onRemoveFromCart={onRemoveFromCart}
-              onUpdateQuantity={onUpdateQuantity}
+              removeFromCart={removeFromCart}
+              updateQuantity={updateQuantity}
             />
 
             <ConditionalRender condition={cart.length > 0}>
               <CouponSection
                 coupons={coupons}
                 selectedCoupon={selectedCoupon}
-                onApplyCoupon={onApplyCoupon}
+                applyCoupon={applyCoupon}
+                toast={toast}
               />
 
               <OrderSection
                 cart={cart}
                 selectedCoupon={selectedCoupon}
-                onClearCart={onClearCart}
+                clearCart={clearCart}
+                toast={toast}
               />
             </ConditionalRender>
           </div>
