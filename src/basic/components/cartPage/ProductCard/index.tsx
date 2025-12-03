@@ -1,6 +1,6 @@
 import { type FC } from "react";
 import { ProductWithUI } from "../../../../types";
-import { fomatPriceWithStock } from "../../../utils/formatters";
+import { formatPrice } from "../../../utils/formatters";
 import {
   getMaxDiscountRate,
   getStockStatus,
@@ -47,7 +47,7 @@ const ProductCard: FC<IProps> = ({ product, onAddToCart, remainingStock }) => {
 
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">
-            {fomatPriceWithStock(product.price, remainingStock)}
+            {formatPrice(product.price, remainingStock)}
           </p>
           {firstDiscount && (
             <DiscountInfo
@@ -67,7 +67,8 @@ const ProductCard: FC<IProps> = ({ product, onAddToCart, remainingStock }) => {
 
         {/* 장바구니 버튼 */}
         <Button
-          variant="secondary"
+          variant="solid"
+          color="secondary"
           className="w-full"
           disabled={stockStatus.isOutOfStock}
           onClick={() => onAddToCart(product)}>

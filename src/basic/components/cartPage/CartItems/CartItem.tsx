@@ -27,7 +27,8 @@ const CartItem: FC<IProps> = ({
           {item.product.name}
         </h4>
         <Button
-          variant="close"
+          variant="ghost"
+          color="danger"
           size="sm"
           className="ml-2"
           onClick={() => onRemove(item.product.id)}>
@@ -37,7 +38,8 @@ const CartItem: FC<IProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <Button
-            variant="icon"
+            variant="outline"
+            color="gray"
             size="sm"
             onClick={() =>
               onUpdateQuantity(item.product.id, item.quantity - 1)
@@ -48,7 +50,8 @@ const CartItem: FC<IProps> = ({
             {item.quantity}
           </span>
           <Button
-            variant="icon"
+            variant="outline"
+            color="gray"
             size="sm"
             onClick={() =>
               onUpdateQuantity(item.product.id, item.quantity + 1)

@@ -7,10 +7,10 @@ import NotificationList, {
   type Notification,
 } from "./components/layout/NotificationList";
 import { useCart } from "./hooks/useCart";
+import AdminHeader from "./components/layout/AdminHeader";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [currentPage, setCurrentPage] = useState<"cart" | "admin">("cart");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { searchTerm, setSearchTerm } = useSearch();
   const { cart } = useCart();
@@ -27,16 +27,19 @@ const App = () => {
         notifications={notifications}
         onClose={handleCloseNotification}
       />
-      <CartHeader
-        searchTerm={searchTerm}
-        totalCount={totalCartCount}
-        onChange={(prev) => setIsAdmin(!prev)}
-        setSearchTerm={setSearchTerm}
-      />
+      {isAdmin ? (
+        <AdminHeader onChange={() => setIsAdmin(false)} />
+      ) : (
+        <CartHeader
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          totalCount={totalCartCount}
+          onChange={() => setIsAdmin(true)}
+        />
+      )}
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <CartPage searchTerm={searchTerm} />
-        {/* {isAdmin ? <></> : <CartPage searchTerm={searchTerm} />} */}
+        {isAdmin ? <AdminPage /> : <CartPage searchTerm={searchTerm} />}
       </main>
     </div>
   );

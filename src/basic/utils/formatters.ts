@@ -5,14 +5,14 @@
 // - formatPercentage(rate: number): string - 소수를 퍼센트로 변환 (0.1 → 10%)
 
 // TODO: 구현
-const formatPrice = (price: number): string => {
-  return `₩${price.toLocaleString()}`;
-};
 
-export const fomatPriceWithStock = (price: number, stock: number): string => {
+export const formatPrice = (price: number, stock: number): string => {
   if (stock <= 0) {
     return "SOLD OUT";
   }
-  return formatPrice(price);
+  return `₩${price.toLocaleString()}`;
 };
 
+export const formatPriceKr = (price: number): string => {
+  return `${price.toLocaleString()}원`;
+};

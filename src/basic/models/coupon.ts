@@ -2,6 +2,22 @@
 
 import { Coupon } from "../../types";
 
+
+export const addCouponToList = (coupons: Coupon[], newCoupon: Coupon): Coupon[] => {
+
+  const existingCoupon = coupons.find((coupon) => coupon.code === newCoupon.code);
+
+  if (existingCoupon) {
+    return coupons;
+  }
+
+
+  return [...coupons, newCoupon];
+};
+
+export const deleteCouponToList = (coupons: Coupon[], couponCode: string): Coupon[] => {
+  return coupons.filter((coupon) => coupon.code !== couponCode);
+};
 /**
  * 쿠폰 할인 금액/비율을 포맷팅
  */
