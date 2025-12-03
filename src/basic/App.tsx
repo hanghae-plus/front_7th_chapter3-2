@@ -12,12 +12,8 @@ import { ProductSearchBar } from "./entities/product/ui/ProductSearchBar";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  // Admin
 
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
@@ -35,7 +31,16 @@ const App = () => {
     addNotification,
   });
 
-  const { products, addProduct, updateProduct, deleteProduct } = useProduct({
+  const {
+    products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    searchTerm,
+    setSearchTerm,
+    debouncedSearchTerm,
+    filteredProducts,
+  } = useProduct({
     addNotification,
   });
 
@@ -121,13 +126,6 @@ const App = () => {
     }
   }, [cart]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
@@ -172,19 +170,6 @@ const App = () => {
 
   const totals = calculateCartTotal();
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
-
   return (
     <div className="min-h-screen bg-gray-50">
       {notifications.length > 0 && (
@@ -202,10 +187,7 @@ const App = () => {
       )}
       <Header>
         {!isAdmin && (
-          <ProductSearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
+          <ProductSearchBar searchTerm={searchTerm} onChange={setSearchTerm} />
         )}
         <nav className="flex ml-auto items-center space-x-4">
           <button

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ProductWithUI } from "../../../types";
 import { initialProducts } from "../../../constants";
 
@@ -54,11 +54,38 @@ export const useProduct = ({
     [addNotification]
   );
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  const filteredProducts = debouncedSearchTerm
+    ? products.filter(
+        (product) =>
+          product.name
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase()) ||
+          (product.description &&
+            product.description
+              .toLowerCase()
+              .includes(debouncedSearchTerm.toLowerCase()))
+      )
+    : products;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   return {
     products,
     setProducts,
     addProduct,
     updateProduct,
     deleteProduct,
+    searchTerm,
+    setSearchTerm,
+    debouncedSearchTerm,
+    filteredProducts,
   };
 };
