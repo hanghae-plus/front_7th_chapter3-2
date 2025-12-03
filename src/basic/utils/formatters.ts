@@ -1,23 +1,13 @@
-import { Product, CartItem } from '../../types';
-import { getRemainingStock as getStock } from '../models/cart';
-import { isOutOfStock } from '../models/product';
-
-export const formatPrice = (
-  price: number,
-  product: Product | undefined,
-  cart: CartItem[],
-  isAdmin: boolean
-): string => {
-  if (product) {
-    const remainingStock = getStock({ product, cart });
-    if (isOutOfStock(remainingStock)) {
-      return 'SOLD OUT';
-    }
-  }
-
-  if (isAdmin) {
-    return `${price.toLocaleString()}원`;
-  }
-
+/**
+ * 가격을 통화 형식으로 포맷팅 (₩ 기호)
+ */
+export const formatCurrency = (price: number): string => {
   return `₩${price.toLocaleString()}`;
+};
+
+/**
+ * 가격을 원화 형식으로 포맷팅 (원 단위)
+ */
+export const formatCurrencyKRW = (price: number): string => {
+  return `${price.toLocaleString()}원`;
 };

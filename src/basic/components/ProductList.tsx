@@ -2,7 +2,7 @@ import React from 'react';
 import { ProductCard } from './ui/ProductCard';
 import { ProductWithUI } from '../hooks/useProducts';
 import { CartItem } from '../../types';
-import { getRemainingStock } from '../utils/formatters';
+import { getRemainingStock } from '../models/cart';
 
 interface ProductListProps {
   products: ProductWithUI[];
@@ -38,7 +38,7 @@ export const ProductList: React.FC<ProductListProps> = ({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => {
-          const remainingStock = getRemainingStock(product, cart);
+          const remainingStock = getRemainingStock({ product, cart });
 
           return (
             <ProductCard

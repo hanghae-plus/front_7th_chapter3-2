@@ -10,8 +10,9 @@ import { useCoupons } from './hooks/useCoupons';
 import { useNotifications } from './hooks/useNotifications';
 import { useDebounce } from './hooks/useDebounce';
 import { calculateCartTotal } from './utils/calculators';
-import { formatPrice as formatPriceUtil } from './utils/formatters';
+import { formatCurrency, formatCurrencyKRW } from './utils/formatters';
 import { getRemainingStock } from './models/cart';
+import { isOutOfStock } from './models/product';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -56,10 +57,19 @@ const App = () => {
 
   const formatPrice = useCallback(
     (price: number, productId?: string): string => {
-      const product = productId
-        ? products.find((p) => p.id === productId)
-        : undefined;
-      return formatPriceUtil(price, product, cart, isAdmin);
+      // 상품이 있으면 재고 확인
+      if (productId) {
+        const product = products.find((p) => p.id === productId);
+        if (product) {
+          const remainingStock = getRemainingStock({ product, cart });
+          if (isOutOfStock(remainingStock)) {
+            return 'SOLD OUT';
+          }
+        }
+      }
+
+      // 관리자 여부에 따라 포맷 선택
+      return isAdmin ? formatCurrencyKRW(price) : formatCurrency(price);
     },
     [products, cart, isAdmin]
   );
