@@ -1,3 +1,5 @@
+import { IconClose } from "./icons/IconClose";
+
 interface Notification {
   id: string;
   message: string;
@@ -13,6 +15,10 @@ const Notifications = ({
   notifications,
   setNotifications,
 }: NotificationsProps) => {
+  const handleRemoveNotification = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
   return (
     <>
       {notifications.length > 0 && (
@@ -30,26 +36,10 @@ const Notifications = ({
             >
               <span className="mr-2">{notif.message}</span>
               <button
-                onClick={() =>
-                  setNotifications((prev) =>
-                    prev.filter((n) => n.id !== notif.id)
-                  )
-                }
+                onClick={() => handleRemoveNotification(notif.id)}
                 className="text-white hover:text-gray-200"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <IconClose />
               </button>
             </div>
           ))}
