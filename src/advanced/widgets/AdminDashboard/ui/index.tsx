@@ -1,7 +1,15 @@
 import { useState } from "react";
-import { ProductWithUI} from "../../../entities/product/model/types";
-import { Coupon } from "../../../entities/coupon/model/types";
+
+// Shared
 import { formatCurrency } from "../../../shared/lib/format";
+
+// Entities (Model)
+import { ProductWithUI } from "../../../entities/product/model/types";
+import { Coupon } from "../../../entities/coupon/model/types";
+
+// Features (UI)
+import { ProductManagementForm } from "../../../features/product/model/ui/ProductManagementForm";
+import { CouponManagementForm } from "../../../features/coupon/ui/CouponManagementForm";
 
 interface Props {
   products: ProductWithUI[];
@@ -11,10 +19,13 @@ interface Props {
   onDeleteProduct: (id: string) => void;
   onAddCoupon: (coupon: Coupon) => void;
   onDeleteCoupon: (id: string) => void;
-  //  알림 기능 주입 추가
   onNotification: (message: string, type?: "error" | "success" | "warning") => void;
 }
 
+/**
+ * 관리자 대시보드 위젯
+ * 상품 및 쿠폰 관리 기능을 제공하며, 하위 폼 컴포넌트의 표시 여부(Visibility)를 관리합니다.
+ */
 export const AdminDashboard = ({
   products,
   coupons,
@@ -23,73 +34,64 @@ export const AdminDashboard = ({
   onDeleteProduct,
   onAddCoupon,
   onDeleteCoupon,
-  onNotification, //  Props로 받기
+  onNotification,
 }: Props) => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
+
+  // --------------------------------------------------------------------------
+  // Local State (Visibility & Editing Target)
+  // --------------------------------------------------------------------------
+  
+  // 상품 관리: 폼 표시 여부 및 수정할 상품 데이터
   const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductWithUI | null>(null);
 
-  const [productForm, setProductForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-    isRecommended: false,
-  });
-
+  // 쿠폰 관리: 폼 표시 여부
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState({
-    name: "",
-    code: "",
-    discountType: "amount" as "amount" | "percentage",
-    discountValue: 0,
-  });
 
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== "new") {
-      onUpdateProduct(editingProduct, productForm);
+  // --------------------------------------------------------------------------
+  // Event Handlers
+  // --------------------------------------------------------------------------
+
+  /**
+   * 상품 추가/수정 완료 핸들러
+   * ProductManagementForm에서 전달받은 데이터를 기반으로
+   * 신규 추가(onAddProduct) 또는 수정(onUpdateProduct) 액션을 호출합니다.
+   */
+  const handleProductSubmit = (productData: ProductWithUI) => {
+    if (editingProduct) {
+      onUpdateProduct(editingProduct.id, productData);
     } else {
-      onAddProduct(productForm);
+      // 신규 생성 시 id는 제외하고 전달 (서버/훅에서 생성)
+      const { id, ...newProduct } = productData;
+      onAddProduct(newProduct);
     }
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-      isRecommended: false,
-    });
+    // 폼 닫기 및 상태 초기화
     setEditingProduct(null);
     setShowProductForm(false);
   };
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAddCoupon(couponForm);
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
-
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || [],
-      isRecommended: product.isRecommended || false,
-    });
+  /**
+   * 상품 수정 버튼 클릭 핸들러
+   * 수정할 상품 데이터를 상태에 설정하고 폼을 엽니다.
+   */
+  const handleEditClick = (product: ProductWithUI) => {
+    setEditingProduct(product);
     setShowProductForm(true);
   };
 
+  /**
+   * 쿠폰 추가 완료 핸들러
+   * CouponManagementForm에서 전달받은 데이터를 기반으로 추가 액션을 호출합니다.
+   */
+  const handleCouponSubmit = (newCoupon: Coupon) => {
+    onAddCoupon(newCoupon);
+    setShowCouponForm(false);
+  };
+
+  // --------------------------------------------------------------------------
+  // Render
+  // --------------------------------------------------------------------------
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
@@ -129,15 +131,7 @@ export const AdminDashboard = ({
               <h2 className="text-lg font-semibold">상품 목록</h2>
               <button
                 onClick={() => {
-                  setEditingProduct("new");
-                  setProductForm({
-                    name: "",
-                    price: 0,
-                    stock: 0,
-                    description: "",
-                    discounts: [],
-                    isRecommended: false,
-                  });
+                  setEditingProduct(null);
                   setShowProductForm(true);
                 }}
                 className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
@@ -196,7 +190,7 @@ export const AdminDashboard = ({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
-                        onClick={() => startEditProduct(product)}
+                        onClick={() => handleEditClick(product)}
                         className="text-indigo-600 hover:text-indigo-900 mr-3"
                       >
                         수정
@@ -214,221 +208,17 @@ export const AdminDashboard = ({
             </table>
           </div>
 
+          {/* 상품 폼 컴포넌트 */}
           {showProductForm && (
-            <div className="p-6 border-t border-gray-200 bg-gray-50">
-              <form onSubmit={handleProductSubmit} className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {editingProduct === "new" ? "새 상품 추가" : "상품 수정"}
-                </h3>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      상품명
-                    </label>
-                    <input
-                      type="text"
-                      value={productForm.name}
-                      onChange={(e) =>
-                        setProductForm({ ...productForm, name: e.target.value })
-                      }
-                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      설명
-                    </label>
-                    <input
-                      type="text"
-                      value={productForm.description}
-                      onChange={(e) =>
-                        setProductForm({
-                          ...productForm,
-                          description: e.target.value,
-                        })
-                      }
-                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      가격
-                    </label>
-                    <input
-                      type="text" // number -> text 변경 (테스트 입력 호환)
-                      value={productForm.price === 0 ? "" : productForm.price}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === "" || /^\d+$/.test(value)) {
-                          setProductForm({
-                            ...productForm,
-                            price: value === "" ? 0 : parseInt(value),
-                          });
-                        }
-                      }}
-                      onBlur={(e) => {
-                        const value = e.target.value;
-                        if (value === "") {
-                          setProductForm({ ...productForm, price: 0 });
-                        } else if (parseInt(value) < 0) {
-                          //  alert 대신 onNotification 사용
-                          onNotification("가격은 0보다 커야 합니다", "error");
-                          setProductForm({ ...productForm, price: 0 });
-                        }
-                      }}
-                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                      placeholder="숫자만 입력"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      재고
-                    </label>
-                    <input
-                      type="text" // number -> text 변경
-                      value={productForm.stock === 0 ? "" : productForm.stock}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === "" || /^\d+$/.test(value)) {
-                          setProductForm({
-                            ...productForm,
-                            stock: value === "" ? 0 : parseInt(value),
-                          });
-                        }
-                      }}
-                      onBlur={(e) => {
-                        const value = e.target.value;
-                        if (value === "") {
-                          setProductForm({ ...productForm, stock: 0 });
-                        } else if (parseInt(value) < 0) {
-                          //  alert 대신 onNotification 사용
-                          onNotification("재고는 0보다 커야 합니다", "error");
-                          setProductForm({ ...productForm, stock: 0 });
-                        } else if (parseInt(value) > 9999) {
-                          onNotification("재고는 9999개를 초과할 수 없습니다", "error");
-                          setProductForm({ ...productForm, stock: 9999 });
-                        }
-                      }}
-                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                      placeholder="숫자만 입력"
-                      required
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={productForm.isRecommended}
-                        onChange={(e) =>
-                          setProductForm({
-                            ...productForm,
-                            isRecommended: e.target.checked,
-                          })
-                        }
-                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        추천 상품(BEST)으로 등록
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    할인 정책
-                  </label>
-                  <div className="space-y-2">
-                    {productForm.discounts.map((discount, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-2 bg-gray-50 p-2 rounded"
-                      >
-                        <input
-                          type="number"
-                          value={discount.quantity}
-                          onChange={(e) => {
-                            const newDiscounts = [...productForm.discounts];
-                            newDiscounts[index].quantity =
-                              parseInt(e.target.value) || 0;
-                            setProductForm({
-                              ...productForm,
-                              discounts: newDiscounts,
-                            });
-                          }}
-                          className="w-20 px-2 py-1 border rounded"
-                          placeholder="수량"
-                        />
-                        <span className="text-sm">개 이상 구매 시</span>
-                        <input
-                          type="number"
-                          value={discount.rate * 100}
-                          onChange={(e) => {
-                            const newDiscounts = [...productForm.discounts];
-                            newDiscounts[index].rate =
-                              (parseInt(e.target.value) || 0) / 100;
-                            setProductForm({
-                              ...productForm,
-                              discounts: newDiscounts,
-                            });
-                          }}
-                          className="w-16 px-2 py-1 border rounded"
-                          placeholder="%"
-                        />
-                        <span className="text-sm">% 할인</span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setProductForm({
-                              ...productForm,
-                              discounts: productForm.discounts.filter(
-                                (_, i) => i !== index
-                              ),
-                            });
-                          }}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setProductForm({
-                          ...productForm,
-                          discounts: [
-                            ...productForm.discounts,
-                            { quantity: 10, rate: 0.1 },
-                          ],
-                        });
-                      }}
-                      className="text-sm text-indigo-600 hover:text-indigo-800"
-                    >
-                      + 할인 추가
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowProductForm(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                  >
-                    취소
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
-                  >
-                    {editingProduct === "new" ? "추가" : "수정"}
-                  </button>
-                </div>
-              </form>
-            </div>
+            <ProductManagementForm
+              initialData={editingProduct}
+              onSubmit={handleProductSubmit}
+              onCancel={() => {
+                setShowProductForm(false);
+                setEditingProduct(null);
+              }}
+              onNotification={onNotification}
+            />
           )}
         </section>
       ) : (
@@ -504,146 +294,13 @@ export const AdminDashboard = ({
               </div>
             </div>
 
+            {/* 쿠폰 폼 컴포넌트 */}
             {showCouponForm && (
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <form onSubmit={handleCouponSubmit} className="space-y-4">
-                  <h3 className="text-md font-medium text-gray-900">
-                    새 쿠폰 생성
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        쿠폰명
-                      </label>
-                      <input
-                        type="text"
-                        value={couponForm.name}
-                        onChange={(e) =>
-                          setCouponForm({ ...couponForm, name: e.target.value })
-                        }
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-                        placeholder="신규 가입 쿠폰"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        쿠폰 코드
-                      </label>
-                      <input
-                        type="text"
-                        value={couponForm.code}
-                        onChange={(e) =>
-                          setCouponForm({
-                            ...couponForm,
-                            code: e.target.value.toUpperCase(),
-                          })
-                        }
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
-                        placeholder="WELCOME2024"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        할인 타입
-                      </label>
-                      <select
-                        value={couponForm.discountType}
-                        onChange={(e) =>
-                          setCouponForm({
-                            ...couponForm,
-                            discountType: e.target.value as
-                              | "amount"
-                              | "percentage",
-                          })
-                        }
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-                      >
-                        <option value="amount">정액 할인</option>
-                        <option value="percentage">정률 할인</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {couponForm.discountType === "amount"
-                          ? "할인 금액"
-                          : "할인율(%)"}
-                      </label>
-                      <input
-                        type="text"
-                        value={
-                          couponForm.discountValue === 0
-                            ? ""
-                            : couponForm.discountValue
-                        }
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === "" || /^\d+$/.test(value)) {
-                            setCouponForm({
-                              ...couponForm,
-                              discountValue:
-                                value === "" ? 0 : parseInt(value),
-                            });
-                          }
-                        }}
-                        onBlur={(e) => {
-                          const value = parseInt(e.target.value) || 0;
-                          if (couponForm.discountType === "percentage") {
-                            if (value > 100) {
-                              //  alert 대신 onNotification 사용 (테스트 통과 핵심)
-                              onNotification("할인율은 100%를 초과할 수 없습니다", "error");
-                              setCouponForm({
-                                ...couponForm,
-                                discountValue: 100,
-                              });
-                            } else if (value < 0) {
-                              setCouponForm({
-                                ...couponForm,
-                                discountValue: 0,
-                              });
-                            }
-                          } else {
-                            if (value > 100000) {
-                              //  alert 대신 onNotification 사용
-                              onNotification("할인 금액은 100,000원을 초과할 수 없습니다", "error");
-                              setCouponForm({
-                                ...couponForm,
-                                discountValue: 100000,
-                              });
-                            } else if (value < 0) {
-                              setCouponForm({
-                                ...couponForm,
-                                discountValue: 0,
-                              });
-                            }
-                          }
-                        }}
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-                        placeholder={
-                          couponForm.discountType === "amount" ? "5000" : "10"
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowCouponForm(false)}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      취소
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
-                    >
-                      쿠폰 생성
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <CouponManagementForm
+                onAddCoupon={handleCouponSubmit}
+                onCancel={() => setShowCouponForm(false)}
+                onNotification={onNotification}
+              />
             )}
           </div>
         </section>
