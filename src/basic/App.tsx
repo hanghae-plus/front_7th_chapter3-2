@@ -11,24 +11,27 @@ import {
   isSoldOut,
 } from "./models/cart";
 import {
-  formatCouponValue,
-  formatDiscount,
-  formatPriceKor,
-  formatPriceUnit,
-} from "./utils/formatters";
-import {
-  isNumericInput,
+  filterProductsBySearch,
+  getMaxDiscountRate,
+  getStockStatusMessage,
+  getStockBadgeClass,
+  getAddToCartButtonState,
   validateProductPrice,
   validateProductStock,
+} from "./models/product";
+import { calculateDiscountRate, hasDiscount } from "./models/discount";
+import {
   validateCouponPercentage,
   validateCouponAmount,
-} from "./utils/validators";
+  formatCouponValue,
+} from "./models/coupon";
+import { formatDiscount, formatPriceKor, formatPriceUnit } from "./utils/formatters";
+import { isNumericInput } from "./utils/validators";
 import {
   ProductWithUI,
   EMPTY_PRODUCT_FORM,
   EMPTY_COUPON_FORM,
   TIMING,
-  STOCK_THRESHOLDS,
 } from "./constants";
 import { useDebounce } from "./utils/hooks/useDebounce";
 
@@ -118,18 +121,10 @@ const App = () => {
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  const filteredProducts = filterProductsBySearch(
+    products,
+    debouncedSearchTerm
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -314,13 +309,9 @@ const App = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  product.stock > STOCK_THRESHOLDS.GOOD_STOCK
-                                    ? "bg-green-100 text-green-800"
-                                    : product.stock > 0
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : "bg-red-100 text-red-800"
-                                }`}
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStockBadgeClass(
+                                  product.stock
+                                )}`}
                               >
                                 {product.stock}개
                               </span>
@@ -823,6 +814,9 @@ const App = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
                       const remainingStock = getRemainingStock(product, cart);
+                      const stockStatus = getStockStatusMessage(remainingStock);
+                      const buttonState =
+                        getAddToCartButtonState(remainingStock);
 
                       return (
                         <div
@@ -853,12 +847,7 @@ const App = () => {
                             )}
                             {product.discounts.length > 0 && (
                               <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                                ~
-                                {formatDiscount(
-                                  Math.max(
-                                    ...product.discounts.map((d) => d.rate)
-                                  )
-                                )}
+                                ~{formatDiscount(getMaxDiscountRate(product))}
                               </span>
                             )}
                           </div>
@@ -891,15 +880,9 @@ const App = () => {
 
                             {/* 재고 상태 */}
                             <div className="mb-3">
-                              {remainingStock <= STOCK_THRESHOLDS.LOW_STOCK &&
-                                remainingStock > 0 && (
-                                  <p className="text-xs text-red-600 font-medium">
-                                    품절임박! {remainingStock}개 남음
-                                  </p>
-                                )}
-                              {remainingStock > STOCK_THRESHOLDS.LOW_STOCK && (
-                                <p className="text-xs text-gray-500">
-                                  재고 {remainingStock}개
+                              {stockStatus && (
+                                <p className={stockStatus.className}>
+                                  {stockStatus.message}
                                 </p>
                               )}
                             </div>
@@ -907,14 +890,10 @@ const App = () => {
                             {/* 장바구니 버튼 */}
                             <button
                               onClick={() => addToCart(product)}
-                              disabled={remainingStock <= 0}
-                              className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                                remainingStock <= 0
-                                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                  : "bg-gray-900 text-white hover:bg-gray-800"
-                              }`}
+                              disabled={buttonState.disabled}
+                              className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${buttonState.className}`}
                             >
-                              {remainingStock <= 0 ? "품절" : "장바구니 담기"}
+                              {buttonState.label}
                             </button>
                           </div>
                         </div>
@@ -969,10 +948,14 @@ const App = () => {
                         const itemTotal = calculateItemTotal(item, cart);
                         const originalPrice =
                           item.product.price * item.quantity;
-                        const hasDiscount = itemTotal < originalPrice;
-                        const discountRate = hasDiscount
-                          ? Math.round((1 - itemTotal / originalPrice) * 100)
-                          : 0;
+                        const itemHasDiscount = hasDiscount(
+                          itemTotal,
+                          originalPrice
+                        );
+                        const discountRate = calculateDiscountRate(
+                          itemTotal,
+                          originalPrice
+                        );
 
                         return (
                           <div
@@ -1031,7 +1014,7 @@ const App = () => {
                                 </button>
                               </div>
                               <div className="text-right">
-                                {hasDiscount && (
+                                {itemHasDiscount && (
                                   <span className="text-xs text-red-500 font-medium block">
                                     -{discountRate}%
                                   </span>
