@@ -1,17 +1,12 @@
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
-import { ToastProps } from '../../shared/ui/toast';
 import {
   INITIAL_PRODUCTS,
   PRODUCT_STORAGE_KEY,
 } from './product-constants.config';
 import { ProductWithUI } from './product-interface.model';
 
-interface UseProductsProps {
-  toast: (notification: ToastProps) => void;
-}
-
 // TODO: model 분리 및 features 분리
-export function useProducts({ toast }: UseProductsProps) {
+export function useProducts() {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
     PRODUCT_STORAGE_KEY,
     INITIAL_PRODUCTS
@@ -25,11 +20,6 @@ export function useProducts({ toast }: UseProductsProps) {
     };
 
     setProducts((prev) => [...prev, product]);
-
-    toast({
-      message: '상품이 추가되었습니다.',
-      type: 'success',
-    });
   };
 
   /** 상품 정보 수정 */
@@ -42,21 +32,11 @@ export function useProducts({ toast }: UseProductsProps) {
         product.id === productId ? { ...product, ...updates } : product
       )
     );
-
-    toast({
-      message: '상품이 수정되었습니다.',
-      type: 'success',
-    });
   };
 
   /** 상품 삭제 */
   const deleteProduct = (productId: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
-
-    toast({
-      message: '상품이 삭제되었습니다.',
-      type: 'success',
-    });
   };
 
   // /** 상품 재고 수정 */

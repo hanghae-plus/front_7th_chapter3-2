@@ -1,18 +1,24 @@
 import { Product } from '../../../types';
 import { ProductWithUI } from '../../entities/product';
+import { useDeleteProduct } from '../../features/product/delete-product';
 import { formatPrice } from '../../shared/lib/formatters';
+import { ToastProps } from '../../shared/ui/toast';
 
 interface ProductsTableProps {
   products: ProductWithUI[];
-  onDeleteProduct: (productId: string) => void;
+  deleteProduct: (productId: string) => void;
   onOpenProductForm: (product: ProductWithUI) => void;
+  toast: (notification: ToastProps) => void;
 }
 
 export function ProductsTable({
   products,
-  onDeleteProduct,
+  deleteProduct,
   onOpenProductForm,
+  toast,
 }: ProductsTableProps) {
+  const { onDeleteProduct } = useDeleteProduct({ deleteProduct, toast });
+
   /* REFACTOR */
   const getRemainingStock = (product: Product): boolean => {
     return product.stock > 0;

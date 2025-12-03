@@ -13,6 +13,7 @@ export function useCoupons() {
   const addCoupon = (coupon: Coupon) => {
     const existingCoupon = coupons.find((c) => c.code === coupon.code);
 
+    // CHECK:  상태의 연결을 담당하는 곳에서 처리하는게 맞는건가?
     if (existingCoupon) {
       throw new Error('이미 존재하는 쿠폰 코드입니다.');
     }

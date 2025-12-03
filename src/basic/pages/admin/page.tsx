@@ -10,9 +10,9 @@ import { AdminHeader } from '../../widgets/admin-header.ui';
 interface PropsType {
   products: ProductWithUI[];
   coupons: Coupon[];
-  onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
-  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  onDeleteProduct: (productId: string) => void;
+  addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
+  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
+  deleteProduct: (productId: string) => void;
   addCoupon: (newCoupon: Coupon) => void;
   removeCoupon: (couponCode: string) => void;
   onToggleAdmin: () => void;
@@ -22,9 +22,9 @@ interface PropsType {
 export function AdminPage({
   products,
   coupons,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
+  addProduct,
+  updateProduct,
+  deleteProduct,
   addCoupon,
   removeCoupon,
   onToggleAdmin,
@@ -47,9 +47,9 @@ export function AdminPage({
           <Tabs.Content value="products" className="mt-0">
             <ProductsSection
               products={products}
-              onAddProduct={onAddProduct}
-              onUpdateProduct={onUpdateProduct}
-              onDeleteProduct={onDeleteProduct}
+              addProduct={addProduct}
+              updateProduct={updateProduct}
+              deleteProduct={deleteProduct}
               toast={toast}
             />
           </Tabs.Content>

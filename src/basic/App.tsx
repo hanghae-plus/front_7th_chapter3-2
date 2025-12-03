@@ -9,9 +9,7 @@ import { useCart } from './entities/cart/use-cart.model';
 const App = () => {
   const { notifications, addNotification, removeNotification } = useToast();
 
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts({
-    toast: addNotification,
-  });
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
 
   const { coupons, addCoupon, removeCoupon } = useCoupons();
 
@@ -42,9 +40,9 @@ const App = () => {
           products={products}
           coupons={coupons}
           toast={addNotification}
-          onAddProduct={addProduct}
-          onUpdateProduct={updateProduct}
-          onDeleteProduct={deleteProduct}
+          addProduct={addProduct}
+          updateProduct={updateProduct}
+          deleteProduct={deleteProduct}
           addCoupon={addCoupon}
           removeCoupon={removeCoupon}
           onToggleAdmin={() => setIsAdmin(!isAdmin)}

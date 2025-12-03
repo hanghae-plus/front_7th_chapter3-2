@@ -9,17 +9,17 @@ import { ConditionalRender } from '../../shared/ui/conditional-render';
 
 interface ProductsSectionProps {
   products: ProductWithUI[];
-  onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
-  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  onDeleteProduct: (productId: string) => void;
+  addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
+  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
+  deleteProduct: (productId: string) => void;
   toast: (notification: ToastProps) => void;
 }
 
 export function ProductsSection({
   products,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
+  addProduct,
+  updateProduct,
+  deleteProduct,
   toast,
 }: ProductsSectionProps) {
   const [openProductFormType, setOpenProductFormType] = useState<
@@ -69,14 +69,15 @@ export function ProductsSection({
       <div className="overflow-x-auto">
         <ProductsTable
           products={products}
-          onDeleteProduct={onDeleteProduct}
+          deleteProduct={deleteProduct}
           onOpenProductForm={handleOpenEditProductForm}
+          toast={toast}
         />
       </div>
 
       <ConditionalRender condition={showCreateProductForm}>
         <CreateProductForm
-          onAddProduct={onAddProduct}
+          addProduct={addProduct}
           onCloseProductForm={handleCloseCreateProductForm}
           toast={toast}
         />
@@ -85,7 +86,7 @@ export function ProductsSection({
       <ConditionalRender condition={showEditProductForm}>
         <EditProductForm
           product={selectedProduct!}
-          onUpdateProduct={onUpdateProduct}
+          updateProduct={updateProduct}
           onCloseProductForm={handleCloseEditProductForm}
           toast={toast}
         />
