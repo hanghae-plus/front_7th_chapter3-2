@@ -4,21 +4,16 @@ import { formatProductPrice } from "../../domains/products/utils/formatProductPr
 import { ProductWithUI } from "../../domains/products/types/ProductWithUI";
 import { ProductsService } from "../../domains/products/hooks/useProducts";
 import { addNotification } from "../../domains/notifications/utils/addNotification";
+import { CouponsService } from "../../domains/coupon/hooks/useCoupon";
 
 type AdminPageProps = {
   products: ProductsService;
-  coupons: Coupon[];
-  onAddCoupon: (coupon: Coupon) => void;
-  onDeleteCoupon: (couponCode: string) => void;
-  onError: (errorMessage: string) => void;
+  coupons: CouponsService;
 };
 
 export function AdminPage({
   products,
   coupons,
-  onAddCoupon,
-  onDeleteCoupon,
-  onError,
 }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -67,11 +62,18 @@ export function AdminPage({
   }, []);
 
   const addCoupon = useCallback((newCoupon: Coupon) => {
-    onAddCoupon(newCoupon);
+    if (coupons.has(newCoupon.code)) {
+      addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+      return;
+    }
+
+    coupons.addItem(newCoupon);
+    addNotification("쿠폰이 추가되었습니다.", "success");
   }, []);
 
   const deleteCoupon = useCallback((couponCode: string) => {
-    onDeleteCoupon(couponCode);
+    coupons.getByCode(couponCode)?.delete();
+    addNotification("쿠폰이 삭제되었습니다.", "success");
   }, []);
 
   const handleProductSubmit = (e: React.FormEvent) => {
@@ -295,7 +297,7 @@ export function AdminPage({
                         if (value === "") {
                           setProductForm({ ...productForm, price: 0 });
                         } else if (parseInt(value) < 0) {
-                          onError("가격은 0보다 커야 합니다");
+                          addNotification("가격은 0보다 커야 합니다", "error");
                           setProductForm({ ...productForm, price: 0 });
                         }
                       }}
@@ -325,10 +327,10 @@ export function AdminPage({
                         if (value === "") {
                           setProductForm({ ...productForm, stock: 0 });
                         } else if (parseInt(value) < 0) {
-                          onError("재고는 0보다 커야 합니다");
+                          addNotification("재고는 0보다 커야 합니다", "error");
                           setProductForm({ ...productForm, stock: 0 });
                         } else if (parseInt(value) > 9999) {
-                          onError("재고는 9999개를 초과할 수 없습니다");
+                          addNotification("재고는 9999개를 초과할 수 없습니다", "error");
                           setProductForm({ ...productForm, stock: 9999 });
                         }
                       }}
@@ -460,7 +462,7 @@ export function AdminPage({
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {coupons.map((coupon) => (
+              {coupons.list.map((coupon) => (
                 <div
                   key={coupon.code}
                   className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
@@ -609,7 +611,7 @@ export function AdminPage({
                           const value = parseInt(e.target.value) || 0;
                           if (couponForm.discountType === "percentage") {
                             if (value > 100) {
-                              onError("할인율은 100%를 초과할 수 없습니다");
+                              addNotification("할인율은 100%를 초과할 수 없습니다", "error");
                               setCouponForm({
                                 ...couponForm,
                                 discountValue: 100,
@@ -622,8 +624,9 @@ export function AdminPage({
                             }
                           } else {
                             if (value > 100000) {
-                              onError(
-                                "할인 금액은 100,000원을 초과할 수 없습니다"
+                              addNotification(
+                                "할인 금액은 100,000원을 초과할 수 없습니다",
+                                "error"
                               );
                               setCouponForm({
                                 ...couponForm,

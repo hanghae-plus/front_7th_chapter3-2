@@ -1,5 +1,6 @@
 import { CartItem, Coupon } from "../../../../types";
 import { CartService } from "../../../domains/cart/hooks/useCart";
+import { CouponsService } from "../../../domains/coupon/hooks/useCoupon";
 import { addNotification } from "../../../domains/notifications/utils/addNotification";
 import { CartItemListSection } from "./CartItemListSection/CartItemListSection";
 import { CouponSection } from "./CouponSection/CouponSection";
@@ -7,7 +8,7 @@ import { PurchaseSection } from "./PurchaseSection/PurchaseSection";
 
 type CartSectionProps = {
   cart: CartService;
-  coupons: Coupon[];
+  coupons: CouponsService;
 };
 
 export function CartSection({ cart, coupons }: CartSectionProps) {

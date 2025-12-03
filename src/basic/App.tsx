@@ -10,42 +10,15 @@ import { ProductWithUI } from "./domains/products/types/ProductWithUI";
 import { initialProducts } from "./domains/products/constants/initialProducts";
 import { initialCoupons } from "./domains/coupon/constants/initialCoupons";
 import { useProducts } from "./domains/products/hooks/useProducts";
+import { useCoupons } from "./domains/coupon/hooks/useCoupon";
+import { CartIcon } from "./shared/components/icons/CartIcon";
 
 const App = () => {
-  // const [products, setProducts] = useState<ProductWithUI[]>(() => {
-  //   const saved = localStorage.getItem("products");
-  //   if (saved) {
-  //     try {
-  //       return JSON.parse(saved);
-  //     } catch {
-  //       return initialProducts;
-  //     }
-  //   }
-  //   return initialProducts;
-  // });
-
   const products = useProducts();
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
+  const coupons = useCoupons();
   const cart = useCart();
 
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -78,18 +51,7 @@ const App = () => {
             </button>
             {!isAdmin && (
               <div className="relative">
-                <svg
-                  className="w-6 h-6 text-gray-700"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
+                <CartIcon />
                 {cart.list.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {cart.totalItemCount}
@@ -103,37 +65,9 @@ const App = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
-          <AdminPage
-            products={products}
-            coupons={coupons}
-            onAddCoupon={(newCoupon) => {
-              const existingCoupon = coupons.find(
-                (c) => c.code === newCoupon.code
-              );
-              if (existingCoupon) {
-                addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-                return;
-              }
-              setCoupons((prev) => [...prev, newCoupon]);
-              addNotification("쿠폰이 추가되었습니다.", "success");
-            }}
-            onDeleteCoupon={(couponCode) => {
-              setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-              if (selectedCoupon?.code === couponCode) {
-                setSelectedCoupon(null);
-              }
-              addNotification("쿠폰이 삭제되었습니다.", "success");
-            }}
-            onError={(errorMessage) => {
-              addNotification(errorMessage, "error");
-            }}
-          />
+          <AdminPage products={products} coupons={coupons} />
         ) : (
-          <ShopPage
-            cart={cart}
-            products={products}
-            coupons={coupons}
-          />
+          <ShopPage cart={cart} products={products} coupons={coupons} />
         )}
       </main>
     </div>

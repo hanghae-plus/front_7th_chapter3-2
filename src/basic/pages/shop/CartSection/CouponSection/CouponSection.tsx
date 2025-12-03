@@ -1,10 +1,11 @@
 import { Coupon } from "../../../../../types";
 import { CartService } from "../../../../domains/cart/hooks/useCart";
+import { CouponsService } from "../../../../domains/coupon/hooks/useCoupon";
 import { addNotification } from "../../../../domains/notifications/utils/addNotification";
 
 type CouponSectionProps = {
   cart: CartService;
-  coupons: Coupon[];
+  coupons: CouponsService;
   selectedCoupon: Coupon | null;
   onApplyCoupon: (coupon: Coupon) => void;
   onRemoveCoupon: () => void;
@@ -25,12 +26,12 @@ export function CouponSection({
           쿠폰 등록
         </button>
       </div>
-      {coupons.length > 0 && (
+      {coupons.list.length > 0 && (
         <select
           className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
           value={selectedCoupon?.code || ""}
           onChange={(e) => {
-            const coupon = coupons.find((c) => c.code === e.target.value);
+            const coupon = coupons.getByCode(e.target.value);
 
             if (coupon == null) {
               onRemoveCoupon();
@@ -53,7 +54,7 @@ export function CouponSection({
             addNotification("쿠폰이 적용되었습니다.", "success");
           }}>
           <option value="">쿠폰 선택</option>
-          {coupons.map((coupon) => (
+          {coupons.list.map((coupon) => (
             <option key={coupon.code} value={coupon.code}>
               {coupon.name} (
               {coupon.discountType === "amount"
