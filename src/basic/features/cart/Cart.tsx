@@ -1,19 +1,11 @@
 import { CartItem, Coupon } from '../../../types';
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { ProductWithUI } from '../../App';
 import { useManageCoupon } from '../admin/hooks/useManageCoupon';
 
 export const Cart = ({
   cart,
   setCart,
-
   addNotification,
   products,
 }: {
@@ -26,13 +18,7 @@ export const Cart = ({
     type: 'success' | 'error' | 'warning',
   ) => void;
 }) => {
-  // 이건 장바구니에서만 다뤄도 됨
-
   const { coupons, selectedCoupon, setSelectedCoupon } = useManageCoupon();
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {

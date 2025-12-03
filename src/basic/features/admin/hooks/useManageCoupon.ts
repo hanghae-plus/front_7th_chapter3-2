@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Coupon } from '../../../../types';
 import { useNotification } from '../../../shared/hooks/useNotification';
 
@@ -34,6 +34,10 @@ export const useManageCoupon = () => {
     }
     return initialCoupons;
   });
+
+  useEffect(() => {
+    localStorage.setItem('coupons', JSON.stringify(coupons));
+  }, [coupons]);
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
