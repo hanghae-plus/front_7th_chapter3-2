@@ -1,40 +1,31 @@
-import { useState } from 'react';
 import { Coupon } from '../../../../types';
 import { ToastProps } from '../../../shared/ui/toast';
+import { useCreateCoupon } from './use-create-coupon';
 
 interface CreateCouponFormProps {
-  onAddCoupon: (coupon: Coupon) => void;
+  addCoupon: (coupon: Coupon) => void;
   onCloseCouponForm: () => void;
   toast: (notification: ToastProps) => void;
 }
 
 export function CreateCouponForm({
-  onAddCoupon,
+  addCoupon,
   onCloseCouponForm,
   toast,
 }: CreateCouponFormProps) {
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
-  });
+  const {
+    couponForm,
+    onCreateCoupon,
+    onChangeName,
+    onChangeCode,
+    onChangeDiscountType,
+    onChangeDiscountValue,
+    onBlurDiscountValue,
+  } = useCreateCoupon({ addCoupon, onCloseCouponForm, toast });
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAddCoupon(couponForm);
-
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
-    onCloseCouponForm();
-  };
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-      <form onSubmit={handleCouponSubmit} className="space-y-4">
+      <form onSubmit={onCreateCoupon} className="space-y-4">
         <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -44,12 +35,7 @@ export function CreateCouponForm({
             <input
               type="text"
               value={couponForm.name}
-              onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  name: e.target.value,
-                })
-              }
+              onChange={onChangeName}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder="신규 가입 쿠폰"
               required
@@ -62,12 +48,7 @@ export function CreateCouponForm({
             <input
               type="text"
               value={couponForm.code}
-              onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  code: e.target.value.toUpperCase(),
-                })
-              }
+              onChange={onChangeCode}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
               placeholder="WELCOME2024"
               required
@@ -79,12 +60,7 @@ export function CreateCouponForm({
             </label>
             <select
               value={couponForm.discountType}
-              onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  discountType: e.target.value as 'amount' | 'percentage',
-                })
-              }
+              onChange={onChangeDiscountType}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
             >
               <option value="amount">정액 할인</option>
@@ -101,53 +77,8 @@ export function CreateCouponForm({
               value={
                 couponForm.discountValue === 0 ? '' : couponForm.discountValue
               }
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === '' || /^\d+$/.test(value)) {
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: value === '' ? 0 : parseInt(value),
-                  });
-                }
-              }}
-              onBlur={(e) => {
-                const value = parseInt(e.target.value) || 0;
-                if (couponForm.discountType === 'percentage') {
-                  if (value > 100) {
-                    toast({
-                      message: '할인율은 100%를 초과할 수 없습니다',
-                      type: 'error',
-                    });
-
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100,
-                    });
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    });
-                  }
-                } else {
-                  if (value > 100000) {
-                    toast({
-                      message: '할인 금액은 100,000원을 초과할 수 없습니다',
-                      type: 'error',
-                    });
-
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100000,
-                    });
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    });
-                  }
-                }
-              }}
+              onChange={onChangeDiscountValue}
+              onBlur={onBlurDiscountValue}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               // REFACTOR
               placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}

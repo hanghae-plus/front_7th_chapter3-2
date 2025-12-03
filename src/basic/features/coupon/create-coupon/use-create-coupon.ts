@@ -15,8 +15,6 @@ const initialState = {
   discountValue: 0,
 };
 
-const createCouponSchema = {};
-
 export function useCreateCoupon({
   addCoupon,
   onCloseCouponForm,
@@ -123,5 +121,10 @@ export function useCreateCoupon({
   return {
     couponForm,
     onCreateCoupon: handleCouponSubmit,
+    onChangeName: handleChangeName,
+    onChangeCode: handleChangeCode,
+    onChangeDiscountType: handleChangeDiscountType,
+    onChangeDiscountValue: handleChangeDiscountValue,
+    onBlurDiscountValue: handleBlurDiscountValue,
   };
 }

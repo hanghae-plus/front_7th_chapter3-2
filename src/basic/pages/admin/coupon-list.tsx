@@ -1,16 +1,21 @@
 import { Coupon } from '../../../types';
+import { useDeleteCoupon } from '../../features/coupon/delete-coupon/use-delete-coupon';
+import { ToastProps } from '../../shared/ui/toast';
 
 interface CouponListProps {
   coupons: Coupon[];
-  onRemoveCoupon: (couponCode: string) => void;
+  removeCoupon: (couponCode: string) => void;
   onToggleShowCouponForm: () => void;
+  toast: (notification: ToastProps) => void;
 }
 
 export function CouponList({
   coupons,
-  onRemoveCoupon,
+  removeCoupon,
   onToggleShowCouponForm,
+  toast,
 }: CouponListProps) {
+  const { onDeleteCoupon } = useDeleteCoupon({ removeCoupon, toast });
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {coupons.map((coupon) => (
@@ -34,7 +39,7 @@ export function CouponList({
               </div>
             </div>
             <button
-              onClick={() => onRemoveCoupon(coupon.code)}
+              onClick={() => onDeleteCoupon(coupon.code)}
               className="text-gray-400 hover:text-red-600 transition-colors"
             >
               <svg

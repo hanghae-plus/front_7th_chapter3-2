@@ -13,8 +13,8 @@ interface PropsType {
   onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
   onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   onDeleteProduct: (productId: string) => void;
-  onAddCoupon: (newCoupon: Coupon) => void;
-  onRemoveCoupon: (couponCode: string) => void;
+  addCoupon: (newCoupon: Coupon) => void;
+  removeCoupon: (couponCode: string) => void;
   onToggleAdmin: () => void;
   toast: (notification: ToastProps) => void;
 }
@@ -25,8 +25,8 @@ export function AdminPage({
   onAddProduct,
   onUpdateProduct,
   onDeleteProduct,
-  onAddCoupon,
-  onRemoveCoupon,
+  addCoupon,
+  removeCoupon,
   onToggleAdmin,
   toast,
 }: PropsType) {
@@ -57,8 +57,8 @@ export function AdminPage({
           <Tabs.Content value="coupons" className="mt-0">
             <CouponsSection
               coupons={coupons}
-              onAddCoupon={onAddCoupon}
-              onRemoveCoupon={onRemoveCoupon}
+              addCoupon={addCoupon}
+              removeCoupon={removeCoupon}
               toast={toast}
             />
           </Tabs.Content>

@@ -1,14 +1,9 @@
 import { Coupon } from '../../../types';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
-import { ToastProps } from '../../shared/ui/toast';
 import { COUPON_STORAGE_KEY, INITIAL_COUPONS } from './coupon-constants.config';
 
-interface UseCouponsProps {
-  toast: (notification: ToastProps) => void;
-}
-
 // TODO: model 분리 및 features 분리 > toast는 features에서 처리
-export function useCoupons({ toast }: UseCouponsProps) {
+export function useCoupons() {
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
     COUPON_STORAGE_KEY,
     INITIAL_COUPONS
@@ -28,11 +23,6 @@ export function useCoupons({ toast }: UseCouponsProps) {
   /** 쿠폰 삭제 */
   const removeCoupon = (couponCode: string) => {
     setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-
-    toast({
-      message: '쿠폰이 삭제되었습니다.',
-      type: 'success',
-    });
   };
   return {
     coupons,

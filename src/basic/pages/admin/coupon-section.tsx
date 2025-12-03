@@ -6,15 +6,15 @@ import { CreateCouponForm } from '../../features/coupon/create-coupon';
 
 interface CouponsSectionProps {
   coupons: Coupon[];
-  onAddCoupon: (newCoupon: Coupon) => void;
-  onRemoveCoupon: (couponCode: string) => void;
+  addCoupon: (newCoupon: Coupon) => void;
+  removeCoupon: (couponCode: string) => void;
   toast: (notification: ToastProps) => void;
 }
 
 export function CouponsSection({
   coupons,
-  onAddCoupon,
-  onRemoveCoupon,
+  addCoupon,
+  removeCoupon,
   toast,
 }: CouponsSectionProps) {
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -27,12 +27,13 @@ export function CouponsSection({
       <div className="p-6">
         <CouponList
           coupons={coupons}
-          onRemoveCoupon={onRemoveCoupon}
+          removeCoupon={removeCoupon}
           onToggleShowCouponForm={() => setShowCouponForm((prev) => !prev)}
+          toast={toast}
         />
         {showCouponForm && (
           <CreateCouponForm
-            onAddCoupon={onAddCoupon}
+            addCoupon={addCoupon}
             onCloseCouponForm={() => setShowCouponForm(false)}
             toast={toast}
           />

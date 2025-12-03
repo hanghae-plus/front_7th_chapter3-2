@@ -13,9 +13,7 @@ const App = () => {
     toast: addNotification,
   });
 
-  const { coupons, addCoupon, removeCoupon } = useCoupons({
-    toast: addNotification,
-  });
+  const { coupons, addCoupon, removeCoupon } = useCoupons();
 
   const {
     cart,
@@ -47,8 +45,8 @@ const App = () => {
           onAddProduct={addProduct}
           onUpdateProduct={updateProduct}
           onDeleteProduct={deleteProduct}
-          onAddCoupon={addCoupon}
-          onRemoveCoupon={removeCoupon}
+          addCoupon={addCoupon}
+          removeCoupon={removeCoupon}
           onToggleAdmin={() => setIsAdmin(!isAdmin)}
         />
       ) : (
