@@ -3,16 +3,15 @@ import { IconClose } from "../../../components/icons";
 
 export function CartListItem({
   item,
+  itemTotal,
   removeFromCart,
   updateQuantity,
-  calculateItemTotal,
 }: {
   item: CartItem;
+  itemTotal: number;
   removeFromCart: (productId: string) => void;
   updateQuantity: (product: Product, newQuantity: number) => void;
-  calculateItemTotal: (item: CartItem) => number;
 }) {
-  const itemTotal = calculateItemTotal(item);
   const originalPrice = item.product.price * item.quantity;
   const hasDiscount = itemTotal < originalPrice;
   const discountRate = hasDiscount

@@ -14,9 +14,7 @@ export function CartPage({
   selectedCoupon,
   setSelectedCoupon,
   applyCoupon,
-  totals,
   completeOrder,
-  calculateItemTotal,
   removeFromCart,
   updateQuantity,
 }: {
@@ -31,12 +29,7 @@ export function CartPage({
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
   applyCoupon: (coupon: Coupon) => void;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
   completeOrder: () => void;
-  calculateItemTotal: (item: CartItem) => number;
   removeFromCart: (productId: string) => void;
   updateQuantity: (product: Product, newQuantity: number) => void;
 }) {
@@ -60,12 +53,10 @@ export function CartPage({
             cart={cart}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
-            calculateItemTotal={calculateItemTotal}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             applyCoupon={applyCoupon}
-            totals={totals}
             completeOrder={completeOrder}
           />
         </div>

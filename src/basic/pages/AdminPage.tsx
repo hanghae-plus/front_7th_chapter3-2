@@ -1,5 +1,5 @@
-import { CouponDashboard } from "../widgets/coupon/ui/CouponDashboard";
-import { ProductDashboard } from "../widgets/product/ui/ProductDashboard";
+import { CouponDashboard } from "../widgets/admin/ui/CouponDashboard";
+import { ProductDashboard } from "../widgets/admin/ui/ProductDashboard";
 import { Coupon, ProductForm, ProductWithUI } from "../types";
 import { useState } from "react";
 
@@ -24,8 +24,8 @@ export function AdminPage({
   ) => void;
   formatPrice: (price: number, productId?: string) => string;
   deleteProduct: (productId: string) => void;
-  updateProduct: (productId: string, product: ProductFormType) => void;
-  addProduct: (product: ProductFormType) => void;
+  updateProduct: (productId: string, product: ProductForm) => void;
+  addProduct: (product: ProductForm) => void;
 }) {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"

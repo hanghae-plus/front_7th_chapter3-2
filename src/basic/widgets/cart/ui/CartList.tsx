@@ -1,17 +1,16 @@
 import { CartItem, Product } from "../../../types";
 import { CartListItem } from "./CartListItem";
 import { IconShopping } from "../../../components/icons";
+import { calculateItemTotal } from "../../../features/calculate-price/model/calculateItemTotal";
 
 export function CartList({
   cart,
   removeFromCart,
   updateQuantity,
-  calculateItemTotal,
 }: {
   cart: CartItem[];
   removeFromCart: (productId: string) => void;
   updateQuantity: (product: Product, newQuantity: number) => void;
-  calculateItemTotal: (item: CartItem) => number;
 }) {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
@@ -31,9 +30,9 @@ export function CartList({
               <CartListItem
                 key={item.product.id}
                 item={item}
+                itemTotal={calculateItemTotal(cart, item)}
                 removeFromCart={removeFromCart}
                 updateQuantity={updateQuantity}
-                calculateItemTotal={calculateItemTotal}
               />
             );
           })}
