@@ -13,6 +13,7 @@ import { SearchBar } from "./components/common/SearchBar";
 import { HeaderActions } from "./components/layouts/HeaderActions";
 import { ProductList } from "./components/product/ProductList";
 import { CartSidebar } from "./components/cart/CartSidebar";
+import { formatPrice } from "./utils/formatters";
 
 // 초기 데이터
 const initialProducts: ProductWithUI[] = [
@@ -129,21 +130,22 @@ const App = () => {
     discountValue: 0,
   });
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
+  const getDisplayPrice = (price: number, productId?: string): string => {
+    if (isSoldOut(productId)) {
+      return "SOLD OUT";
     }
 
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
+    return formatPrice(price, isAdmin ? "kr" : "en");
   };
 
+  // 재고 없는지 여부 확인
+  const isSoldOut = (productId?: string): boolean => {
+    if (!productId) return false;
+    const product = products.find((p) => p.id === productId);
+    return product ? getRemainingStock(product) <= 0 : false;
+  };
+
+  // 재고 잔량 확인
   const getRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
     const remaining = product.stock - (cartItem?.quantity || 0);
@@ -540,7 +542,7 @@ const App = () => {
                             {product.name}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {formatPrice(product.price, product.id)}
+                            {getDisplayPrice(product.price, product.id)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <span
@@ -1036,7 +1038,7 @@ const App = () => {
               filteredProducts={filteredProducts}
               debouncedSearchTerm={debouncedSearchTerm}
               getRemainingStock={getRemainingStock}
-              formatPrice={formatPrice}
+              getDisplayPrice={getDisplayPrice}
               addToCart={addToCart}
             />
           </div>

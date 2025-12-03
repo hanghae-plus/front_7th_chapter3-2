@@ -7,7 +7,7 @@ interface ProductListProps {
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
   getRemainingStock: (product: Product) => number;
-  formatPrice: (price: number, productId?: string) => string;
+  getDisplayPrice: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
 }
 
@@ -16,7 +16,7 @@ export const ProductList = ({
   filteredProducts,
   debouncedSearchTerm,
   getRemainingStock,
-  formatPrice,
+  getDisplayPrice,
   addToCart,
 }: ProductListProps) => {
   const EmptyProduct = () => {
@@ -45,7 +45,7 @@ export const ProductList = ({
                 key={product.id}
                 product={product}
                 remainingStock={remainingStock}
-                formatPrice={formatPrice}
+                getDisplayPrice={getDisplayPrice}
                 addToCart={addToCart}
               />
             );

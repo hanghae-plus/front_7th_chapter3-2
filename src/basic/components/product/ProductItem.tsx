@@ -4,14 +4,14 @@ import { ImagePlaceholderIcon } from "../icon/ImagePlaceholderIcon";
 interface ProductItemProps {
   product: ProductWithUI;
   remainingStock: number;
-  formatPrice: (price: number, productId?: string) => string;
+  getDisplayPrice: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
 }
 
 export const ProductItem = ({
   product,
   remainingStock,
-  formatPrice,
+  getDisplayPrice,
   addToCart,
 }: ProductItemProps) => {
   return (
@@ -47,7 +47,7 @@ export const ProductItem = ({
         {/* 가격 정보 */}
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">
-            {formatPrice(product.price, product.id)}
+            {getDisplayPrice(product.price, product.id)}
           </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">

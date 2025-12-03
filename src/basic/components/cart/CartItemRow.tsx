@@ -1,3 +1,4 @@
+import { formatPrice } from "../../utils/formatters";
 import { CloseButton } from "../common/CloseButton";
 import { MinusButton } from "../common/MinusButton";
 import { PlusButton } from "../common/PlusButton";
@@ -44,7 +45,7 @@ export const CartItemRow = ({
             </span>
           )}
           <p className="text-sm font-medium text-gray-900">
-            {Math.round(itemTotal).toLocaleString()}원
+            {formatPrice(Math.round(itemTotal))}
           </p>
         </div>
       </div>
