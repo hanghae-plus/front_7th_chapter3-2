@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { ProductWithUI } from '../types';
 import { Coupon } from '../../types';
 import { Notification } from '../types';
+import { formatPriceKRW } from '../utils';
 
 interface AdminDashboardPageProps {
   products: ProductWithUI[];
@@ -119,21 +120,6 @@ export default function AdminDashboardPage({
     [addNotification]
   );
 
-  const formatPrice = (price: number, productId?: string): string => {
-    // if (productId) {
-    //   const product = products.find(p => p.id === productId);
-    //   if (product && getRemainingStock(product) <= 0) {
-    //     return 'SOLD OUT';
-    //   }
-    // }
-
-    // if (isAdmin) {
-    //   return `${price.toLocaleString()}원`;
-    // }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
@@ -245,7 +231,7 @@ export default function AdminDashboardPage({
                       {product.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatPrice(product.price, product.id)}
+                      {formatPriceKRW(product.price, 'suffix')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span

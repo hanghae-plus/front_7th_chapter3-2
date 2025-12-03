@@ -1,17 +1,7 @@
 import { useCallback, useState } from 'react';
 import { CartItem, Coupon, Product } from '../../types';
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
-
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
-
+import { ProductWithUI, Notification } from '../types';
+import { formatPriceKRW } from '../utils';
 interface ProductPageProps {
   products: ProductWithUI[];
   coupons: Coupon[];
@@ -47,20 +37,6 @@ export default function ProductPage({
     return remaining;
   };
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find(p => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return 'SOLD OUT';
-      }
-    }
-
-    // if (isAdmin) {
-    //   return `${price.toLocaleString()}원`;
-    // }
-
-    return `₩${price.toLocaleString()}`;
-  };
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
       const id = Date.now().toString();
@@ -286,7 +262,7 @@ export default function ProductPage({
                       {/* 가격 정보 */}
                       <div className="mb-3">
                         <p className="text-lg font-bold text-gray-900">
-                          {formatPrice(product.price, product.id)}
+                          {formatPriceKRW(product.price, 'prefix')}
                         </p>
                         {product.discounts.length > 0 && (
                           <p className="text-xs text-gray-500">
@@ -420,7 +396,7 @@ export default function ProductPage({
                             </span>
                           )}
                           <p className="text-sm font-medium text-gray-900">
-                            {Math.round(itemTotal).toLocaleString()}원
+                            {formatPriceKRW(itemTotal, 'suffix')}
                           </p>
                         </div>
                       </div>
@@ -453,7 +429,7 @@ export default function ProductPage({
                       <option key={coupon.code} value={coupon.code}>
                         {coupon.name} (
                         {coupon.discountType === 'amount'
-                          ? `${coupon.discountValue.toLocaleString()}원`
+                          ? `${formatPriceKRW(coupon.discountValue, 'suffix')}`
                           : `${coupon.discountValue}%`}
                         )
                       </option>
@@ -468,22 +444,25 @@ export default function ProductPage({
                   <div className="flex justify-between">
                     <span className="text-gray-600">상품 금액</span>
                     <span className="font-medium">
-                      {totals.totalBeforeDiscount.toLocaleString()}원
+                      {formatPriceKRW(totals.totalBeforeDiscount, 'suffix')}
                     </span>
                   </div>
                   {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
                     <div className="flex justify-between text-red-500">
                       <span>할인 금액</span>
                       <span>
-                        -{(totals.totalBeforeDiscount - totals.totalAfterDiscount).toLocaleString()}
-                        원
+                        -
+                        {formatPriceKRW(
+                          totals.totalBeforeDiscount - totals.totalAfterDiscount,
+                          'suffix'
+                        )}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between py-2 border-t border-gray-200">
                     <span className="font-semibold">결제 예정 금액</span>
                     <span className="font-bold text-lg text-gray-900">
-                      {totals.totalAfterDiscount.toLocaleString()}원
+                      {formatPriceKRW(totals.totalAfterDiscount, 'suffix')}
                     </span>
                   </div>
                 </div>
@@ -492,7 +471,7 @@ export default function ProductPage({
                   onClick={completeOrder}
                   className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                 >
-                  {totals.totalAfterDiscount.toLocaleString()}원 결제하기
+                  {formatPriceKRW(totals.totalAfterDiscount, 'suffix')} 결제하기
                 </button>
 
                 <div className="mt-3 text-xs text-gray-500 text-center">
