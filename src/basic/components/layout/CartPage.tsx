@@ -54,9 +54,10 @@ export function CartPage({
   calculateItemTotal,
   calculateTotal,
   clearCart,
+  cart,
 }: CartPageProps) {
-  const totals = calculateCartTotal(cart, selectedCoupon);
-  const useCart = useCart();
+  // const totals = calculateCartTotal(cart, selectedCoupon);
+
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>
@@ -73,7 +74,7 @@ export function CartPage({
         <ProductList
           filteredProducts={filteredProducts}
           debouncedSearchTerm={debouncedSearchTerm}
-          getRemainingStock={getRemainingStock}
+          getRemainingStock={getRemaininegStock}
           addToCart={addToCart}
         />
       </div>

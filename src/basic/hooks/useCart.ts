@@ -35,6 +35,7 @@ import {
 } from "../models/cart";
 import { ProductWithUI } from "./useProducts";
 import { Coupon } from "../../types";
+import { toast } from "../utils/toast";
 
 export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -55,7 +56,7 @@ export const useCart = () => {
     (product: ProductWithUI) => {
       const remainingStock = getRemainingStock(product);
       if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
+        toast.error("재고가 부족합니다!");
         return;
       }
 
@@ -66,7 +67,7 @@ export const useCart = () => {
           const newQuantity = existingItem.quantity + 1;
 
           if (newQuantity > product.stock) {
-            addNotification(`재고는 ${product.stock}개까지만 있습니다.`, "error");
+            toast.error(`재고는 ${product.stock}개까지만 있습니다.`);
             return prevCart;
           }
 
@@ -78,9 +79,9 @@ export const useCart = () => {
         return [...prevCart, { product, quantity: 1 }];
       });
 
-      addNotification("장바구니에 담았습니다", "success");
+      toast.success("장바구니에 담았습니다");
     },
-    [cart, addNotification, getRemainingStock]
+    [cart, getRemainingStock]
   );
 
   const removeFromCart = useCallback((productId: string) => {
@@ -92,14 +93,14 @@ export const useCart = () => {
       const currentTotal = calculateCartTotal().totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        addNotification("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.", "error");
+        toast.error("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.");
         return;
       }
 
       setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
+      toast.success("쿠폰이 적용되었습니다.");
     },
-    [addNotification, calculateCartTotal]
+    [calculateCartTotal]
   );
 
   const updateQuantity = useCallback(
@@ -114,7 +115,7 @@ export const useCart = () => {
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+        toast.error(`재고는 ${maxStock}개까지만 있습니다.`);
         return;
       }
 
@@ -124,7 +125,7 @@ export const useCart = () => {
         )
       );
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, removeFromCart, getRemainingStock]
   );
 
   const calculateTotal = () => {
@@ -133,10 +134,10 @@ export const useCart = () => {
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
+    toast.success(`주문이 완료되었습니다. 주문번호: ${orderNumber}`);
     setCart([]);
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, []);
 
   const clearCart = useCallback(() => {
     setCart([]);

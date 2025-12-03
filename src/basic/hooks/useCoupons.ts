@@ -10,6 +10,7 @@
 
 import { useCallback, useState } from "react";
 import { Coupon } from "../../types";
+import { toast } from "../utils/toast";
 
 const initialCoupons: Coupon[] = [
   {
@@ -43,13 +44,13 @@ export function useCoupons() {
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+        toast.error("이미 존재하는 쿠폰 코드입니다.");
         return;
       }
       setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
+      toast.success("쿠폰이 추가되었습니다.");
     },
-    [coupons, addNotification]
+    [coupons]
   );
 
   const deleteCoupon = useCallback(
@@ -58,9 +59,9 @@ export function useCoupons() {
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
+      toast.success("쿠폰이 삭제되었습니다.");
     },
-    [selectedCoupon, addNotification]
+    [selectedCoupon]
   );
 
   return {

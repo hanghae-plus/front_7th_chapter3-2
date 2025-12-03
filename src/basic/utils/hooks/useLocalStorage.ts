@@ -7,23 +7,51 @@
 //
 // 반환값: [저장된 값, 값 설정 함수]
 
+import { useCallback, useEffect, useState } from "react";
+import { storage } from "../storage";
+
+// loose Autocomplete pattern
+// https://x.com/mattpocockuk/status/1823380970147369171
+// https://lackluster.tistory.com/239
+type TKey = "products" | "coupons" | "cart";
+
 export function useLocalStorage<T>(
-  key: string,
+  key: TKey | (string & {}),
   initialValue: T
-): [T, (value: T | ((val: T) => T)) => void] {
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
+): [T, (value: T | ((val: T) => T)) => void, () => void] {
+  const [value, setValue] = useState<T>(() => storage.get<T>(key) ?? initialValue);
 
   useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
+    return storage.subscribe<T>(key, (newValue) => {
+      setValue(newValue ?? initialValue);
+    });
+  }, [key, initialValue]);
 
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
+  const set = useCallback(
+    (newValue: T | ((val: T) => T)) => {
+      const valueToStore = newValue instanceof Function ? newValue(storage.get<T>(key) ?? initialValue) : newValue;
+      storage.set(key, valueToStore);
+    },
+    [key, initialValue]
+  );
+
+  const remove = useCallback(() => {
+    storage.remove(key);
+  }, [key]);
+
+  return [value, set, remove];
 }
+
+// useEffect(() => {
+//   localStorage.setItem("products", JSON.stringify(products));
+// }, [products]);
+// useEffect(() => {
+//   localStorage.setItem("coupons", JSON.stringify(coupons));
+// }, [coupons]);
+// useEffect(() => {
+//   if (cart.length > 0) {
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//   } else {
+//     localStorage.removeItem("cart");
+//   }
+// }, [cart]);

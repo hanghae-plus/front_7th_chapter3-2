@@ -8,6 +8,8 @@
 
 import { Product } from "../../types";
 import { useCallback, useState } from "react";
+import { toast } from "../utils/toast";
+import { storage } from "../utils/storage";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -16,54 +18,40 @@ export interface ProductWithUI extends Product {
 
 export const useProducts = () => {
   /**상품 배열 */
+  // 이러면 의존성이 섞여 있는 것 아닌가??
+  // const [products, setProducts] = useLocalStorage("products", initialProducts);
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
+    const saved = storage.get<ProductWithUI[]>("products");
+    return saved ? saved : initialProducts;
   });
 
   /**상품 정보 수정 */
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
-      );
-      addNotification("상품이 수정되었습니다.", "success");
-    },
-    [addNotification]
-  );
+  const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
+    setProducts((prev) =>
+      prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
+    );
+    toast.success("상품이 수정되었습니다.");
+  }, []);
 
   /**새 상품 추가 */
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
-    },
-    [addNotification]
-  );
+  const addProduct = useCallback((newProduct: Omit<ProductWithUI, "id">) => {
+    const product: ProductWithUI = {
+      ...newProduct,
+      id: `p${Date.now()}`,
+    };
+    setProducts((prev) => [...prev, product]);
+    toast.success("상품이 추가되었습니다.");
+  }, []);
 
   /**재고 수정 */
   const updateProductStock = () => {
     return;
   };
 
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
-    },
-    [addNotification]
-  );
+  const deleteProduct = useCallback((productId: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    toast.success("상품이 삭제되었습니다.");
+  }, []);
 
   /**할인 규칙 추가 */
   const addProductDiscount = () => {
@@ -76,9 +64,11 @@ export const useProducts = () => {
   };
 
   return {
-    products,
-    updateProduct,
-    addProduct,
+    addProduct, // C
+    products, // R
+    updateProduct, // U
+    deleteProduct, // D
+
     updateProductStock,
     addProductDiscount,
     removeProductDiscount,
