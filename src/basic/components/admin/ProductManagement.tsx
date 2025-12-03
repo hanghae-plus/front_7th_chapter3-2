@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductTable, ProductWithUI } from "./ProductTable";
+import { ProductAccordion, ProductWithUI } from "./ProductAccordion";
 import { ProductForm, ProductFormData } from "./ProductForm";
 
 interface ProductManagementProps {
@@ -8,7 +8,10 @@ interface ProductManagementProps {
   onUpdate: (id: string, updates: Partial<ProductWithUI>) => void;
   onDelete: (id: string) => void;
   formatPrice: (price: number, productId?: string) => string;
-  addNotification: (message: string, type: "error" | "success" | "warning") => void;
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
 }
 
 export const ProductManagement: React.FC<ProductManagementProps> = ({
@@ -20,7 +23,9 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
   addNotification,
 }) => {
   const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<ProductWithUI | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductWithUI | null>(
+    null
+  );
 
   const handleEdit = (product: ProductWithUI) => {
     setEditingProduct(product);
@@ -61,7 +66,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
         </div>
       </div>
 
-      <ProductTable
+      <ProductAccordion
         products={products}
         onEdit={handleEdit}
         onDelete={onDelete}
@@ -91,4 +96,3 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
     </section>
   );
 };
-

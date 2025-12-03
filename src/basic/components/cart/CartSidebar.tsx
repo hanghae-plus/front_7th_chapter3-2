@@ -16,6 +16,7 @@ interface CartSidebarProps {
   onApplyCoupon: (coupon: Coupon | null) => void;
   onCheckout: () => void;
   calculateItemTotal: (item: CartItemType) => number;
+  calculateItemDiscountRate: (item: CartItemType) => number;
 }
 
 export const CartSidebar: React.FC<CartSidebarProps> = ({
@@ -28,6 +29,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
   onApplyCoupon,
   onCheckout,
   calculateItemTotal,
+  calculateItemDiscountRate,
 }) => {
   return (
     <div className="sticky top-24 space-y-4">
@@ -69,11 +71,13 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
           <div className="space-y-3">
             {cart.map((item) => {
               const itemTotal = calculateItemTotal(item);
+              const discountRate = calculateItemDiscountRate(item);
               return (
                 <CartItem
                   key={item.product.id}
                   item={item}
                   itemTotal={itemTotal}
+                  discountRate={discountRate}
                   onUpdateQuantity={onUpdateQuantity}
                   onRemove={onRemove}
                 />

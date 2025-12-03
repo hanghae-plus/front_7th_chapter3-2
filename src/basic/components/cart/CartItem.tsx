@@ -3,6 +3,7 @@ import { CartItem as CartItemType } from "../../../types";
 interface CartItemProps {
   item: CartItemType;
   itemTotal: number;
+  discountRate: number;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemove: (productId: string) => void;
 }
@@ -10,15 +11,10 @@ interface CartItemProps {
 export const CartItem: React.FC<CartItemProps> = ({
   item,
   itemTotal,
+  discountRate,
   onUpdateQuantity,
   onRemove,
 }) => {
-  const originalPrice = item.product.price * item.quantity;
-  const hasDiscount = itemTotal < originalPrice;
-  const discountRate = hasDiscount
-    ? Math.round((1 - itemTotal / originalPrice) * 100)
-    : 0;
-
   return (
     <div className="border-b pb-3 last:border-b-0">
       <div className="flex justify-between items-start mb-2">
@@ -63,7 +59,7 @@ export const CartItem: React.FC<CartItemProps> = ({
           </button>
         </div>
         <div className="text-right">
-          {hasDiscount && (
+          {discountRate > 0 && (
             <span className="text-xs text-red-500 font-medium block">
               -{discountRate}%
             </span>
@@ -76,4 +72,3 @@ export const CartItem: React.FC<CartItemProps> = ({
     </div>
   );
 };
-

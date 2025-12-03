@@ -3,38 +3,46 @@ import { Coupon } from "../../types";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { initialCoupons } from "../constants";
 
+type NotifyFn = (
+  message: string,
+  type: "error" | "success" | "warning"
+) => void;
+
 /**
  * 쿠폰 관리를 위한 커스텀 훅
+ * @param addNotification - 알림 함수 (옵션)
  */
-export function useCoupons() {
+export function useCoupons(addNotification?: NotifyFn) {
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
     "coupons",
     initialCoupons
   );
 
-  const addCoupon = useCallback(
+  const handleAddCoupon = useCallback(
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        return { success: false, message: "이미 존재하는 쿠폰 코드입니다." };
+        addNotification?.("이미 존재하는 쿠폰 코드입니다.", "error");
+        return false;
       }
       setCoupons((prev) => [...prev, newCoupon]);
-      return { success: true, message: "쿠폰이 추가되었습니다." };
+      addNotification?.("쿠폰이 추가되었습니다.", "success");
+      return true;
     },
-    [coupons, setCoupons]
+    [coupons, setCoupons, addNotification]
   );
 
-  const deleteCoupon = useCallback(
+  const handleDeleteCoupon = useCallback(
     (couponCode: string) => {
       setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      return { success: true, message: "쿠폰이 삭제되었습니다." };
+      addNotification?.("쿠폰이 삭제되었습니다.", "success");
     },
-    [setCoupons]
+    [setCoupons, addNotification]
   );
 
   return {
     coupons,
-    addCoupon,
-    deleteCoupon,
+    handleAddCoupon,
+    handleDeleteCoupon,
   };
 }

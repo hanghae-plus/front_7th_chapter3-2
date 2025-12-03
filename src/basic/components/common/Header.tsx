@@ -1,9 +1,11 @@
+import { CartItem } from "../../../types";
+import { useLocalStorage } from "../../utils/hooks/useLocalStorage";
+
 interface HeaderProps {
   isAdmin: boolean;
   searchTerm: string;
   onSearchChange: (term: string) => void;
   onToggleAdmin: () => void;
-  cartCount: number;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -11,8 +13,10 @@ export const Header: React.FC<HeaderProps> = ({
   searchTerm,
   onSearchChange,
   onToggleAdmin,
-  cartCount,
 }) => {
+  // localStorage에서 cart를 읽어와서 개수 계산
+  const [cart] = useLocalStorage<CartItem[]>("cart", []);
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
