@@ -10,7 +10,7 @@ const variants = {
   number: 'px-2 py-1 rounded'
 };
 
-const Input = ({ type, className, ...props }: InputProps) => {
+const Input = ({ type, className = '', ...props }: InputProps) => {
   return <input type={type} className={`w-full border ${variants[type]} ${className}`} {...props} />;
 };
 

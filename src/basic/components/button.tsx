@@ -24,7 +24,7 @@ const variants = {
   delete: 'text-gray-400 hover:text-red-600'
 };
 
-const Button = ({ size, variant, className, disabled, children, ...props }: ButtonProps) => {
+const Button = ({ size, variant, className = '', disabled, children, ...props }: ButtonProps) => {
   return (
     <button
       className={`
