@@ -1,6 +1,6 @@
 import { ProductWithUI } from '../../../entities/product/types';
 import { formatPriceKRW } from '../../../utils';
-
+import { showSoldOutWarningMessage, showInStockMessage } from '../../../entities/product/utils';
 interface ProductCardProps {
   product: ProductWithUI;
   remainingStock: number;
@@ -65,23 +65,25 @@ export default function ProductCard({ product, remainingStock, addToCart }: Prod
 
         {/* 재고 상태 */}
         <div className="mb-3">
-          {remainingStock <= 5 && remainingStock > 0 && (
+          {showSoldOutWarningMessage(remainingStock) && (
             <p className="text-xs text-red-600 font-medium">품절임박! {remainingStock}개 남음</p>
           )}
-          {remainingStock > 5 && <p className="text-xs text-gray-500">재고 {remainingStock}개</p>}
+          {showInStockMessage(remainingStock) && (
+            <p className="text-xs text-gray-500">재고 {remainingStock}개</p>
+          )}
         </div>
 
         {/* 장바구니 버튼 */}
         <button
           onClick={() => addToCart(product)}
-          disabled={remainingStock <= 0}
+          disabled={isSoldOut}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-            remainingStock <= 0
+            isSoldOut
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : 'bg-gray-900 text-white hover:bg-gray-800'
           }`}
         >
-          {remainingStock <= 0 ? '품절' : '장바구니 담기'}
+          {isSoldOut ? '품절' : '장바구니 담기'}
         </button>
       </div>
     </div>

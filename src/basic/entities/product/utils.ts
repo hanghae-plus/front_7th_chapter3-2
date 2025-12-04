@@ -48,3 +48,12 @@ export const getDeletedDiscounts = (
   discounts: DiscountFormState[],
   index: number
 ): DiscountFormState[] => discounts.filter((_, i) => i !== index);
+
+// SHOW
+export const showSoldOutWarningMessage = (remainingStock: number): boolean => {
+  return remainingStock <= 5 && remainingStock > 0;
+};
+
+export const showInStockMessage = (remainingStock: number): boolean => {
+  return remainingStock > 5;
+};
