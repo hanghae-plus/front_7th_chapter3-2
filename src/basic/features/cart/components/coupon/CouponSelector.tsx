@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Coupon } from '../../../../../types';
 import { checkCouponAvailability } from '../../cart.service';
 import { formatPrice } from '../../../../shared/utils/priceUtils';
-import { useNotification } from '../../../../shared/hooks/useNotification';
+import { useNotification } from '../../../notification/hooks/useNotification';
 import { Select } from '../../../../shared/component/ui';
 
 export const CouponSelector = ({

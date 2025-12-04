@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Coupon } from '../../../../types';
-import { useNotification } from '../../../shared/hooks/useNotification';
+import { useNotification } from '../../notification/hooks/useNotification';
 
 const initialCoupons: Coupon[] = [
   {

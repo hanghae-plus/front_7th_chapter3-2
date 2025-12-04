@@ -1,5 +1,5 @@
 import { Notification } from '.';
-import { NotificationType } from '../../shared/hooks/useNotification';
+import { NotificationType } from './hooks/useNotification';
 
 export const NotificationSection = ({
   notifications,

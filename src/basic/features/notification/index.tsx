@@ -1,4 +1,4 @@
-import { NotificationType } from '../../shared/hooks/useNotification';
+import { NotificationType } from './hooks/useNotification';
 
 export const Notification = ({
   notification,

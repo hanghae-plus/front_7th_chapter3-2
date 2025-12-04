@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNotification } from './shared/hooks/useNotification';
+import { useNotification } from './features/notification/hooks/useNotification';
 import { Admin } from './features/admin';
 import { Header } from './shared/component/Header';
 import { ProductList } from './features/product/ProductList';
