@@ -1,6 +1,11 @@
 import { formatPriceKRW } from '../../../utils';
 import { ProductWithUI } from '../../../entities/product/types';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
+import {
+  getNewProducts,
+  getUpdatedProducts,
+  getDeletedProducts,
+} from '../../../entities/product/utils';
 
 interface ProductTabProps {
   products: ProductWithUI[];
@@ -32,37 +37,20 @@ export default function ProductTab({ products, setProducts, addNotification }: P
     setShowProductForm(true);
   };
 
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts(prev => [...prev, product]);
-      addNotification('상품이 추가되었습니다.', 'success');
-    },
-    [addNotification]
-  );
+  const addProduct = (newProduct: Omit<ProductWithUI, 'id'>) => {
+    setProducts(getNewProducts(products, newProduct));
+    addNotification('상품이 추가되었습니다.', 'success');
+  };
 
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev: ProductWithUI[]) =>
-        prev.map((product: ProductWithUI) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification('상품이 수정되었습니다.', 'success');
-    },
-    [addNotification]
-  );
+  const updateProduct = (productId: string, updates: Partial<ProductWithUI>) => {
+    setProducts(getUpdatedProducts(products, productId, updates));
+    addNotification('상품이 수정되었습니다.', 'success');
+  };
 
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts(prev => prev.filter(p => p.id !== productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
-    },
-    [addNotification]
-  );
+  const deleteProduct = (productId: string) => {
+    setProducts(getDeletedProducts(products, productId));
+    addNotification('상품이 삭제되었습니다.', 'success');
+  };
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();

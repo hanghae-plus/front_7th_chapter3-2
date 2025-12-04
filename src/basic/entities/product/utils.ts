@@ -24,3 +24,21 @@ export const filterProducts = (
     );
   });
 };
+
+// ADD PRODUCT
+export const getNewProducts = (
+  products: ProductWithUI[],
+  newProduct: Omit<ProductWithUI, 'id'>
+): ProductWithUI[] => [...products, { ...newProduct, id: `p${Date.now()}` }];
+
+// UPDATE PRODUCT
+export const getUpdatedProducts = (
+  products: ProductWithUI[],
+  productId: string,
+  updates: Partial<ProductWithUI>
+): ProductWithUI[] =>
+  products.map(product => (product.id === productId ? { ...product, ...updates } : product));
+
+// DELETE PRODUCT
+export const getDeletedProducts = (products: ProductWithUI[], productId: string): ProductWithUI[] =>
+  products.filter(product => product.id !== productId);
