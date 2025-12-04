@@ -7,16 +7,16 @@ import { useNotification } from './utils/hooks/useNotification';
 import { useProducts } from './hooks/useProducts';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
+import { useSearch } from './utils/hooks/useSearch';
 
 const App = () => {
   const { notifications, addNotification, removeNotification } = useNotification();
   const productsHook = useProducts(addNotification);
   const cartHook = useCart(addNotification);
   const couponsHook = useCoupons(addNotification);
+  const searchHook = useSearch(productsHook.products);
 
-  // UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
 
   // 장바구니 총 아이템 수 계산
   const totalItemCount = useMemo(() => {
@@ -30,11 +30,11 @@ const App = () => {
         onRemove={removeNotification}
       />
 
-      <Header 
+      <Header
         isAdmin={isAdmin}
         setIsAdmin={setIsAdmin}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        searchTerm={searchHook.searchTerm}
+        onSearchChange={searchHook.setSearchTerm}
         cartItemCount={totalItemCount}
       />
 
@@ -46,10 +46,9 @@ const App = () => {
           />
         ) : (
           <CartPage
-            productsHook={productsHook}
             cartHook={cartHook}
             couponsHook={couponsHook}
-            searchTerm={searchTerm}
+            searchHook={searchHook}
           />
         )}
       </main>

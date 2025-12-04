@@ -2,15 +2,15 @@ interface HeaderProps {
   isAdmin: boolean;
   setIsAdmin: (value: boolean) => void;
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
+  onSearchChange: (value: string) => void;
   cartItemCount: number;
 }
 
 export function Header({
-  isAdmin, 
+  isAdmin,
   setIsAdmin,
   searchTerm,
-  setSearchTerm,
+  onSearchChange,
   cartItemCount
 }: HeaderProps) {
   return (
@@ -24,7 +24,7 @@ export function Header({
                 <input
                   type="text"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => onSearchChange(e.target.value)}
                   placeholder="상품 검색..."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                 />
