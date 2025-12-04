@@ -1,8 +1,9 @@
 import { Coupon } from '../../../../types';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import CouponItem from './CouponItem';
 import { CouponFormState } from '../../../entities/coupon/types';
 import CouponForm from './CouponForm';
+import { canAddCoupon } from '../../../entities/coupon/utils';
 
 interface CouponTabProps {
   coupons: Coupon[];
@@ -21,29 +22,22 @@ export default function CouponTab({ coupons, setCoupons, addNotification }: Coup
     discountValue: 0,
   });
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find(c => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons(prev => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification]
-  );
+  const addCoupon = (newCoupon: Coupon) => {
+    if (!canAddCoupon(coupons, newCoupon)) {
+      addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
+      return;
+    }
+    setCoupons(prev => [...prev, newCoupon]);
+    addNotification('쿠폰이 추가되었습니다.', 'success');
+  };
 
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons(prev => prev.filter(c => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification]
-  );
+  const deleteCoupon = (couponCode: string) => {
+    setCoupons(prev => prev.filter(c => c.code !== couponCode));
+    if (selectedCoupon?.code === couponCode) {
+      setSelectedCoupon(null);
+    }
+    addNotification('쿠폰이 삭제되었습니다.', 'success');
+  };
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
