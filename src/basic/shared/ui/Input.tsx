@@ -14,19 +14,22 @@ const variants = {
 };
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  type: keyof typeof variants;
+  variant?: keyof typeof variants;
 }
 
-export const Input = ({ type, className, ...props }: InputProps) => {
+export const Input = ({
+  variant = 'text',
+  className,
+  ...props
+}: InputProps) => {
   return (
     <input
-      type={type}
       className={cn(
         // 1. 공통 기본 스타일 (너비 꽉 참, 테두리 두께)
         'w-full border',
 
         // 2. 타입별 변형 스타일
-        variants[type],
+        variants[variant],
 
         // 3. 외부 커스텀 스타일 (가장 마지막에 위치하여 오버라이딩 가능)
         className,
