@@ -4,8 +4,7 @@ import { useNotificationStore } from "../../store/useNotificationStore";
 
 export const CheckoutSection = () => {
   // Store에서 상태 및 액션 가져오기
-  // cart와 selectedCoupon을 직접 구독하여 리렌더링 보장
-  const cart = useCartStore((state) => state.cart);
+  // selectedCoupon을 직접 구독하여 리렌더링 보장
   const selectedCoupon = useCartStore((state) => state.selectedCoupon);
   const {
     getTotals,

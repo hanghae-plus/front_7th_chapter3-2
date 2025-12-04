@@ -1,7 +1,4 @@
-import { useCartStore } from "../../store/useCartStore";
-
 export const CartIcon = ({ itemCount }: { itemCount: number }) => {
-
   return (
     <div className="relative">
       <svg
