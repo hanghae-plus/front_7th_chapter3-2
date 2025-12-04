@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Coupon } from '../../../../types';
 import { useNotification } from '../../../shared/hooks/useNotification';
-import { CouponForm } from '../components/coupons/AdminCouponList';
 
 const initialCoupons: Coupon[] = [
   {
@@ -39,12 +38,6 @@ export const useManageCoupon = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState<CouponForm>({
-    name: '',
-    code: '',
-    discountType: 'amount',
-    discountValue: 0,
-  });
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
@@ -59,51 +52,8 @@ export const useManageCoupon = () => {
     [coupons, addNotification],
   );
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addCoupon(couponForm);
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
-
   const toggleShowCouponForm = () => {
     setShowCouponForm((prev) => !prev);
-  };
-
-  const onBlurCouponForm = (e: React.FocusEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
-    if (couponForm.discountType === 'percentage') {
-      if (value > 100) {
-        addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
-        setCouponForm({
-          ...couponForm,
-          discountValue: 100,
-        });
-      } else if (value < 0) {
-        setCouponForm({
-          ...couponForm,
-          discountValue: 0,
-        });
-      }
-    } else {
-      if (value > 100000) {
-        addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
-        setCouponForm({
-          ...couponForm,
-          discountValue: 100000,
-        });
-      } else if (value < 0) {
-        setCouponForm({
-          ...couponForm,
-          discountValue: 0,
-        });
-      }
-    }
   };
 
   const deleteCoupon = useCallback((couponCode: string) => {
@@ -137,12 +87,9 @@ export const useManageCoupon = () => {
     selectedCoupon,
     setSelectedCoupon,
     applyCoupon,
-    handleCouponSubmit,
+    addCoupon,
     toggleShowCouponForm,
-    onBlurCouponForm,
     handleDeleteCoupon,
-    couponForm,
-    setCouponForm,
     showCouponForm,
   };
 };

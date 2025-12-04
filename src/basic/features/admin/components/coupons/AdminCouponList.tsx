@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useManageCoupon } from '../../hooks/useManageCoupon';
 import { Coupon } from '../../../../../types';
 import { AddNewCouponCard } from './AddNewCouponCard';
@@ -18,12 +17,9 @@ export const AdminCouponList = ({
 }) => {
   const {
     coupons,
-    handleCouponSubmit,
+    addCoupon,
     toggleShowCouponForm,
-    onBlurCouponForm,
     handleDeleteCoupon,
-    couponForm,
-    setCouponForm,
     showCouponForm,
   } = useManageCoupon();
 
@@ -48,11 +44,14 @@ export const AdminCouponList = ({
 
         {showCouponForm && (
           <CouponAddForm
-            handleCouponSubmit={handleCouponSubmit}
-            onBlurCouponForm={onBlurCouponForm}
-            toggleShowCouponForm={toggleShowCouponForm}
-            couponForm={couponForm}
-            setCouponForm={setCouponForm}
+            onSubmit={(form: CouponForm) => {
+              addCoupon(form as Coupon);
+              toggleShowCouponForm();
+            }}
+            onCancel={toggleShowCouponForm}
+            onValidationError={(message: string) =>
+              addNotification(message, 'error')
+            }
           />
         )}
       </div>
