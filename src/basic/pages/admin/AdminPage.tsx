@@ -1,6 +1,6 @@
-import { Admin } from '../features/admin';
-import { Header } from '../shared/component/Header';
-import { useProduct } from '../features/product/hook/useProduct';
+import { AdminDashboard } from './components/AdminDashboard';
+import { Header } from '../../shared/component/Header';
+import { useProduct } from '../../features/product/hook/useProduct';
 
 interface AdminPageProps {
   isAdmin: boolean;
@@ -30,7 +30,7 @@ export const AdminPage = ({
         }}
       />
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <Admin
+        <AdminDashboard
           products={products}
           setProducts={setProducts}
           addNotification={addNotification}

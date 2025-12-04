@@ -1,4 +1,4 @@
-import { calculateItemTotal } from '../../cart.service';
+import { calculateItemTotal } from '../../service/cart.service';
 import { CartItem } from '../../../../../types';
 import { CartTitle } from './CartTitle';
 import { CartEmptyList } from './CartEmptyList';

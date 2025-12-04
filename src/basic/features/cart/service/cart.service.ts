@@ -1,4 +1,4 @@
-import { CartItem, Coupon } from '../../../types';
+import { CartItem, Coupon } from '../../../../types';
 
 export const checkCouponAvailability = (
   coupon: Coupon,
@@ -60,4 +60,3 @@ export const calculateCartTotalPrice = (
   });
   return { totalBeforeDiscount, totalAfterDiscount };
 };
-

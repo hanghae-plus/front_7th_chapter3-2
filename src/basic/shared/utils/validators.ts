@@ -1,4 +1,4 @@
-import { CouponForm } from '../../features/admin/components/coupons/AdminCouponList';
+import { CouponForm } from '../../features/coupon/admin/AdminCouponList';
 import { ProductForm } from '../../features/product/admin/AdminProductList';
 
 export interface ValidationError {

@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ProductWithUI } from '../product/hook/useProduct';
-import { AdminTitle } from './components/AdminTitle';
-import { AdminViewTab } from './components/AdminViewTab';
-import { AdminProductList } from '../product/admin/AdminProductList';
-import { AdminCouponList } from '../coupon/admin/AdminCouponList';
+import { ProductWithUI } from '../../../features/product/hook/useProduct';
+import { AdminTitle } from './AdminTitle';
+import { AdminViewTab } from './AdminViewTab';
+import { AdminProductList } from '../../../features/product/admin/AdminProductList';
+import { AdminCouponList } from '../../../features/coupon/admin/AdminCouponList';
 
-export const Admin = ({
+export const AdminDashboard = ({
   products,
   setProducts,
   addNotification,

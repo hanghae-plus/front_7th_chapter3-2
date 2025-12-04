@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNotification } from './features/notification/hooks/useNotification';
-import { NotificationSection } from './features/notification/NotificationSection';
-import { AdminPage } from './pages/AdminPage';
-import { ShopPage } from './pages/ShopPage';
+import { Notification } from './features/notification/index';
+import { AdminPage } from './pages/admin/AdminPage';
+import { ShopPage } from './pages/shop/ShopPage';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -11,7 +11,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NotificationSection
+      <Notification
         notifications={notifications}
         closeNotification={closeNotification}
       />
