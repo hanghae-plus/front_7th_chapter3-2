@@ -47,27 +47,3 @@ export const filterProducts = ({
       (product as any).description?.toLowerCase().includes(lowerSearchTerm)
   );
 };
-
-/**
- * 상품 정렬
- */
-export const sortProducts = ({
-  products,
-  sortBy,
-}: {
-  products: Product[];
-  sortBy: 'name' | 'price' | 'stock';
-}) => {
-  return [...products].sort((a, b) => {
-    switch (sortBy) {
-      case 'name':
-        return a.name.localeCompare(b.name);
-      case 'price':
-        return a.price - b.price;
-      case 'stock':
-        return b.stock - a.stock;
-      default:
-        return 0;
-    }
-  });
-};
