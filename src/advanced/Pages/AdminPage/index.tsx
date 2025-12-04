@@ -2,8 +2,8 @@ import { useState, type FC } from "react";
 import ProductManagement from "./ProductManagement";
 import CouponManagement from "./CouponManagement";
 import NaviTab from "./NaviTab";
-import { Notification } from "../../models/notificiation";
 import AdminHeader from "../../components/layout/AdminHeader";
+import { Notification } from "../../../types";
 
 interface IProps {
   onChange: () => void;

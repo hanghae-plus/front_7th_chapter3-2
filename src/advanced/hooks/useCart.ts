@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CartItem, Coupon, ProductWithUI } from "../../types";
+import { CartItem, Coupon, ProductWithUI, Notification } from "../../types";
 import {
   addItemToCart,
   calculateCartTotal,
@@ -7,7 +7,6 @@ import {
   removeItemFromCart,
   updateCartItemQuantity,
 } from "../models/cart";
-import { Notification } from "../models/notificiation";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCart = (

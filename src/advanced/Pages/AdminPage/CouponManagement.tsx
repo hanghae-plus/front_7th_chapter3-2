@@ -1,12 +1,11 @@
 import { type FC, useState } from "react";
 import { useCoupons } from "../../hooks/useCoupons";
-import { Coupon } from "../../../types";
+import { Coupon, Notification } from "../../../types";
 import CouponList from "../../components/adminPage/CouponList";
 import CouponForm from "../../components/adminPage/CouponForm";
 import Section from "../../components/_common/Section";
 import { useForm } from "../../utils/hooks/useForm";
 import { formatCouponCode } from "../../utils/validators";
-import { Notification } from "../../models/notificiation";
 import { validateDiscountRate } from "../../models/validation";
 
 const INITIAL_COUPON: Coupon = {

@@ -1,8 +1,4 @@
-export type Notification = {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-};
+import { Notification } from "../../types";
 
 export const createNotification = (
   message: string,
@@ -16,4 +12,4 @@ export const createNotification = (
 export const removeNotification = (
   notifications: Notification[],
   id: string
-): Notification[] => notifications.filter(n => n.id !== id);
+): Notification[] => notifications.filter((n) => n.id !== id);

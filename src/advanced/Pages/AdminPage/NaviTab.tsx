@@ -11,7 +11,7 @@ const NaviTab: FC<IProps> = ({ activeTab, onChange }) => {
     { id: "products" as const, label: "상품 관리" },
     { id: "coupons" as const, label: "쿠폰 관리" },
   ];
-  
+
   return (
     <div className="border-b border-gray-200 mb-6">
       <nav className="-mb-px flex space-x-8">

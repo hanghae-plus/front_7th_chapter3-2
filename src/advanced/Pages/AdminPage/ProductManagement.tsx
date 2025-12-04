@@ -2,11 +2,10 @@ import { useState, type FC } from "react";
 import ProductListTable from "../../components/adminPage/ProductListTable";
 import ProductForm from "../../components/adminPage/ProductForm";
 import { useProducts } from "../../hooks/useProducts";
-import { ProductWithUI } from "../../../types";
+import { ProductWithUI, Notification } from "../../../types";
 import Section from "../../components/_common/Section";
 import Button from "../../components/_common/Button";
 import { useForm } from "../../utils/hooks/useForm";
-import { Notification } from "../../models/notificiation";
 import { validateStock, validatePrice } from "../../models/validation";
 
 const INITIAL_PRODUCT_FORM: Omit<ProductWithUI, "id"> = {

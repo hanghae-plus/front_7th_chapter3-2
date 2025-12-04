@@ -1,8 +1,7 @@
 import { useCallback } from "react";
-import { Coupon } from "../../types";
+import { Coupon, Notification } from "../../types";
 import { initialCoupons } from "../constants";
 import { addCouponToList, deleteCouponToList } from "../models/coupon";
-import { Notification } from "../models/notificiation";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCoupons = (
