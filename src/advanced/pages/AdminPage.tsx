@@ -1,53 +1,38 @@
 import { useState, useCallback } from "react";
-import { Coupon, AdminTab } from "../../types";
-import { ProductWithUI } from "../hooks/useProducts";
+import { AdminTab } from "../../types";
 import { useProductForm } from "../hooks/useProductForm";
 import { Tabs, ProductTable, ProductForm, CouponList } from "../features";
+import { useProductStore } from "../store/useProductStore";
+import { useCouponStore } from "../store/useCouponStore";
+import { useNotificationStore } from "../store/useNotificationStore";
 
-interface AdminPageProps {
-  products: ProductWithUI[];
-  addProduct: (product: Omit<ProductWithUI, "id">) => void;
-  updateProduct: (id: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (id: string) => void;
-  coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => { success: boolean; message: string };
-  deleteCoupon: (code: string) => { success: boolean; message: string };
-  addNotification: (message: string, type: "success" | "error") => void;
-}
-
-export const AdminPage = ({
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  coupons,
-  addCoupon: addCouponToList,
-  deleteCoupon: deleteCouponFromList,
-  addNotification,
-}: AdminPageProps) => {
+export const AdminPage = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>("products");
 
-  const productForm = useProductForm({
-    addProduct,
-    updateProduct,
-    addNotification,
-  });
+  // Store에서 상태 및 액션 가져오기
+  const { products, addProduct, updateProduct, deleteProduct } =
+    useProductStore();
+  const { coupons, addCoupon: addCouponAction, deleteCoupon: deleteCouponAction } =
+    useCouponStore();
+  const { addNotification } = useNotificationStore();
 
-  // props로 받은 함수를 래핑하여 notification 처리
+  const productForm = useProductForm();
+
+  // 쿠폰 관련 핸들러 (notification 처리 포함)
   const handleAddCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const result = addCouponToList(newCoupon);
+    (newCoupon: typeof coupons[0]) => {
+      const result = addCouponAction(newCoupon);
       addNotification(result.message, result.success ? "success" : "error");
     },
-    [addCouponToList, addNotification]
+    [addCouponAction, addNotification, coupons]
   );
 
   const handleDeleteCoupon = useCallback(
     (couponCode: string) => {
-      const result = deleteCouponFromList(couponCode);
+      const result = deleteCouponAction(couponCode);
       addNotification(result.message, "success");
     },
-    [deleteCouponFromList, addNotification]
+    [deleteCouponAction, addNotification]
   );
 
   return (

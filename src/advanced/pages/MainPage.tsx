@@ -1,60 +1,56 @@
-import { useEffect, useCallback } from "react";
-import { Coupon, Product } from "../../types";
-import { getRemainingStock } from "../models/cart";
-import { ProductWithUI } from "../hooks/useProducts";
-import { useCart } from "../hooks/useCart";
+import { useState, useMemo, useCallback } from "react";
+import { ProductWithUI } from "../store/useProductStore";
 import { CartList, ProductList, CheckoutSection } from "../features";
+import { useProductStore } from "../store/useProductStore";
+import { useCouponStore } from "../store/useCouponStore";
+import { useNotificationStore } from "../store/useNotificationStore";
+import { useCartStore } from "../store/useCartStore";
+import { useDebounce } from "../hooks/useDebounce";
 
-interface MainPageProps {
-  // 상품 관련
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-
-  // 쿠폰 관련
-  coupons: Coupon[];
-
-  // Callback Props - App에 상태 전달
-  onTotalItemCountChange: (count: number) => void;
-  addNotification: (message: string, type: "success" | "error") => void;
-}
-
-export const MainPage = ({
-  products,
-  filteredProducts,
-  debouncedSearchTerm,
-  coupons,
-  onTotalItemCountChange,
-  addNotification,
-}: MainPageProps) => {
-  // useCart를 MainPage 내부에서 호출
+export const MainPage = () => {
+  // Store에서 상태 가져오기
+  const { products } = useProductStore();
+  const { coupons } = useCouponStore();
+  const { addNotification } = useNotificationStore();
   const {
     cart,
     selectedCoupon,
-    totalItemCount,
-    totals,
+    getTotals,
     addToCart: addToCartAction,
     removeFromCart,
     updateQuantity: updateQuantityAction,
     applyCoupon: applyCouponAction,
     removeCoupon,
     completeOrder: completeOrderAction,
-  } = useCart(products);
+    getRemainingStock,
+  } = useCartStore();
 
-  // totalItemCount가 변경될 때 App에 알림 (Callback Props 패턴)
-  useEffect(() => {
-    onTotalItemCountChange(totalItemCount);
-  }, [totalItemCount, onTotalItemCountChange]);
+  // totals 계산
+  const totals = getTotals();
 
-  // 순수 함수 래퍼 - cart를 클로저로 캡처
-  const getRemainingStockForProduct = useCallback(
-    (product: Product): number => {
-      return getRemainingStock(product, cart);
-    },
-    [cart]
+  // 로컬 상태: 검색어
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // 필터링된 상품 목록 계산
+  const filteredProducts = useMemo(
+    () =>
+      debouncedSearchTerm
+        ? products.filter(
+            (product) =>
+              product.name
+                .toLowerCase()
+                .includes(debouncedSearchTerm.toLowerCase()) ||
+              (product.description &&
+                product.description
+                  .toLowerCase()
+                  .includes(debouncedSearchTerm.toLowerCase()))
+          )
+        : products,
+    [products, debouncedSearchTerm]
   );
 
-  // notification 래퍼 함수들
+  // Notification 래퍼 함수들
   const addToCart = useCallback(
     (product: ProductWithUI) => {
       const result = addToCartAction(product);
@@ -74,11 +70,11 @@ export const MainPage = ({
   );
 
   const applyCoupon = useCallback(
-    (coupon: Coupon) => {
+    (coupon: typeof coupons[0]) => {
       const result = applyCouponAction(coupon);
       addNotification(result.message, result.success ? "success" : "error");
     },
-    [applyCouponAction, addNotification]
+    [applyCouponAction, addNotification, coupons]
   );
 
   const completeOrder = useCallback(() => {
@@ -91,7 +87,7 @@ export const MainPage = ({
         <ProductList
           filteredProducts={filteredProducts}
           debouncedSearchTerm={debouncedSearchTerm}
-          getRemainingStock={getRemainingStockForProduct}
+          getRemainingStock={getRemainingStock}
           addToCart={addToCart}
         />
       </div>
