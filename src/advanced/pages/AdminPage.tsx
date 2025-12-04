@@ -1,3 +1,4 @@
+import { useAtom, useSetAtom } from 'jotai';
 import { PlusIcon, TrashIcon } from "../components/icons";
 import { Product, Coupon } from "../../types";
 import { formatAdminPrice, formatPercentage } from "../utils/formatters";
@@ -6,85 +7,117 @@ import { ProductForm } from "../components/entities/ProductForm";
 import { CouponForm } from "../components/entities/CouponForm";
 import { useAdminPage } from "../hooks/useAdminPage";
 
+import {
+  productsAtom,
+  couponsAtom,
+  addProductAtom,
+  updateProductAtom,
+  deleteProductAtom,
+  addCouponAtom,
+  deleteCouponAtom,
+  addNotificationAtom
+} from '../atoms';
+
 interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
 }
 
-interface AdminPageProps {
-  addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
-  products: ProductWithUI[];
-  coupons: Coupon[];
-  addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-}
+const AdminPage = () => {
+  const [products] = useAtom(productsAtom);
+  const [coupons] = useAtom(couponsAtom);
+  
+  const addProduct = useSetAtom(addProductAtom);
+  const updateProduct = useSetAtom(updateProductAtom);
+  const deleteProduct = useSetAtom(deleteProductAtom);
+  const addCoupon = useSetAtom(addCouponAtom);
+  const deleteCoupon = useSetAtom(deleteCouponAtom);
+  const addNotification = useSetAtom(addNotificationAtom);
 
-const AdminPage = ({ 
-  addNotification, 
-  products, 
-  coupons, 
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  addCoupon,
-  deleteCoupon
-}: AdminPageProps) => {
-    // 관리자 페이지 상태 관리 로직 분리
-    const {
-      activeTab,
-      showProductForm,
-      showCouponForm,
-      editingProduct,
-      setActiveTab,
-      startEditProduct,
-      startAddProduct,
-      handleProductSubmit,
-      handleProductCancel,
-      handleCouponSubmit,
-      handleCouponCancel,
-      toggleCouponForm
-    } = useAdminPage({
-      onAddProduct: addProduct,
-      onUpdateProduct: updateProduct,
-      onAddCoupon: addCoupon
-    });
+  const handleAddProduct = (newProduct: Omit<ProductWithUI, 'id'>) => {
+    const result = addProduct(newProduct);
+    if (result.message) {
+      addNotification({ message: result.message, type: 'success' });
+    }
+  };
 
-    return (
-        <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
-          <p className="text-gray-600 mt-1">상품과 쿠폰을 관리할 수 있습니다</p>
-        </div>
-        <div className="border-b border-gray-200 mb-6">
-          <nav className="-mb-px flex space-x-8">
-            <button 
-              onClick={() => setActiveTab('products')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'products' 
-                  ? 'border-gray-900 text-gray-900' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              상품 관리
-            </button>
-            <button 
-              onClick={() => setActiveTab('coupons')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'coupons' 
-                  ? 'border-gray-900 text-gray-900' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              쿠폰 관리
-            </button>
-          </nav>
-        </div>
+  const handleUpdateProduct = (productId: string, updates: Partial<ProductWithUI>) => {
+    const result = updateProduct({ productId, updates });
+    if (result.message) {
+      addNotification({ message: result.message, type: 'success' });
+    }
+  };
 
-        {activeTab === 'products' ? (
-          <section className="bg-white rounded-lg border border-gray-200">
+  const handleDeleteProduct = (productId: string) => {
+    deleteProduct(productId);
+  };
+
+  const handleAddCoupon = (newCoupon: Coupon) => {
+    const result = addCoupon(newCoupon);
+    if (result.error) {
+      addNotification({ message: result.error, type: 'error' });
+    } else if (result.message) {
+      addNotification({ message: result.message, type: 'success' });
+    }
+  };
+
+  const handleDeleteCoupon = (couponCode: string) => {
+    deleteCoupon(couponCode);
+  };
+
+  // 관리자 페이지 상태 관리 로직 분리
+  const {
+    activeTab,
+    showProductForm,
+    showCouponForm,
+    editingProduct,
+    setActiveTab,
+    startEditProduct,
+    startAddProduct,
+    handleProductSubmit,
+    handleProductCancel,
+    handleCouponSubmit,
+    handleCouponCancel,
+    toggleCouponForm
+  } = useAdminPage({
+    onAddProduct: handleAddProduct,
+    onUpdateProduct: handleUpdateProduct,
+    onAddCoupon: handleAddCoupon
+  });
+
+  return (
+    <div className="max-w-6xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
+        <p className="text-gray-600 mt-1">상품과 쿠폰을 관리할 수 있습니다</p>
+      </div>
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="-mb-px flex space-x-8">
+          <button 
+            onClick={() => setActiveTab('products')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'products' 
+                ? 'border-gray-900 text-gray-900' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            상품 관리
+          </button>
+          <button 
+            onClick={() => setActiveTab('coupons')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'coupons' 
+                ? 'border-gray-900 text-gray-900' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            쿠폰 관리
+          </button>
+        </nav>
+      </div>
+
+      {activeTab === 'products' ? (
+        <section className="bg-white rounded-lg border border-gray-200">
           <div className="p-6 border-b border-gray-200">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">상품 목록</h2>
@@ -124,16 +157,16 @@ const AdminPage = ({
                         {product.stock}개
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{product.description || '-'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{(product as ProductWithUI).description || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
-                        onClick={() => startEditProduct(product)}
+                        onClick={() => startEditProduct(product as ProductWithUI)}
                         className="text-indigo-600 hover:text-indigo-900 mr-3"
                       >
                         수정
                       </button>
                       <button
-                        onClick={() => deleteProduct(product.id)}
+                        onClick={() => handleDeleteProduct(product.id)}
                         className="text-red-600 hover:text-red-900"
                       >
                         삭제
@@ -149,13 +182,13 @@ const AdminPage = ({
               initialProduct={editingProduct || undefined}
               onSubmit={handleProductSubmit}
               onCancel={handleProductCancel}
-              addNotification={addNotification}
+              addNotification={(message, type) => addNotification({ message, type })}
               isEditing={!!editingProduct}
             />
           )}
-          </section>
-        ) : (
-          <section className="bg-white rounded-lg border border-gray-200">
+        </section>
+      ) : (
+        <section className="bg-white rounded-lg border border-gray-200">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-lg font-semibold">쿠폰 관리</h2>
           </div>
@@ -176,7 +209,7 @@ const AdminPage = ({
                       </div>
                     </div>
                     <button
-                      onClick={() => deleteCoupon(coupon.code)}
+                      onClick={() => handleDeleteCoupon(coupon.code)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <TrashIcon className="w-5 h-5" aria-hidden />
@@ -201,14 +234,14 @@ const AdminPage = ({
               <CouponForm
                 onSubmit={handleCouponSubmit}
                 onCancel={handleCouponCancel}
-                addNotification={addNotification}
+                addNotification={(message, type) => addNotification({ message, type })}
               />
             )}
           </div>
-          </section>
-        )}
-      </div>
-    )
+        </section>
+      )}
+    </div>
+  );
 }
 
 export default AdminPage;
