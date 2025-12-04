@@ -1,14 +1,13 @@
 import { CartItem as CartItemType } from "../../../../../types";
 import { QuantityControl } from "../../../ui";
 import { CloseIcon } from "../../../icons";
+import { useCart } from "../../../../hooks/useCart";
 
 interface CartItemProps {
   item: CartItemType;
   itemTotal: number;
   discountRate: number;
   hasDiscount: boolean;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
 }
 
 export const CartItem = ({
@@ -16,9 +15,8 @@ export const CartItem = ({
   itemTotal,
   discountRate,
   hasDiscount,
-  removeFromCart,
-  updateQuantity,
 }: CartItemProps) => {
+  const { removeFromCart, updateQuantity } = useCart();
   return (
     <div className="border-b pb-3 last:border-b-0">
       <div className="flex justify-between items-start mb-2">

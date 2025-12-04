@@ -1,48 +1,26 @@
-import { CartItem, Coupon } from "../../../../types";
 import { calculateCartTotal } from "../../../models/cart";
 import CartItemList from "./CartItemList";
 import { CouponSelector } from "./CouponSelector";
 import { OrderSummary } from "./OrderSummary";
+import { useCart } from "../../../hooks/useCart";
+import { useCoupons } from "../../../hooks/useCoupons";
 
 interface CartProps {
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  applyCoupon: (coupon: Coupon) => void;
-  clearSelectedCoupon: () => void;
   completeOrder: () => void;
 }
 
-export const Cart = ({
-  cart,
-  coupons,
-  selectedCoupon,
-  removeFromCart,
-  updateQuantity,
-  applyCoupon,
-  clearSelectedCoupon,
-  completeOrder,
-}: CartProps) => {
+export const Cart = ({ completeOrder }: CartProps) => {
+  const { cart } = useCart();
+  const { selectedCoupon } = useCoupons();
   const totals = calculateCartTotal(cart, selectedCoupon);
 
   return (
     <div className="sticky top-24 space-y-4">
-      <CartItemList
-        cart={cart}
-        removeFromCart={removeFromCart}
-        updateQuantity={updateQuantity}
-      />
+      <CartItemList />
 
       {cart.length > 0 && (
         <>
-          <CouponSelector
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            applyCoupon={applyCoupon}
-            clearSelectedCoupon={clearSelectedCoupon}
-          />
+          <CouponSelector />
 
           <OrderSummary
             totalBeforeDiscount={totals.totalBeforeDiscount}

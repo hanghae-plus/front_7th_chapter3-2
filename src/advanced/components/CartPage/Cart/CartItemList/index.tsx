@@ -1,4 +1,3 @@
-import { CartItem as CartItemType } from "../../../../../types";
 import { calculateItemTotal } from "../../../../models/cart";
 import {
   calculateDiscountRate,
@@ -7,18 +6,10 @@ import {
 import { Card } from "../../../ui";
 import { EmptyCartIcon, EmptyCartIconSmall } from "../../../icons";
 import { CartItem } from "./CartItem";
+import { useCart } from "../../../../hooks/useCart";
 
-interface CartItemListProps {
-  cart: CartItemType[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-}
-
-export const CartItemList = ({
-  cart,
-  removeFromCart,
-  updateQuantity,
-}: CartItemListProps) => {
+export const CartItemList = () => {
+  const { cart } = useCart();
   return (
     <Card className="p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
@@ -48,8 +39,6 @@ export const CartItemList = ({
                 itemTotal={itemTotal}
                 discountRate={discountRate}
                 hasDiscount={itemHasDiscount}
-                removeFromCart={removeFromCart}
-                updateQuantity={updateQuantity}
               />
             );
           })}

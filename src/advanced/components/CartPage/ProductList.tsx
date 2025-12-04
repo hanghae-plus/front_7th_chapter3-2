@@ -1,27 +1,29 @@
-import { CartItem } from "../../../types";
-import { ProductWithUI } from "../../constants";
 import { getRemainingStock, isSoldOut } from "../../models/cart";
 import {
   getStockStatusMessage,
   getAddToCartButtonState,
   getMaxDiscountRate,
+  filterProductsBySearch,
 } from "../../models/product";
 import { formatDiscount, formatPriceUnit } from "../../utils/formatters";
 import { ImageIcon } from "../icons";
+import { useProducts } from "../../hooks/useProducts";
+import { useCart } from "../../hooks/useCart";
+import { ProductWithUI } from "../../constants";
 
 interface ProductListProps {
-  products: ProductWithUI[];
-  cart: CartItem[];
   debouncedSearchTerm: string;
-  addToCart: (product: ProductWithUI) => void;
 }
 
-export const ProductList = ({
-  products,
-  cart,
-  debouncedSearchTerm,
-  addToCart,
-}: ProductListProps) => {
+export const ProductList = ({ debouncedSearchTerm }: ProductListProps) => {
+  const { products: allProducts } = useProducts();
+  const { cart, addToCart } = useCart();
+
+  const products = filterProductsBySearch(
+    allProducts,
+    debouncedSearchTerm
+  ) as ProductWithUI[];
+
   return (
     <section>
       <div className="mb-6 flex justify-between items-center">

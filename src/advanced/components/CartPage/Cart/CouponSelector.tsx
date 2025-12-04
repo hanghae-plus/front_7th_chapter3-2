@@ -1,19 +1,9 @@
-import { Coupon } from "../../../../types";
 import { Card } from "../../ui";
+import { useCoupons } from "../../../hooks/useCoupons";
 
-interface CouponSelectorProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon) => void;
-  clearSelectedCoupon: () => void;
-}
-
-export const CouponSelector = ({
-  coupons,
-  selectedCoupon,
-  applyCoupon,
-  clearSelectedCoupon,
-}: CouponSelectorProps) => {
+export const CouponSelector = () => {
+  const { coupons, selectedCoupon, applyCoupon, clearSelectedCoupon } =
+    useCoupons();
   const handleCouponChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const coupon = coupons.find((c) => c.code === e.target.value);
     if (coupon) {
