@@ -20,15 +20,12 @@ export const useNotification = () => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
       }, 3000);
     },
-    [setNotifications],
+    [],
   );
 
-  const closeNotification = useCallback(
-    (id: string) => {
-      setNotifications((prev) => prev.filter((noti) => noti.id !== id));
-    },
-    [setNotifications],
-  );
+  const closeNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((noti) => noti.id !== id));
+  }, []);
 
   return { addNotification, notifications, closeNotification };
 };
