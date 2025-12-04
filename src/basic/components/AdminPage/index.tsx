@@ -15,27 +15,27 @@
 // - CouponForm: 새 쿠폰 추가 폼
 // - CouponList: 쿠폰 목록 표시
 import { useState } from "react";
-import { Product, CartItem, Coupon } from "../../types";
+import { Product, CartItem, Coupon } from "../../../types";
 import {
   ProductWithUI,
   EMPTY_PRODUCT_FORM,
   EMPTY_COUPON_FORM,
-} from "../constants";
-import { isSoldOut } from "../models/cart";
+} from "../../constants";
+import { isSoldOut } from "../../models/cart";
 import {
   getStockBadgeClass,
   validateProductPrice,
   validateProductStock,
-} from "../models/product";
+} from "../../models/product";
 import {
   validateCouponPercentage,
   validateCouponAmount,
   formatCouponValue,
-} from "../models/coupon";
-import { formatPriceKor } from "../utils/formatters";
-import { isNumericInput } from "../utils/validators";
-import { Button, Card, FormInput, FormSelect, Tabs } from "../components/ui";
-import { CloseIcon, PlusIcon, TrashIcon } from "../components/icons";
+} from "../../models/coupon";
+import { formatPriceKor } from "../../utils/formatters";
+import { isNumericInput } from "../../utils/validators";
+import { Button, Card, FormInput, FormSelect, Tabs } from "../ui";
+import { CloseIcon, PlusIcon, TrashIcon } from "../icons";
 
 interface ProductForm {
   name: string;

@@ -16,30 +16,30 @@
 // - ProductList: 상품 목록 표시
 // - Cart: 장바구니 표시 및 결제
 import { useState } from "react";
-import { Product, CartItem, Coupon } from "../../types";
-import { ProductWithUI, TIMING } from "../constants";
+import { Product, CartItem, Coupon } from "../../../types";
+import { ProductWithUI, TIMING } from "../../constants";
 import {
   getRemainingStock,
   isSoldOut,
   calculateCartTotal,
   calculateItemTotal,
-} from "../models/cart";
+} from "../../models/cart";
 import {
   filterProductsBySearch,
   getMaxDiscountRate,
   getStockStatusMessage,
   getAddToCartButtonState,
-} from "../models/product";
-import { calculateDiscountRate, hasDiscount } from "../models/discount";
-import { formatDiscount, formatPriceUnit } from "../utils/formatters";
-import { useDebounce } from "../utils/hooks/useDebounce";
-import { Card, QuantityControl } from "../components/ui";
+} from "../../models/product";
+import { calculateDiscountRate, hasDiscount } from "../../models/discount";
+import { formatDiscount, formatPriceUnit } from "../../utils/formatters";
+import { useDebounce } from "../../utils/hooks/useDebounce";
+import { Card, QuantityControl } from "../ui";
 import {
   CloseIcon,
   EmptyCartIcon,
   EmptyCartIconSmall,
   ImageIcon,
-} from "../components/icons";
+} from "../icons";
 
 interface CartPageProps {
   products: Product[];

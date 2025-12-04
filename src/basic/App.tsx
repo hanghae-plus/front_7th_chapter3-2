@@ -4,9 +4,10 @@ import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
 import { useNotification } from "./hooks/useNotification";
 import { UIToast } from "./components/ui/UIToast";
+
+import Header from "./components/Header";
 import { AdminPage } from "./components/AdminPage";
 import { CartPage } from "./components/CartPage";
-import Header from "./components/Header";
 
 const App = () => {
   const { notifications, addNotification, removeNotification } =
@@ -50,7 +51,7 @@ const App = () => {
       <UIToast notifications={notifications} onClose={removeNotification} />
       <Header
         isAdmin={isAdmin}
-        toggleAdmin={setIsAdmin(!isAdmin)}
+        toggleAdmin={() => setIsAdmin(!isAdmin)}
         cart={cart}
         totalItemCount={totalItemCount}
       />
