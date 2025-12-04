@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { CartItem, Coupon, ProductWithUI } from "../../../types/types";
+import { CartItem, Coupon } from "../../../types/types";
 import SectionCoupon from "./SectionCoupon";
 import SectionPayment from "./SectionPayment";
 import { getRemainingStock } from "../../../utils/product";
@@ -8,11 +8,11 @@ import { IconShoppingBag } from "../../icons/IconShoppingBag";
 import { IconShoppingBagEmpty } from "../../icons/IconShoppingBagEmpty";
 import CartItemRow from "./CartItem";
 import { useNotificationStore } from "../../../stores/useNotificationStore";
+import { useProductStore } from "../../../stores/useProductStore";
 
 interface CartProps {
   cart: CartItem[];
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-  products: ProductWithUI[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
@@ -22,12 +22,12 @@ interface CartProps {
 export const Cart = ({
   cart,
   setCart,
-  products,
   coupons,
   selectedCoupon,
   setSelectedCoupon,
   removeFromCart,
 }: CartProps) => {
+  const products = useProductStore((state) => state.products);
   const addNotification = useNotificationStore(
     (state) => state.addNotification
   );

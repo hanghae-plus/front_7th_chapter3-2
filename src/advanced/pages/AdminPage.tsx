@@ -1,23 +1,15 @@
 import { useState } from "react";
-import { Coupon, ProductWithUI } from "../types/types";
+import { Coupon } from "../types/types";
 import { AdminProducts } from "../components/AdminPage/products/AdminProduct";
 import { AdminCoupons } from "../components/AdminPage/coupons/AdminCoupons";
 
 interface AdminPageProps {
-  products: ProductWithUI[];
-  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
   coupons: Coupon[];
   addCoupon: (newCoupon: Coupon) => void;
   deleteCoupon: (couponCode: string) => void;
 }
 
 const AdminPage = ({
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
   coupons,
   addCoupon,
   deleteCoupon,
@@ -58,12 +50,7 @@ const AdminPage = ({
       </div>
 
       {activeTab === "products" ? (
-        <AdminProducts
-          products={products}
-          addProduct={addProduct}
-          updateProduct={updateProduct}
-          deleteProduct={deleteProduct}
-        />
+        <AdminProducts />
       ) : (
         <AdminCoupons
           coupons={coupons}

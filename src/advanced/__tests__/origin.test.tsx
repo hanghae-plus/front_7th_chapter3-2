@@ -12,6 +12,8 @@ import "../../setupTests";
 import { useUIStore } from "../stores/useUIStore";
 import { useNotificationStore } from "../stores/useNotificationStore";
 import { useSearchStore } from "../stores/useSearchStore";
+import { useProductStore } from "../stores/useProductStore";
+import { INITIAL_PRODUCTS } from "../constants";
 
 describe("쇼핑몰 앱 통합 테스트", () => {
   beforeEach(() => {
@@ -21,6 +23,7 @@ describe("쇼핑몰 앱 통합 테스트", () => {
     useUIStore.setState({ isAdmin: false });
     useSearchStore.setState({ searchTerm: "" });
     useNotificationStore.setState({ notifications: [] });
+    useProductStore.setState({ products: INITIAL_PRODUCTS });
     // console 경고 무시
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -461,9 +464,10 @@ describe("쇼핑몰 앱 통합 테스트", () => {
 
       fireEvent.click(screen.getByText("추가"));
 
-      // localStorage에 products가 저장되었는지 확인
+      // localStorage에 products가 저장되었는지 확인 (Zustand persist 형식)
       expect(localStorage.getItem("products")).toBeTruthy();
-      const products = JSON.parse(localStorage.getItem("products"));
+      const productsStorage = JSON.parse(localStorage.getItem("products"));
+      const products = productsStorage.state?.products || productsStorage;
       expect(products.some((p) => p.name === "저장 테스트")).toBe(true);
     });
 

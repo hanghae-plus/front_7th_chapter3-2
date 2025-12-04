@@ -2,7 +2,6 @@ import Header from "./components/Header";
 import Notifications from "./components/Notifications";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
-import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useUIStore } from "./stores/useUIStore";
@@ -12,8 +11,6 @@ const App = () => {
   const addNotification = useNotificationStore(
     (state) => state.addNotification
   );
-  const { products, addProduct, updateProduct, deleteProduct } =
-    useProducts(addNotification);
   const { cart, setCart, totalItemCount, addToCart, removeFromCart } =
     useCart(addNotification);
   const {
@@ -37,10 +34,6 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage
-            products={products}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            deleteProduct={deleteProduct}
             coupons={coupons}
             addCoupon={addCoupon}
             deleteCoupon={deleteCoupon}
@@ -51,7 +44,6 @@ const App = () => {
             setCart={setCart}
             addToCart={addToCart}
             removeFromCart={removeFromCart}
-            products={products}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}

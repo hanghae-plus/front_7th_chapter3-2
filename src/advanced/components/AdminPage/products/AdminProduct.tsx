@@ -1,21 +1,14 @@
-import { ProductWithUI } from "../../../types/types";
 import AdminProductForm from "./AdminProductForm";
 import AdminProductsTable from "./AdminProductsTable";
 import { useProductForm } from "../../../hooks/useProductForm";
+import { useProductStore } from "../../../stores/useProductStore";
 
-interface AdminProductsProps {
-  products: ProductWithUI[];
-  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
-}
+export const AdminProducts = () => {
+  const products = useProductStore((state) => state.products);
+  const addProduct = useProductStore((state) => state.addProduct);
+  const updateProduct = useProductStore((state) => state.updateProduct);
+  const deleteProduct = useProductStore((state) => state.deleteProduct);
 
-export const AdminProducts = ({
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-}: AdminProductsProps) => {
   const {
     productForm,
     setProductForm,

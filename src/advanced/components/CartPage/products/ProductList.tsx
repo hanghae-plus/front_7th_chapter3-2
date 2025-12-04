@@ -2,20 +2,20 @@ import { useSearchStore } from "../../../stores/useSearchStore";
 import { CartItem, ProductWithUI } from "../../../types/types";
 import { useDebounce } from "../../../utils/hooks/useDebounce";
 import { filterProducts } from "../../../utils/product";
+import { useProductStore } from "../../../stores/useProductStore";
 
 import ProductCard from "./ProductCard";
 
 interface ProductListProps {
-  products: ProductWithUI[];
   cart: CartItem[];
   addToCart: (product: ProductWithUI) => void;
 }
 
 export const ProductList = ({
-  products,
   cart,
   addToCart,
 }: ProductListProps) => {
+  const products = useProductStore((state) => state.products);
   const searchTerm = useSearchStore((state) => state.searchTerm);
   const debouncedSearchTerm = useDebounce(searchTerm);
   const filteredProducts = filterProducts(products, debouncedSearchTerm);
