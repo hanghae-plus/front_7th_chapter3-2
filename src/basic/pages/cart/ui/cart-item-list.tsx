@@ -1,17 +1,21 @@
-import { CartItem } from '../../../../types';
+import { CartItem } from '../../../entities/cart';
+import { CartItem as CartItemType } from '../../../../types';
 import { useDeleteCart } from '../../../features/cart/delete-cart';
 import { useUpdateQuantity } from '../../../features/cart/update-quantitiy';
 import { ToastProps } from '../../../shared/ui/toast';
 
 interface PropsType {
-  cart: CartItem[];
+  cart: CartItemType[];
   toast: (notification: ToastProps) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
 }
 
 /* REFACTOR */
-const getMaxApplicableDiscount = (cart: CartItem[], item: CartItem): number => {
+const getMaxApplicableDiscount = (
+  cart: CartItemType[],
+  item: CartItemType
+): number => {
   const { discounts } = item.product;
   const { quantity } = item;
 
@@ -30,7 +34,10 @@ const getMaxApplicableDiscount = (cart: CartItem[], item: CartItem): number => {
 };
 
 /* REFACTOR */
-const calculateItemTotal = (cart: CartItem[], item: CartItem): number => {
+const calculateItemTotal = (
+  cart: CartItemType[],
+  item: CartItemType
+): number => {
   const { price } = item.product;
   const { quantity } = item;
   const discount = getMaxApplicableDiscount(cart, item);
@@ -64,62 +71,16 @@ export function CartItemList({
           : 0;
 
         return (
-          <div key={item.product.id} className="border-b pb-3 last:border-b-0">
-            <div className="flex justify-between items-start mb-2">
-              <h4 className="text-sm font-medium text-gray-900 flex-1">
-                {item.product.name}
-              </h4>
-              <button
-                onClick={() => onDeleteCart(item.product.id)}
-                className="text-gray-400 hover:text-red-500 ml-2"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <button
-                  onClick={() => onDecreaseQuantity(item)}
-                  className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                >
-                  <span className="text-xs">−</span>
-                </button>
-                <span className="mx-3 text-sm font-medium w-8 text-center">
-                  {item.quantity}
-                </span>
-                <button
-                  onClick={() => onIncreaseQuantity(item)}
-                  className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                >
-                  <span className="text-xs">+</span>
-                </button>
-              </div>
-              <div className="text-right">
-                {/* REFACTOR */}
-                {hasDiscount && (
-                  <span className="text-xs text-red-500 font-medium block">
-                    -{discountRate}%
-                  </span>
-                )}
-                <p className="text-sm font-medium text-gray-900">
-                  {/* REFACTOR */}
-                  {Math.round(itemTotal).toLocaleString()}원
-                </p>
-              </div>
-            </div>
-          </div>
+          <CartItem
+            key={item.product.id}
+            item={item}
+            hasDiscount={hasDiscount}
+            discountRate={discountRate}
+            itemTotal={itemTotal}
+            onDeleteCart={() => onDeleteCart(item.product.id)}
+            onDecreaseQuantity={() => onDecreaseQuantity(item)}
+            onIncreaseQuantity={() => onIncreaseQuantity(item)}
+          />
         );
       })}
     </div>
