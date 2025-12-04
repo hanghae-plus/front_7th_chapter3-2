@@ -1,36 +1,20 @@
-import React from "react";
-import { Coupon } from "../../../types";
+import { useCouponForm } from "../../hooks/useCouponForm";
+import { useCouponStore } from "../../store/couponStore";
 
-type CouponFormType = {
-  name: string;
-  code: string;
-  discountType: "amount" | "percentage";
-  discountValue: number;
-};
+const CouponManagement = () => {
+  const coupons = useCouponStore((state) => state.coupons);
+  const addCoupon = useCouponStore((state) => state.addCoupon);
+  const deleteCoupon = useCouponStore((state) => state.deleteCoupon);
 
-type Props = {
-  coupons: Coupon[];
-  deleteCoupon: (code: string) => void;
-  showCouponForm: boolean;
-  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
-  handleCouponSubmit: (e: React.FormEvent) => void;
-  couponForm: CouponFormType;
-  setCouponForm: React.Dispatch<React.SetStateAction<CouponFormType>>;
-  handleDiscountValueChange: (value: string) => void;
-  handleDiscountValueBlur: (value: string, discountType: "amount" | "percentage") => void;
-};
-
-const CouponManagement = ({
-  coupons,
-  deleteCoupon,
-  showCouponForm,
-  setShowCouponForm,
-  handleCouponSubmit,
-  couponForm,
-  setCouponForm,
-  handleDiscountValueChange,
-  handleDiscountValueBlur,
-}: Props) => {
+  const {
+    showCouponForm,
+    setShowCouponForm,
+    couponForm,
+    setCouponForm,
+    handleCouponSubmit,
+    handleDiscountValueChange,
+    handleDiscountValueBlur,
+  } = useCouponForm({ addCoupon });
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">

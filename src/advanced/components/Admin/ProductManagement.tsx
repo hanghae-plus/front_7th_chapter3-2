@@ -1,55 +1,30 @@
-import React from "react";
-import { ProductWithUI } from "../../../types";
+import { useProductForm } from "../../hooks/useProductForm";
+import { useCartStore } from "../../store/cartStore";
+import { useProductStore } from "../../store/productStore";
+import { formatPrice } from "../../utils/formatters";
 
-type ProductFormType = {
-  name: string;
-  price: number;
-  stock: number;
-  description: string;
-  discounts: Array<{ quantity: number; rate: number }>;
-};
+const ProductManagement = () => {
+  const getRemainingStock = useCartStore((state) => state.getRemainingStock);
+  const products = useProductStore((state) => state.products);
+  const addProduct = useProductStore((state) => state.addProduct);
+  const updateProduct = useProductStore((state) => state.updateProduct);
+  const deleteProduct = useProductStore((state) => state.deleteProduct);
 
-type Props = {
-  products: ProductWithUI[];
-  activeTab: string;
-  formatPrice: (stock: number, price: number, showDiscounted?: boolean) => string;
-  getRemainingStock: (product: ProductWithUI) => number;
-  startEditProduct: (product: ProductWithUI) => void;
-  startAddProduct: () => void;
-  deleteProduct: (id: string) => void;
-  showProductForm: boolean;
-  setShowProductForm: React.Dispatch<React.SetStateAction<boolean>>;
-  handleProductSubmit: (e: React.FormEvent) => void;
-  productForm: ProductFormType;
-  setProductForm: React.Dispatch<React.SetStateAction<ProductFormType>>;
-  editingProduct: string | null;
-  setEditingProduct: React.Dispatch<React.SetStateAction<string | null>>;
-  handlePriceChange: (value: string) => void;
-  handlePriceBlur: (value: string) => void;
-  handleStockChange: (value: string) => void;
-  handleStockBlur: (value: string) => void;
-};
-
-const ProductManagement = ({
-  products,
-  activeTab,
-  formatPrice,
-  getRemainingStock,
-  startEditProduct,
-  startAddProduct,
-  deleteProduct,
-  showProductForm,
-  setShowProductForm,
-  handleProductSubmit,
-  productForm,
-  setProductForm,
-  editingProduct,
-  setEditingProduct,
-  handlePriceChange,
-  handlePriceBlur,
-  handleStockChange,
-  handleStockBlur,
-}: Props) => {
+  const {
+    showProductForm,
+    setShowProductForm,
+    editingProduct,
+    setEditingProduct,
+    productForm,
+    setProductForm,
+    startEditProduct,
+    startAddProduct,
+    handleProductSubmit,
+    handlePriceChange,
+    handlePriceBlur,
+    handleStockChange,
+    handleStockBlur,
+  } = useProductForm({ addProduct, updateProduct });
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -76,7 +51,7 @@ const ProductManagement = ({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {(activeTab === "products" ? products : products).map((product) => (
+            {products.map((product) => (
               <tr key={product.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
