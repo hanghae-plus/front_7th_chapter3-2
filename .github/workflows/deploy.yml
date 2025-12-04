@@ -24,9 +24,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,6 +36,9 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Rename HTML file for GitHub Pages
+        run: mv dist/index.basic.html dist/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
