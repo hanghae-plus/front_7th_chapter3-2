@@ -1,4 +1,24 @@
-export default function ProductForm() {
+import { ProductFormState } from '../../../entities/product/types';
+
+interface ProductFormProps {
+  editingProduct: string | null;
+  productForm: ProductFormState;
+  setProductForm: (productForm: ProductFormState) => void;
+  setEditingProduct: (editingProduct: string | null) => void;
+  setShowProductForm: (showProductForm: boolean) => void;
+  handleProductSubmit: (e: React.FormEvent) => void;
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+}
+
+export default function ProductForm({
+  editingProduct,
+  productForm,
+  setProductForm,
+  setEditingProduct,
+  setShowProductForm,
+  handleProductSubmit,
+  addNotification,
+}: ProductFormProps) {
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
       <form onSubmit={handleProductSubmit} className="space-y-4">
