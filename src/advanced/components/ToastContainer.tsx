@@ -1,20 +1,9 @@
 import { Toast } from "./Toast";
+import { useNotificationStore } from "../store/useNotificationStore";
 
-interface Notification {
-  id: string;
-  type: "success" | "error" | "warning";
-  message: string;
-}
+export const ToastContainer = () => {
+  const { notifications, removeNotification } = useNotificationStore();
 
-interface ToastContainerProps {
-  notifications: Notification[];
-  onRemove: (id: string) => void;
-}
-
-export const ToastContainer = ({
-  notifications,
-  onRemove,
-}: ToastContainerProps) => {
   if (notifications.length === 0) return null;
 
   return (
@@ -25,7 +14,7 @@ export const ToastContainer = ({
           id={notif.id}
           type={notif.type}
           message={notif.message}
-          onClose={onRemove}
+          onClose={removeNotification}
         />
       ))}
     </div>

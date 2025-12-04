@@ -1,10 +1,6 @@
-interface CartIconProps {
-  itemCount: number;
-  show: boolean;
-}
+import { useCartStore } from "../../store/useCartStore";
 
-export const CartIcon = ({ itemCount, show }: CartIconProps) => {
-  if (!show) return null;
+export const CartIcon = ({ itemCount }: { itemCount: number }) => {
 
   return (
     <div className="relative">
