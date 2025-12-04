@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useProductStore, useCouponStore, useNotificationStore, ProductWithUI } from '../../stores';
-import { Coupon } from '../../../types';
 
 export function AdminPage() {
   const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
