@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Coupon } from '../types';
 import AdminDashboardPage from './pages/adminDashboard/AdminDashboardPage';
 import ProductPage from './pages/client/ProductPage';
@@ -9,6 +9,9 @@ import { useCartStorage } from './entities/cart/hooks/useCartStorage';
 import { useProductsStorage } from './entities/product/hooks/useProductsStorage';
 import { useCouponsStorage } from './entities/coupon/hooks/useCouponsStorage';
 import { Header } from './components/Header';
+import { useDebounce } from './hooks/useDebounce';
+
+const SEARCH_DEBOUNCE_DELAY = 500;
 
 const App = () => {
   // Storage State
@@ -19,9 +22,9 @@ const App = () => {
   // State
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DEBOUNCE_DELAY);
 
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
@@ -34,13 +37,6 @@ const App = () => {
     },
     []
   );
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   return (
     <div className="min-h-screen bg-gray-50">
