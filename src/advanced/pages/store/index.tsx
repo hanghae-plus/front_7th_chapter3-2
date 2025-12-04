@@ -16,11 +16,9 @@ const StorePage = () => {
       <div className='lg:col-span-3'>
         <ProductSection />
       </div>
-
       <div className='lg:col-span-1'>
         <div className='sticky top-24 space-y-4'>
           <CartSection />
-
           {totalItemCount > 0 && (
             <>
               <CouponSection totals={totals} selectedCoupon={selectedCoupon} setSelectedCoupon={setSelectedCoupon} />

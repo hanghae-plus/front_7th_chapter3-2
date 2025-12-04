@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, useCallback, useMemo } from 'react';
+import { ChangeEvent, FocusEvent, useCallback } from 'react';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import Label from '../../../components/label';
@@ -27,7 +27,7 @@ const CouponForm = ({ addCoupon, close, addNotification }: CouponFormProps) => {
 
   const { form, setForm, handleSubmit } = useForm({ initialForm, onSubmit });
 
-  const discountTypeOptions = useMemo(() => Object.values(DISCOUNT_TYPES).map(type => ({ label: DISCOUNT_TYPE_LABELS[type], value: type })), []);
+  const discountTypeOptions = Object.values(DISCOUNT_TYPES).map(type => ({ label: DISCOUNT_TYPE_LABELS[type], value: type }));
 
   const handleChange = {
     name: (e: ChangeEvent<HTMLInputElement>) => setForm(prev => ({ ...prev, name: e.target.value })),
