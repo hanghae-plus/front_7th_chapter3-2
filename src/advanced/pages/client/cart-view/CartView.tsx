@@ -8,7 +8,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { useProductContext } from '../../../entities/product/contexts/productContext';
 interface CartViewProps {
   cart: CartItem[];
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   setCart: Dispatch<SetStateAction<CartItem[]>>;
@@ -17,7 +16,6 @@ interface CartViewProps {
 
 export default function CartView({
   cart,
-  coupons,
   setCart,
   addNotification,
   selectedCoupon,
@@ -96,7 +94,6 @@ export default function CartView({
 
         {cart.length > 0 && (
           <CouponSection
-            coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             applyCoupon={applyCoupon}

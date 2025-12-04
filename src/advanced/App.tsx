@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import AdminDashboardPage from './pages/adminDashboard/AdminDashboardPage';
-import { type Coupon, useCouponsStorage } from './entities/coupon';
+import { type Coupon } from './entities/coupon';
 import ProductPage from './pages/client/ProductPage';
-import { initialProducts } from './mock/product';
-import { initialCoupons } from './mock/coupon';
 import { NotificationContainer, useNotification } from './entities/notification';
-import { useProductsStorage } from './entities/product';
 import { Header } from './components/Header';
 import { useDebounce } from './hooks/useDebounce';
 import { useCartStorage } from './entities/cart';
@@ -16,7 +13,7 @@ const App = () => {
   // Storage State
   // const [products, setProducts] = useProductsStorage(initialProducts);
   const [cart, setCart] = useCartStorage([]);
-  const [coupons, setCoupons] = useCouponsStorage(initialCoupons);
+  // const [coupons, setCoupons] = useCouponsStorage(initialCoupons);
 
   // State
   const [isAdmin, setIsAdmin] = useState(false);
@@ -40,10 +37,8 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminDashboardPage
-            coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
-            setCoupons={setCoupons}
             addNotification={addNotification}
           />
         ) : (
@@ -52,7 +47,6 @@ const App = () => {
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             setCart={setCart}
-            coupons={coupons}
             debouncedSearchTerm={debouncedSearchTerm}
             addNotification={addNotification}
           />

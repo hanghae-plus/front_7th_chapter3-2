@@ -1,4 +1,4 @@
-import { createContext, type Dispatch, type SetStateAction, useContext, useState } from 'react';
+import { createContext, type Dispatch, type SetStateAction, useContext } from 'react';
 import { type ProductWithUI } from '../types';
 import { useProductsStorage } from '../hooks/useProductsStorage';
 import { initialProducts } from '../../../mock/product';

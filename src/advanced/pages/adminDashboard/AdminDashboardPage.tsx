@@ -5,18 +5,14 @@ import CouponTab from './coupon-tab/CouponTab';
 import { Dispatch, SetStateAction } from 'react';
 
 interface AdminDashboardPageProps {
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
-  setCoupons: Dispatch<SetStateAction<Coupon[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function AdminDashboardPage({
-  coupons,
   selectedCoupon,
   setSelectedCoupon,
-  setCoupons,
   addNotification,
 }: AdminDashboardPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
@@ -56,8 +52,6 @@ export default function AdminDashboardPage({
         <ProductTab addNotification={addNotification} />
       ) : (
         <CouponTab
-          coupons={coupons}
-          setCoupons={setCoupons}
           addNotification={addNotification}
           selectedCoupon={selectedCoupon}
           setSelectedCoupon={setSelectedCoupon}

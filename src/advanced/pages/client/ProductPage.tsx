@@ -6,7 +6,6 @@ import { type Coupon } from '../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
 interface ProductPageProps {
   cart: CartItem[];
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
@@ -16,7 +15,6 @@ interface ProductPageProps {
 
 export default function ProductPage({
   cart,
-  coupons,
   selectedCoupon,
   setSelectedCoupon,
   debouncedSearchTerm,
@@ -33,7 +31,6 @@ export default function ProductPage({
       />
       <CartView
         cart={cart}
-        coupons={coupons}
         selectedCoupon={selectedCoupon}
         setSelectedCoupon={setSelectedCoupon}
         setCart={setCart}

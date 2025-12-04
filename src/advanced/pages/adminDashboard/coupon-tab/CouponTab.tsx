@@ -3,22 +3,20 @@ import CouponItem from './CouponItem';
 import CouponForm from './CouponForm';
 import { type Coupon, canAddCoupon } from '../../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
+import { useCouponContext } from '../../../entities/coupon';
 
 interface CouponTabProps {
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
-  setCoupons: Dispatch<SetStateAction<Coupon[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function CouponTab({
-  coupons,
-  setCoupons,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: CouponTabProps) {
+  const { coupons, setCoupons } = useCouponContext();
   const [showCouponForm, setShowCouponForm] = useState(false);
 
   const [couponForm, setCouponForm] = useState<Coupon>({

@@ -1,19 +1,18 @@
 import { formatPriceKRW } from '../../../utils/formatters';
-import { type Coupon } from '../../../entities/coupon';
+import { type Coupon, useCouponContext } from '../../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
 interface CouponSectionProps {
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   applyCoupon: (coupon: Coupon) => void;
 }
 
 export default function CouponSection({
-  coupons,
   selectedCoupon,
   setSelectedCoupon,
   applyCoupon,
 }: CouponSectionProps) {
+  const { coupons } = useCouponContext();
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
