@@ -1,5 +1,6 @@
 import React from 'react';
 import { CartItem, Coupon } from '../types';
+import Button from './components/ui/Button';
 
 interface CartProps {
   cart: CartItem[];
@@ -69,19 +70,19 @@ const Cart: React.FC<CartProps> = ({
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <button 
+                        <Button 
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)} 
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                         >
                           <span className="text-xs">−</span>
-                        </button>
+                        </Button>
                         <span className="mx-3 text-sm font-medium w-8 text-center">{item.quantity}</span>
-                        <button 
+                        <Button 
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)} 
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                         >
                           <span className="text-xs">+</span>
-                        </button>
+                        </Button>
                       </div>
                       <div className="text-right">
                         {hasDiscount && (
@@ -104,9 +105,9 @@ const Cart: React.FC<CartProps> = ({
             <section className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-gray-700">쿠폰 할인</h3>
-                <button className="text-xs text-blue-600 hover:underline">
+                <Button className="text-xs text-blue-600 hover:underline">
                   쿠폰 등록
-                </button>
+                </Button>
               </div>
               {coupons.length > 0 && (
                 <select 
@@ -149,12 +150,12 @@ const Cart: React.FC<CartProps> = ({
                 </div>
               </div>
               
-              <button
+              <Button
                 onClick={completeOrder}
-                className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
+                className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500"
               >
                 {totals.totalAfterDiscount.toLocaleString()}원 결제하기
-              </button>
+              </Button>
               
               <div className="mt-3 text-xs text-gray-500 text-center">
                 <p>* 실제 결제는 이루어지지 않습니다</p>
