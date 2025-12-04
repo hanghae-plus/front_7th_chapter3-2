@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { INITIAL_COUPONS } from "../constants";
 import { Coupon } from "../types/types";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
