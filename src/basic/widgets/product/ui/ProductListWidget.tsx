@@ -1,26 +1,24 @@
-import { useState } from 'react';
 import { useProductList } from '../../../entities/product/model/useProductList';
 import { useCart } from '../../../entities/cart/model/useCart';
 import { searchProducts } from '../../../entities/product/lib/search';
 import { ProductCard } from '../../../entities/product/ui/ProductCard';
 import { EmptySearchResult } from '../../../entities/product/ui/EmptySearchResult';
 import { AddToCartButton } from '../../../features/cart/ui/AddToCartButton';
-import { useDebounce } from '../../../shared/hooks/useDebounce';
 import { ToastMessage } from '../../../shared/hooks/useToast';
-import { Input } from '../../../shared/ui/Input';
 
 interface ProductListWidgetProps {
+  searchTerm: string; // debounced된 값을 받음
   onShowToast?: (message: string, type: ToastMessage['type']) => void;
 }
 
-export const ProductListWidget = ({ onShowToast }: ProductListWidgetProps) => {
+export const ProductListWidget = ({
+  searchTerm,
+  onShowToast,
+}: ProductListWidgetProps) => {
   const { products } = useProductList();
   const { cart } = useCart();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
-
-  const filteredProducts = searchProducts(products, debouncedSearchTerm);
+  const filteredProducts = searchProducts(products, searchTerm);
 
   const getUsedQuantity = (productId: string): number => {
     const cartItem = cart.find((item) => item.product.id === productId);
@@ -29,16 +27,6 @@ export const ProductListWidget = ({ onShowToast }: ProductListWidgetProps) => {
 
   return (
     <section>
-      {/* 검색 */}
-      <div className="mb-4">
-        <Input
-          variant="search"
-          placeholder="상품명 또는 설명으로 검색..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
       {/* 헤더 */}
       <div className="mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
@@ -49,7 +37,7 @@ export const ProductListWidget = ({ onShowToast }: ProductListWidgetProps) => {
 
       {/* 상품 목록 */}
       {filteredProducts.length === 0 ? (
-        <EmptySearchResult searchTerm={debouncedSearchTerm} />
+        <EmptySearchResult searchTerm={searchTerm} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
