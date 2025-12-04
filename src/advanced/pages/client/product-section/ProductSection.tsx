@@ -1,22 +1,19 @@
-import { type CartItem, canAddToCart, getAddToCart } from '../../../entities/cart';
+import { canAddToCart, getAddToCart } from '../../../entities/cart';
 import { type ProductWithUI, filterProducts, getRemainingStock } from '../../../entities/product';
 import ProductCard from './ProductCard';
-import { Dispatch, SetStateAction } from 'react';
 import { useProductContext } from '../../../entities/product/contexts/productContext';
+import { useCartContext } from '../../../entities/cart/contexts/cartContext';
 interface ProductSectionProps {
   debouncedSearchTerm: string;
-  cart: CartItem[];
-  setCart: Dispatch<SetStateAction<CartItem[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function ProductSection({
   debouncedSearchTerm,
-  cart,
-  setCart,
   addNotification,
 }: ProductSectionProps) {
   const { products } = useProductContext();
+  const { cart, setCart } = useCartContext();
   const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   // Events

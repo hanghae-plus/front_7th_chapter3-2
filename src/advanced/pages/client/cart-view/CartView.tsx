@@ -2,26 +2,24 @@ import { useMemo } from 'react';
 import PaymentInfoSection from './PaymentInfoSection';
 import CouponSection from './CouponSection';
 import CartSection from './CartSection';
-import { type CartItem, calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart';
+import { calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart';
 import { type Coupon, canApplyCoupon } from '../../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
 import { useProductContext } from '../../../entities/product/contexts/productContext';
+import { useCartContext } from '../../../entities/cart/contexts/cartContext';
 interface CartViewProps {
-  cart: CartItem[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
-  setCart: Dispatch<SetStateAction<CartItem[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function CartView({
-  cart,
-  setCart,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: CartViewProps) {
   const { products } = useProductContext();
+  const { cart, setCart } = useCartContext();
 
   // Computed Values
   const originTotal = useMemo(() => {

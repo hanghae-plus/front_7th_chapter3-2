@@ -1,4 +1,4 @@
-import { CartItem } from '../../types';
+import { useCartContext } from '../entities/cart';
 import { useMemo } from 'react';
 
 interface HeaderProps {
@@ -6,10 +6,10 @@ interface HeaderProps {
   searchTerm: string;
   setIsAdmin: (value: boolean) => void;
   setSearchTerm: (value: string) => void;
-  cart: CartItem[];
 }
 
-export function Header({ isAdmin, searchTerm, setIsAdmin, setSearchTerm, cart }: HeaderProps) {
+export function Header({ isAdmin, searchTerm, setIsAdmin, setSearchTerm }: HeaderProps) {
+  const { cart } = useCartContext();
   const totalItemCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
