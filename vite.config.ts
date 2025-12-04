@@ -21,7 +21,7 @@ function dynamicAliasPlugin(): Plugin {
       else if (importerPath.includes('/src/origin/')) baseFolder = 'origin';
     
       const relativePath = source.substring(2);
-      const localFolders = ['components', 'hooks', 'models', 'utils', 'constants', 'types', 'pages', 'App'];
+      const localFolders = ['constants', 'features', 'pages', 'shared', 'App'];
       const firstSegment = relativePath.split('/')[0];
 
       const resolvedPath = localFolders.includes(firstSegment)

@@ -1,6 +1,6 @@
-import App from '@/basic/App';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import App from '@/basic/App';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

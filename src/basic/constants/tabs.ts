@@ -1,8 +1,12 @@
-import { TabItem } from '@/hooks/useTab';
-import { CouponsTab } from '@/pages/AdminPage/components/CouponsTab';
-import { ProductsTab } from '@/pages/AdminPage/components/ProductsTab';
+import { Notification, TabItem } from '@/shared/hooks';
+import { CouponsTab } from '@/features/coupon';
+import { ProductsTab } from '@/features/product';
 
-export const ADMIN_TABS: TabItem[] = [
+type TabProps = {
+  addNotification: (message: string, type: Notification['type']) => void;
+};
+
+export const ADMIN_TABS: TabItem<TabProps>[] = [
   { id: 'products', label: '상품 관리', component: ProductsTab },
   { id: 'coupons', label: '쿠폰 관리', component: CouponsTab },
 ];

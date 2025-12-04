@@ -1,12 +1,9 @@
-import { Notifications } from '@/components/ui/Notifications';
 import { PAGES } from '@/constants/pages';
-import { useNotifications } from '@/hooks/useNotifications';
-import { PageItem, usePage } from '@/hooks/usePage';
-import { Notification } from '@/models/notification';
+import { Notification, useNotifications, usePage } from '@/shared/hooks';
+import { Notifications, PageLayout } from '@/shared/ui';
 
 const App = () => {
-  const { PageComponent, currentPage, goPage } = usePage<{
-    currentPage: PageItem;
+  const { PageComponent, goPage } = usePage<{
     goPage: (id: string) => void;
     addNotification: (message: string, type: Notification['type']) => void;
   }>(PAGES, 'products');
@@ -15,17 +12,13 @@ const App = () => {
     useNotifications();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <PageLayout>
       <Notifications
         notifications={notifications}
         removeNotification={removeNotification}
       />
-      <PageComponent
-        currentPage={currentPage}
-        goPage={goPage}
-        addNotification={addNotification}
-      />
-    </div>
+      <PageComponent goPage={goPage} addNotification={addNotification} />
+    </PageLayout>
   );
 };
 

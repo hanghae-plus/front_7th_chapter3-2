@@ -19,45 +19,25 @@
 
     /* Path Mapping */
     "paths": {
-      "@/components/*": [
-        "./src/origin/components/*",
-        "./src/basic/components/*",
-        "./src/advanced/components/*"
-      ],
-      "@/hooks/*": [
-        "./src/origin/hooks/*",
-        "./src/basic/hooks/*",
-        "./src/advanced/hooks/*"
-      ],
-      "@/models/*": [
-        "./src/origin/models/*",
-        "./src/basic/models/*",
-        "./src/advanced/models/*"
-      ],
-      "@/utils/*": [
-        "./src/origin/utils/*",
-        "./src/basic/utils/*",
-        "./src/advanced/utils/*"
-      ],
       "@/constants/*": [
         "./src/origin/constants/*",
         "./src/basic/constants/*",
         "./src/advanced/constants/*"
       ],
-      "@/types/*": [
-        "./src/origin/types/*",
-        "./src/basic/types/*",
-        "./src/advanced/types/*"
-      ],
-      "@/types": [
-        "./src/origin/types",
-        "./src/basic/types",
-        "./src/advanced/types"
+      "@/features/*": [
+        "./src/origin/features/*",
+        "./src/basic/features/*",
+        "./src/advanced/features/*"
       ],
       "@/pages/*": [
         "./src/origin/pages/*",
         "./src/basic/pages/*",
         "./src/advanced/pages/*"
+      ],
+      "@/shared/*": [
+        "./src/origin/shared/*",
+        "./src/basic/shared/*",
+        "./src/advanced/shared/*"
       ],
       "@/*": ["./src/*"]
     },

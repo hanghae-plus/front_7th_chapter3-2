@@ -1,7 +1,6 @@
-import AdminHeader from '@/components/layout/AdminHeader';
 import { ADMIN_TABS } from '@/constants/tabs';
-import { useTab } from '@/hooks/useTab';
-import { Notification } from '@/models/notification';
+import { Notification, useTab } from '@/shared/hooks';
+import { AdminHeader } from '@/shared/ui';
 import { clsx } from 'clsx';
 
 export const AdminPage = ({
