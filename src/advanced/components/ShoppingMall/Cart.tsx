@@ -1,17 +1,14 @@
 import { useCallback } from "react";
-import { CartItem, Coupon } from "../../../types";
 import CartItemComponent from "./CartItem";
 import CouponSelector from "./CouponSelector";
 import OrderSummary from "./OrderSummary";
 import { useCartStore } from "../../store/cartStore";
 import { useCouponStore } from "../../store/couponStore";
 
-type Props = {
-  cart: CartItem[];
-  coupons: Coupon[];
-};
+const Cart = () => {
+  const cart = useCartStore((state) => state.cart);
+  const coupons = useCouponStore((state) => state.coupons);
 
-const Cart = ({ cart, coupons }: Props) => {
   const selectedCoupon = useCouponStore((state) => state.selectedCoupon);
   const applyCoupon = useCouponStore((state) => state.applyCoupon);
   const setSelectedCoupon = useCouponStore((state) => state.setSelectedCoupon);

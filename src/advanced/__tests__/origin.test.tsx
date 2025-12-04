@@ -7,6 +7,7 @@ import { useCartStore } from '../store/cartStore';
 import { useProductStore } from '../store/productStore';
 import { useCouponStore } from '../store/couponStore';
 import { useNotificationStore } from '../store/notificationStore';
+import { useSearchStore } from '../store/searchStore';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
@@ -18,6 +19,7 @@ describe('쇼핑몰 앱 통합 테스트', () => {
     useProductStore.getState().reset();
     useCouponStore.getState().reset();
     useNotificationStore.getState().reset();
+    useSearchStore.getState().reset();
 
     // console 경고 무시
     vi.spyOn(console, 'warn').mockImplementation(() => {});

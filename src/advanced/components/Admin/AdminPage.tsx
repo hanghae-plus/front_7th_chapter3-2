@@ -7,7 +7,7 @@ type Props = {
   setActiveTab: React.Dispatch<React.SetStateAction<"products" | "coupons">>;
 };
 
-const Template = ({ activeTab, setActiveTab }: Props) => {
+const AdminPage = ({ activeTab, setActiveTab }: Props) => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
@@ -22,4 +22,4 @@ const Template = ({ activeTab, setActiveTab }: Props) => {
   );
 };
 
-export default Template;
+export default AdminPage;

@@ -1,16 +1,17 @@
 import React from "react";
 import { useCartStore } from "../store/cartStore";
+import { useSearchStore } from "../store/searchStore";
 
 type Props = {
   isAdmin: boolean;
-  searchTerm: string;
-  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  totalItemCount: number;
 };
 
-const Header = ({ isAdmin, searchTerm, setSearchTerm, setIsAdmin, totalItemCount }: Props) => {
+const Header = ({ isAdmin, setIsAdmin }: Props) => {
   const cart = useCartStore((state) => state.cart);
+  const totalItemCount = useCartStore((state) => state.totalItemCount);
+  const searchTerm = useSearchStore((state) => state.searchTerm);
+  const setSearchTerm = useSearchStore((state) => state.setSearchTerm);
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">

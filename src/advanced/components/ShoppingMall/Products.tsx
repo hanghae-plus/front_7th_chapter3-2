@@ -1,16 +1,18 @@
-import { ProductWithUI } from "../../../types";
 import ProductCard from "./ProductCard";
 import { useCartStore } from "../../store/cartStore";
+import { useProductStore } from "../../store/productStore";
+import { filterProducts } from "../../utils/productCalculations";
+import { useSearchStore } from "../../store/searchStore";
+import { useDebounce } from "../../hooks/useDebounce";
 
-type Props = {
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-};
-
-const Products = ({ products, filteredProducts, debouncedSearchTerm }: Props) => {
+const Products = () => {
+  const searchTerm = useSearchStore((state) => state.searchTerm);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const products = useProductStore((state) => state.products);
+  const filteredProducts = filterProducts(products, debouncedSearchTerm);
   const getRemainingStock = useCartStore((state) => state.getRemainingStock);
   const addToCart = useCartStore((state) => state.addToCart);
+
   return (
     <div className="lg:col-span-3">
       <section>
