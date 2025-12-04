@@ -8,30 +8,12 @@ import { AdminPage } from "./components/AdminPage";
 import { CartPage } from "./components/CartPage";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
-import { useProducts } from "./hooks/useProducts";
 
 const App = () => {
   const { notifications, addNotification, removeNotification } =
     useNotification();
-
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const {
-    cart,
-    totalItemCount,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-  } = useCart();
-
-  const {
-    coupons,
-    selectedCoupon,
-    addCoupon,
-    deleteCoupon,
-    applyCoupon,
-    clearSelectedCoupon,
-  } = useCoupons();
+  const { clearCart } = useCart();
+  const { clearSelectedCoupon } = useCoupons();
 
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -48,41 +30,10 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <UIToast notifications={notifications} onClose={removeNotification} />
-      <Header
-        isAdmin={isAdmin}
-        toggleAdmin={() => setIsAdmin(!isAdmin)}
-        cart={cart}
-        totalItemCount={totalItemCount}
-      />
+      <Header isAdmin={isAdmin} toggleAdmin={() => setIsAdmin(!isAdmin)} />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? (
-          <AdminPage
-            products={products}
-            coupons={coupons}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            deleteProduct={deleteProduct}
-            addCoupon={addCoupon}
-            deleteCoupon={deleteCoupon}
-            addNotification={addNotification}
-            cart={cart}
-          />
-        ) : (
-          <CartPage
-            products={products}
-            cart={cart}
-            totalItemCount={totalItemCount}
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            addToCart={addToCart}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-            applyCoupon={applyCoupon}
-            clearSelectedCoupon={clearSelectedCoupon}
-            completeOrder={completeOrder}
-          />
-        )}
+        {isAdmin ? <AdminPage /> : <CartPage completeOrder={completeOrder} />}
       </main>
     </div>
   );
