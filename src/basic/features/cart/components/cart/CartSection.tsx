@@ -2,7 +2,7 @@ import { calculateItemTotal } from '../../cart.service';
 import { CartItem } from '../../../../../types';
 import { CartTitle } from './CartTitle';
 import { CartEmptyList } from './CartEmptyList';
-import { CartItemList } from './CartItemList';
+import { CartItemComponent } from './CartItem';
 
 export const CartSection = ({
   cart,
@@ -26,7 +26,7 @@ export const CartSection = ({
             const originalPrice = item.product.price * item.quantity;
 
             return (
-              <CartItemList
+              <CartItemComponent
                 key={item.product.id}
                 item={item}
                 itemTotal={itemTotal}
