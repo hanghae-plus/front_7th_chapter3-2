@@ -43,30 +43,25 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
 }) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-lg font-semibold">상품 관리</h2>
-      </div>
-      <div className="p-6">
-        <ProductTable
-          products={products}
-          formatPrice={formatPrice}
-          onEditProduct={onEditProduct}
-          onDeleteProduct={onDeleteProduct}
-          onAddProduct={onAddProductClick}
-        />
+      <ProductTable
+        products={products}
+        formatPrice={formatPrice}
+        onEditProduct={onEditProduct}
+        onDeleteProduct={onDeleteProduct}
+        onAddProduct={onAddProductClick}
+      />
 
-        {showProductForm && (
-          <ProductForm
-            isVisible={showProductForm}
-            isEditing={editingProduct !== 'new'}
-            productForm={productForm}
-            onFormChange={onProductFormChange}
-            onSubmit={onProductSubmit}
-            onCancel={onProductFormCancel}
-            onAddNotification={onAddNotification}
-          />
-        )}
-      </div>
+      {showProductForm && (
+        <ProductForm
+          isVisible={showProductForm}
+          isEditing={editingProduct !== 'new'}
+          productForm={productForm}
+          onFormChange={onProductFormChange}
+          onSubmit={onProductSubmit}
+          onCancel={onProductFormCancel}
+          onAddNotification={onAddNotification}
+        />
+      )}
     </section>
   );
 };
