@@ -9,6 +9,7 @@ import { useProduct } from "./hooks/useProduct";
 import { useCoupon } from "./hooks/useCoupon";
 import { CartCounter } from "./components/CartCounter";
 import { ProductSearchBar } from "./components/ProductSearchBar";
+import { Coupon } from "../types";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -27,9 +28,17 @@ const App = () => {
     []
   );
 
-  const { cart, setCart, addToCart, removeFromCart, updateQuantity } = useCart({
-    addNotification,
-  });
+  const notificationHandler = {
+    onSuccess: (message: string) => {
+      addNotification(message, "success");
+    },
+    onError: (message: string) => {
+      addNotification(message, "error");
+    },
+  };
+
+  const { cart, setCart, addToCart, removeFromCart, updateQuantity } =
+    useCart(notificationHandler);
 
   const {
     products,
@@ -40,9 +49,7 @@ const App = () => {
     setSearchTerm,
     debouncedSearchTerm,
     filteredProducts,
-  } = useProduct({
-    addNotification,
-  });
+  } = useProduct(notificationHandler);
 
   const {
     coupons,
@@ -51,9 +58,7 @@ const App = () => {
     addCoupon,
     deleteCoupon,
     applyCoupon,
-  } = useCoupon({
-    addNotification,
-  });
+  } = useCoupon(notificationHandler);
 
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -123,7 +128,7 @@ const App = () => {
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
-            applyCoupon={applyCoupon}
+            applyCoupon={(coupon: Coupon) => applyCoupon(cart, coupon)}
             onPurchase={handlePurchase}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}

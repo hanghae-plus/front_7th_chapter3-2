@@ -4,12 +4,11 @@ import { calculateRemainingStock } from "../models/calculateRemainingStock";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCart = ({
-  addNotification,
+  onSuccess,
+  onError,
 }: {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  onSuccess: (message: string) => void;
+  onError: (message: string) => void;
 }) => {
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
@@ -17,7 +16,7 @@ export const useCart = ({
     (product: Product) => {
       const remainingStock = calculateRemainingStock(product, cart);
       if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
+        onError("재고가 부족합니다!");
         return;
       }
 
@@ -30,10 +29,7 @@ export const useCart = ({
           const newQuantity = existingItem.quantity + 1;
 
           if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
+            onError(`재고는 ${product.stock}개까지만 있습니다.`);
             return prevCart;
           }
 
@@ -47,9 +43,9 @@ export const useCart = ({
         return [...prevCart, { product, quantity: 1 }];
       });
 
-      addNotification("장바구니에 담았습니다", "success");
+      onSuccess("장바구니에 담았습니다");
     },
-    [cart, addNotification, setCart]
+    [cart, onError, onSuccess, setCart]
   );
 
   const removeFromCart = useCallback(
@@ -70,7 +66,7 @@ export const useCart = ({
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+        onError(`재고는 ${maxStock}개까지만 있습니다.`);
         return;
       }
 
@@ -82,7 +78,7 @@ export const useCart = ({
         )
       );
     },
-    [removeFromCart, addNotification, setCart]
+    [removeFromCart, onError, setCart]
   );
 
   return {

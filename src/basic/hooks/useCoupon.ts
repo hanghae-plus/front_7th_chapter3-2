@@ -1,15 +1,15 @@
 import { useCallback, useState } from "react";
-import { Coupon } from "../types";
+import { CartItem, Coupon } from "../types";
 import { initialCoupons } from "../constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { calculateCartTotal } from "../models/calculateCartTotal";
 
 export const useCoupon = ({
-  addNotification,
+  onSuccess,
+  onError,
 }: {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  onSuccess: (message: string) => void;
+  onError: (message: string) => void;
 }) => {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
@@ -21,13 +21,13 @@ export const useCoupon = ({
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+        onError("이미 존재하는 쿠폰 코드입니다.");
         return;
       }
       setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
+      onSuccess("쿠폰이 추가되었습니다.");
     },
-    [coupons, addNotification, setCoupons]
+    [coupons, onError, onSuccess, setCoupons]
   );
 
   const deleteCoupon = useCallback(
@@ -36,27 +36,27 @@ export const useCoupon = ({
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
+      onSuccess("쿠폰이 삭제되었습니다.");
     },
-    [selectedCoupon, addNotification, setCoupons]
+    [selectedCoupon, onSuccess, setCoupons]
   );
 
   const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      // const currentTotal = calculateCartTotal().totalAfterDiscount;
+    (cart: CartItem[], coupon: Coupon) => {
+      const currentTotal = calculateCartTotal(
+        cart,
+        selectedCoupon
+      ).totalAfterDiscount;
 
-      // if (currentTotal < 10000 && coupon.discountType === "percentage") {
-      //   addNotification(
-      //     "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-      //     "error"
-      //   );
-      //   return;
-      // }
+      if (currentTotal < 10000 && coupon.discountType === "percentage") {
+        onError("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.");
+        return;
+      }
 
       setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
+      onSuccess("쿠폰이 적용되었습니다.");
     },
-    [addNotification]
+    [onSuccess]
   );
 
   return {

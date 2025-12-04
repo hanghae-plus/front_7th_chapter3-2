@@ -5,12 +5,9 @@ import { useDebounce } from "../utils/hooks/useDebounce";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useProduct = ({
-  addNotification,
+  onSuccess,
 }: {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  onSuccess: (message: string) => void;
 }) => {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
     "products",
@@ -24,9 +21,9 @@ export const useProduct = ({
         id: `p${Date.now()}`,
       };
       setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
+      onSuccess("상품이 추가되었습니다.");
     },
-    [addNotification, setProducts]
+    [onSuccess, setProducts]
   );
 
   const updateProduct = useCallback(
@@ -36,17 +33,17 @@ export const useProduct = ({
           product.id === productId ? { ...product, ...updates } : product
         )
       );
-      addNotification("상품이 수정되었습니다.", "success");
+      onSuccess("상품이 수정되었습니다.");
     },
-    [addNotification, setProducts]
+    [onSuccess, setProducts]
   );
 
   const deleteProduct = useCallback(
     (productId: string) => {
       setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
+      onSuccess("상품이 삭제되었습니다.");
     },
-    [addNotification, setProducts]
+    [onSuccess, setProducts]
   );
 
   const [searchTerm, setSearchTerm] = useState("");
