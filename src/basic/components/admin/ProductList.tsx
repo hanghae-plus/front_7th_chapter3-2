@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ProductWithUI } from "../../hooks/useProducts";
-import { formatPrice } from "../../utils/formatters";
+import { formatPriceWon } from "../../utils/formatters";
 
 interface ProductListProps {
   products: ProductWithUI[];
@@ -56,7 +56,7 @@ export const ProductList = ({
                 {product.name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {formatPrice(product.price)}
+                {formatPriceWon(product.price)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <span

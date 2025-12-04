@@ -1,5 +1,5 @@
 import { ProductWithUI } from "../../hooks/useProducts";
-import { formatPrice } from "../../utils/formatters";
+import { formatProductPrice } from "../../utils/formatters";
 
 interface ProductCardProps {
   product: ProductWithUI;
@@ -11,6 +11,8 @@ export const ProductCard = ({
   remainingStock,
   addToCart,
 }: ProductCardProps) => {
+  const price =
+    remainingStock <= 0 ? "SOLD OUT" : formatProductPrice(product.price);
   return (
     <div
       key={product.id}
@@ -56,9 +58,7 @@ export const ProductCard = ({
 
         {/* 가격 정보 */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-gray-900">
-            {formatPrice(product.price)}
-          </p>
+          <p className="text-lg font-bold text-gray-900">{price}</p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
               {product.discounts[0].quantity}개 이상 구매시 할인{" "}
