@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { CartItem, ProductWithUI } from "../types/types";
 import { getRemainingStock } from "../utils/product";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCart = (
   addNotification: (
@@ -8,17 +9,7 @@ export const useCart = (
     type?: "success" | "error" | "warning"
   ) => void
 ) => {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -66,14 +57,6 @@ export const useCart = (
       prevCart.filter((item) => item.product.id !== productId)
     );
   }, []);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);

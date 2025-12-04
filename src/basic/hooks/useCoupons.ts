@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { INITIAL_COUPONS } from "../constants";
 import { Coupon } from "../types/types";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCoupons = (
   addNotification: (
@@ -8,17 +9,7 @@ export const useCoupons = (
     type?: "success" | "error" | "warning"
   ) => void
 ) => {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_COUPONS;
-      }
-    }
-    return INITIAL_COUPONS;
-  });
+  const [coupons, setCoupons] = useLocalStorage("coupons", INITIAL_COUPONS);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const addCoupon = useCallback(
@@ -44,10 +35,6 @@ export const useCoupons = (
     },
     [selectedCoupon, addNotification]
   );
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
 
   return {
     coupons,

@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { INITIAL_PRODUCTS } from "../constants";
 import { ProductWithUI } from "../types/types";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useProducts = (
   addNotification: (
@@ -8,17 +9,7 @@ export const useProducts = (
     type?: "success" | "error" | "warning"
   ) => void
 ) => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_PRODUCTS;
-      }
-    }
-    return INITIAL_PRODUCTS;
-  });
+  const [products, setProducts] = useLocalStorage("products", INITIAL_PRODUCTS);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
@@ -51,10 +42,6 @@ export const useProducts = (
     },
     [addNotification]
   );
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
 
   return { products, addProduct, updateProduct, deleteProduct };
 };
