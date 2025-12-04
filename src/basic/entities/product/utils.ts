@@ -1,5 +1,5 @@
-import { CartItem, Product } from '../../../types';
-import { DiscountFormState, ProductWithUI } from './types';
+import { Discount, Product, ProductWithUI } from './types';
+import { CartItem } from '../cart/types';
 
 // GET REMAINING STOCK
 export const getRemainingStock = (product: Product, cartItems: CartItem[]): number => {
@@ -44,10 +44,8 @@ export const getDeletedProducts = (products: ProductWithUI[], productId: string)
   products.filter(product => product.id !== productId);
 
 // DISCOUNT FORM
-export const getDeletedDiscounts = (
-  discounts: DiscountFormState[],
-  index: number
-): DiscountFormState[] => discounts.filter((_, i) => i !== index);
+export const getDeletedDiscounts = (discounts: Discount[], index: number): Discount[] =>
+  discounts.filter((_, i) => i !== index);
 
 // SHOW
 export const showSoldOutWarningMessage = (remainingStock: number): boolean => {

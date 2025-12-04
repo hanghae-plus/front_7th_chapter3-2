@@ -1,6 +1,5 @@
-import { Coupon } from '../../../../types';
-import { formatPriceKRW } from '../../../utils';
-
+import { formatPriceKRW } from '../../../utils/formatters';
+import { Coupon } from '../../../entities/coupon/types';
 interface CouponSectionProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;

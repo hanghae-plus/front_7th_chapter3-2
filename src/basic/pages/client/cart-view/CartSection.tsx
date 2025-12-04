@@ -1,5 +1,5 @@
-import { CartItem } from '../../../../types';
 import { calculateItemTotal } from '../../../entities/cart/utils';
+import { CartItem } from '../../../entities/cart/types';
 import CartListItem from './CartListItem';
 
 interface CartSectionProps {

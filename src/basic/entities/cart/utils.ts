@@ -1,4 +1,5 @@
-import { CartItem, Product } from '../../../types';
+import { CartItem } from './types';
+import { Product } from '../product/types';
 
 const BULK_PURCHASE_DISCOUNT = 0.05;
 const BULK_PURCHASE_QUANTITY = 10;

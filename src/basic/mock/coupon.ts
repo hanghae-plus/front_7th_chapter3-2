@@ -1,5 +1,4 @@
-import { Coupon } from '../../types';
-
+import { Coupon } from '../entities/coupon/types';
 export const initialCoupons: Coupon[] = [
   {
     name: '5000원 할인',

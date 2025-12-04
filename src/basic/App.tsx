@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import { Coupon } from '../types';
+import { useState } from 'react';
 import AdminDashboardPage from './pages/adminDashboard/AdminDashboardPage';
+import { Coupon } from './entities/coupon/types';
 import ProductPage from './pages/client/ProductPage';
 import { initialProducts } from './mock/product';
 import { initialCoupons } from './mock/coupon';

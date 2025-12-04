@@ -1,5 +1,5 @@
 import { ProductWithUI } from '../../../entities/product/types';
-import { formatPriceKRW } from '../../../utils';
+import { formatPriceKRW } from '../../../utils/formatters';
 import { showSoldOutWarningMessage, showInStockMessage } from '../../../entities/product/utils';
 interface ProductCardProps {
   product: ProductWithUI;

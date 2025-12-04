@@ -1,4 +1,4 @@
-import { formatPriceKRW } from '../../../utils';
+import { formatPriceKRW } from '../../../utils/formatters';
 
 interface PaymentInfoSectionProps {
   originTotal: number;

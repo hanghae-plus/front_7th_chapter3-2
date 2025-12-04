@@ -1,10 +1,10 @@
-import { DiscountFormState, ProductFormState } from '../../../entities/product/types';
+import { Discount, ProductFormState } from '../../../entities/product/types';
 import { getDeletedDiscounts } from '../../../entities/product/utils';
 
 interface DiscountFormProps {
   index: number;
   productForm: ProductFormState;
-  discount: DiscountFormState;
+  discount: Discount;
   setProductForm: (productForm: ProductFormState) => void;
 }
 

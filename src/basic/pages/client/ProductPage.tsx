@@ -1,7 +1,8 @@
-import { CartItem, Coupon } from '../../../types';
 import { ProductWithUI } from '../../entities/product/types';
 import CartView from './cart-view/CartView';
 import ProductSection from './product-section/ProductSection';
+import { CartItem } from '../../entities/cart/types';
+import { Coupon } from '../../entities/coupon/types';
 interface ProductPageProps {
   products: ProductWithUI[];
   cart: CartItem[];

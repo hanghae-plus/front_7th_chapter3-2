@@ -1,5 +1,4 @@
-import { Coupon } from '../../../../types';
-
+import { Coupon } from '../../../entities/coupon/types';
 interface CouponItemProps {
   coupon: Coupon;
   deleteCoupon: (couponCode: string) => void;

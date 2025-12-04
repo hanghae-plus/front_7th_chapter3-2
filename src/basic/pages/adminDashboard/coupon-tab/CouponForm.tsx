@@ -1,8 +1,7 @@
-import { CouponFormState } from '../../../entities/coupon/types';
-
+import { Coupon } from '../../../../types';
 interface CouponFormProps {
-  couponForm: CouponFormState;
-  setCouponForm: (couponForm: CouponFormState) => void;
+  couponForm: Coupon;
+  setCouponForm: (couponForm: Coupon) => void;
   setShowCouponForm: (showCouponForm: boolean) => void;
   handleCouponSubmit: (e: React.FormEvent) => void;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;

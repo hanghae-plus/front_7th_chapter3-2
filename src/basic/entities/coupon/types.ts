@@ -1,4 +1,4 @@
-export interface CouponFormState {
+export interface Coupon {
   name: string;
   code: string;
   discountType: 'amount' | 'percentage';

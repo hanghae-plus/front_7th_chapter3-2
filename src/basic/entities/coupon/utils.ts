@@ -1,5 +1,4 @@
-import { Coupon } from '../../../types';
-
+import { Coupon } from './types';
 const MIN_TOTAL_FOR_PERCENTAGE_COUPON = 10000;
 
 // APPLY COUPON

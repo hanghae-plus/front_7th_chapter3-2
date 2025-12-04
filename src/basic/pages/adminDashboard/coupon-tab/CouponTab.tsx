@@ -1,7 +1,6 @@
-import { Coupon } from '../../../../types';
 import { useState } from 'react';
 import CouponItem from './CouponItem';
-import { CouponFormState } from '../../../entities/coupon/types';
+import { Coupon } from '../../../entities/coupon/types';
 import CouponForm from './CouponForm';
 import { canAddCoupon } from '../../../entities/coupon/utils';
 
@@ -22,7 +21,7 @@ export default function CouponTab({
 }: CouponTabProps) {
   const [showCouponForm, setShowCouponForm] = useState(false);
 
-  const [couponForm, setCouponForm] = useState<CouponFormState>({
+  const [couponForm, setCouponForm] = useState<Coupon>({
     name: '',
     code: '',
     discountType: 'amount',

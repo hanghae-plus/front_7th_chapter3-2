@@ -1,4 +1,4 @@
-import { formatPriceKRW } from '../../../utils';
+import { formatPriceKRW } from '../../../utils/formatters';
 import { ProductWithUI } from '../../../entities/product/types';
 
 interface ProductListRowItemProps {
