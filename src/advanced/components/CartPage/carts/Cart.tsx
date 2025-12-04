@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { CartItem, Coupon } from "../../../types/types";
+import { Coupon } from "../../../types/types";
 import SectionCoupon from "./SectionCoupon";
 import SectionPayment from "./SectionPayment";
 import { getRemainingStock } from "../../../utils/product";
@@ -9,25 +9,21 @@ import { IconShoppingBagEmpty } from "../../icons/IconShoppingBagEmpty";
 import CartItemRow from "./CartItem";
 import { useNotificationStore } from "../../../stores/useNotificationStore";
 import { useProductStore } from "../../../stores/useProductStore";
+import { useCartStore } from "../../../stores/useCartStore";
 
 interface CartProps {
-  cart: CartItem[];
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-  removeFromCart: (productId: string) => void;
 }
 
 export const Cart = ({
-  cart,
-  setCart,
   coupons,
   selectedCoupon,
   setSelectedCoupon,
-  removeFromCart,
 }: CartProps) => {
-  const products = useProductStore((state) => state.products);
+  const cart = useCartStore((state) => state.cart);
+  const clearCart = useCartStore((state) => state.clearCart);
   const addNotification = useNotificationStore(
     (state) => state.addNotification
   );
@@ -54,34 +50,6 @@ export const Cart = ({
     [addNotification, calculateCartTotal]
   );
 
-  // 제품 수량 업데이트
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
-
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
-        return;
-      }
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-    },
-    [products, removeFromCart, addNotification, getRemainingStock]
-  );
-
   // 주문
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
@@ -89,9 +57,9 @@ export const Cart = ({
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       "success"
     );
-    setCart([]);
+    clearCart();
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [addNotification, clearCart, setSelectedCoupon]);
 
   return (
     <div className="lg:col-span-1">
@@ -109,14 +77,7 @@ export const Cart = ({
           ) : (
             <div className="space-y-3">
               {cart.map((item) => {
-                return (
-                  <CartItemRow
-                    item={item}
-                    cart={cart}
-                    removeFromCart={removeFromCart}
-                    updateQuantity={updateQuantity}
-                  />
-                );
+                return <CartItemRow key={item.product.id} item={item} />;
               })}
             </div>
           )}

@@ -1,20 +1,11 @@
 import { useSearchStore } from "../../../stores/useSearchStore";
-import { CartItem, ProductWithUI } from "../../../types/types";
 import { useDebounce } from "../../../utils/hooks/useDebounce";
 import { filterProducts } from "../../../utils/product";
 import { useProductStore } from "../../../stores/useProductStore";
 
 import ProductCard from "./ProductCard";
 
-interface ProductListProps {
-  cart: CartItem[];
-  addToCart: (product: ProductWithUI) => void;
-}
-
-export const ProductList = ({
-  cart,
-  addToCart,
-}: ProductListProps) => {
+export const ProductList = () => {
   const products = useProductStore((state) => state.products);
   const searchTerm = useSearchStore((state) => state.searchTerm);
   const debouncedSearchTerm = useDebounce(searchTerm);
@@ -40,11 +31,7 @@ export const ProductList = ({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredProducts.map((product) => (
-              <ProductCard
-                product={product}
-                cart={cart}
-                addToCart={addToCart}
-              />
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}

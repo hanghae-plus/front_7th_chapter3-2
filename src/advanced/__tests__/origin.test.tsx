@@ -13,6 +13,7 @@ import { useUIStore } from "../stores/useUIStore";
 import { useNotificationStore } from "../stores/useNotificationStore";
 import { useSearchStore } from "../stores/useSearchStore";
 import { useProductStore } from "../stores/useProductStore";
+import { useCartStore } from "../stores/useCartStore";
 import { INITIAL_PRODUCTS } from "../constants";
 
 describe("쇼핑몰 앱 통합 테스트", () => {
@@ -24,6 +25,7 @@ describe("쇼핑몰 앱 통합 테스트", () => {
     useSearchStore.setState({ searchTerm: "" });
     useNotificationStore.setState({ notifications: [] });
     useProductStore.setState({ products: INITIAL_PRODUCTS });
+    useCartStore.setState({ cart: [] });
     // console 경고 무시
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -443,9 +445,11 @@ describe("쇼핑몰 앱 통합 테스트", () => {
       // 상품을 장바구니에 추가
       fireEvent.click(screen.getAllByText("장바구니 담기")[0]);
 
-      // localStorage 확인
+      // localStorage 확인 (Zustand persist 형식)
       expect(localStorage.getItem("cart")).toBeTruthy();
-      expect(JSON.parse(localStorage.getItem("cart"))).toHaveLength(1);
+      const cartStorage = JSON.parse(localStorage.getItem("cart"));
+      const cart = cartStorage.state?.cart || cartStorage;
+      expect(cart).toHaveLength(1);
 
       // 관리자 모드로 전환하여 새 상품 추가
       fireEvent.click(screen.getByText("관리자 페이지로"));

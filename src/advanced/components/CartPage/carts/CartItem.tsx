@@ -1,20 +1,16 @@
 import { CartItem } from "../../../types/types";
 import { calculateItemTotal } from "../../../utils/cart";
 import { formatPercentage } from "../../../utils/common/formatters";
+import { useCartStore } from "../../../stores/useCartStore";
 
 interface CartItemProps {
   item: CartItem;
-  cart: CartItem[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
 }
 
-const CartItemRow = ({
-  item,
-  cart,
-  removeFromCart,
-  updateQuantity,
-}: CartItemProps) => {
+const CartItemRow = ({ item }: CartItemProps) => {
+  const cart = useCartStore((state) => state.cart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
   const itemTotal = calculateItemTotal(item, cart);
   const originalPrice = item.product.price * item.quantity;
   const hasDiscount = itemTotal < originalPrice;

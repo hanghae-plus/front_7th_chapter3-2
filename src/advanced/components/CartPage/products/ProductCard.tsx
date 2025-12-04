@@ -1,19 +1,19 @@
-import { CartItem, ProductWithUI } from "../../../types/types";
+import { ProductWithUI } from "../../../types/types";
 import {
   formatPercentage,
   formatPrice,
 } from "../../../utils/common/formatters";
 import { getRemainingStock } from "../../../utils/product";
 import { IconImagePlaceholder } from "../../icons/IconImagePlaceholder";
+import { useCartStore } from "../../../stores/useCartStore";
 
 interface ProductCardProps {
   product: ProductWithUI;
-  // TODO : cart를 여기까지 내려주는 게 너무 마음에 안드네
-  cart: CartItem[];
-  addToCart: (product: ProductWithUI) => void;
 }
 
-const ProductCard = ({ product, cart, addToCart }: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
+  const cart = useCartStore((state) => state.cart);
+  const addToCart = useCartStore((state) => state.addToCart);
   const remainingStock = getRemainingStock(product, cart);
 
   const formatProductPrice =
