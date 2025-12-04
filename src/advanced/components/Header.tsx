@@ -1,9 +1,8 @@
+import { useGlobalStore } from "../stores/useGlobalStore";
 import { CartItem } from "../types/types";
 import { IconCart } from "./icons/IconCart";
 
 interface HeaderProps {
-  isAdmin: boolean;
-  setIsAdmin: (isAdmin: boolean) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   cart: CartItem[];
@@ -11,13 +10,14 @@ interface HeaderProps {
 }
 
 const Header = ({
-  isAdmin,
-  setIsAdmin,
   searchTerm,
   setSearchTerm,
   cart,
   totalItemCount,
 }: HeaderProps) => {
+  const isAdmin = useGlobalStore((state) => state.isAdmin);
+  const setIsAdmin = useGlobalStore((state) => state.setIsAdmin);
+
   return (
     // 헤더
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">

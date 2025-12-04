@@ -8,6 +8,7 @@ import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useDebounce } from "./utils/hooks/useDebounce";
+import { useGlobalStore } from "./stores/useGlobalStore";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -24,7 +25,7 @@ const App = () => {
     setSelectedCoupon,
   } = useCoupons(addNotification);
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAdmin = useGlobalStore((state) => state.isAdmin);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm);
 
@@ -38,8 +39,6 @@ const App = () => {
 
       {/* 헤더 */}
       <Header
-        isAdmin={isAdmin}
-        setIsAdmin={setIsAdmin}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         cart={cart}
