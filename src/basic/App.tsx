@@ -30,9 +30,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {notifications.length > 0 && (
-        <Notification notifications={notifications} setNotifications={setNotifications} />
-      )}
+      <Notification notifications={notifications} setNotifications={setNotifications} />
 
       <Header
         isAdmin={isAdmin}
