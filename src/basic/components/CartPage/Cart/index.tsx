@@ -1,6 +1,6 @@
 import { CartItem, Coupon } from "../../../../types";
 import { calculateCartTotal } from "../../../models/cart";
-import { CartItemList } from "./CartItemList";
+import { CartItemList } from "./CartItemList/CartItemList";
 import { CouponSelector } from "./CouponSelector";
 import { OrderSummary } from "./OrderSummary";
 
