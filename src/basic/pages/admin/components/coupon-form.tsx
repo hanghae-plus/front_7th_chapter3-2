@@ -7,6 +7,7 @@ import useForm from '../../../hooks/form';
 import { AddNotification } from '../../../hooks/notifications';
 import { Coupon, DiscountType } from '../../../types/coupons';
 import { validateRange } from '../../../utils/validator';
+import { isNumericInput, parseNumericInput, toUpperCase as toUpperCaseUtil } from '../../../utils/form';
 import { COUPON_VALIDATION_RULES, DISCOUNT_TYPE_LABELS, DISCOUNT_TYPE_PLACEHOLDERS, DISCOUNT_TYPES, initialForm } from '../constants/coupons';
 
 interface CouponFormProps {
@@ -25,19 +26,19 @@ const CouponForm = ({ addCoupon, close, addNotification }: CouponFormProps) => {
 
   const handleChange = {
     name: (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, name: e.target.value }),
-    code: (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, code: e.target.value.toUpperCase() }),
+    code: (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, code: toUpperCaseUtil(e.target.value) }),
     discountType: (e: ChangeEvent<HTMLSelectElement>) => setForm({ ...form, discountType: e.target.value as DiscountType }),
     discountValue: (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (value === '' || /^\d+$/.test(value)) {
-        setForm({ ...form, discountValue: value === '' ? 0 : parseInt(value) });
+      if (isNumericInput(value)) {
+        setForm({ ...form, discountValue: parseNumericInput(value) });
       }
     }
   };
 
   const handleBlur = {
     discountValue: (e: FocusEvent<HTMLInputElement>) => {
-      const value = parseInt(e.target.value) || 0;
+      const value = parseNumericInput(e.target.value) || 0;
       const validation = validateRange(value, COUPON_VALIDATION_RULES[form.discountType]);
 
       if (!validation.isValid) {

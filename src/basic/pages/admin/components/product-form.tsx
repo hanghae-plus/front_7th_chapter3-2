@@ -9,6 +9,7 @@ import { ProductFormData, ProductWithUI } from '../../../types/products';
 import { validateRange } from '../../../utils/validator';
 import { removeDiscount, addDefaultDiscount } from '../../../utils/discount';
 import { getProductFormTitle, getProductFormSubmitText, isEditingProduct } from '../../../utils/product-form';
+import { isNumericInput, parseNumericInput, convertPercentageToDecimal, convertDecimalToPercentage } from '../../../utils/form';
 import { initialForm, PRODUCT_VALIDATION_RULES } from '../constants/products';
 
 interface ProductFormProps {
@@ -42,24 +43,24 @@ const ProductForm = ({ products, editingProduct, setEditingProduct, addProduct, 
     description: (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, description: e.target.value }),
     price: (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (value === '' || /^\d+$/.test(value)) {
-        setForm({ ...form, price: value === '' ? 0 : parseInt(value) });
+      if (isNumericInput(value)) {
+        setForm({ ...form, price: parseNumericInput(value) });
       }
     },
     stock: (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (value === '' || /^\d+$/.test(value)) {
-        setForm({ ...form, stock: value === '' ? 0 : parseInt(value) });
+      if (isNumericInput(value)) {
+        setForm({ ...form, stock: parseNumericInput(value) });
       }
     },
     discountQuantity: (e: ChangeEvent<HTMLInputElement>, index: number) => {
       const newDiscounts = [...form.discounts];
-      newDiscounts[index].quantity = parseInt(e.target.value) || 0;
+      newDiscounts[index].quantity = parseNumericInput(e.target.value) || 0;
       setForm({ ...form, discounts: newDiscounts });
     },
     discountRate: (e: ChangeEvent<HTMLInputElement>, index: number) => {
       const newDiscounts = [...form.discounts];
-      newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
+      newDiscounts[index].rate = convertPercentageToDecimal(parseNumericInput(e.target.value) || 0);
       setForm({ ...form, discounts: newDiscounts });
     }
   };
@@ -162,7 +163,7 @@ const ProductForm = ({ products, editingProduct, setEditingProduct, addProduct, 
                 <span className='text-sm'>개 이상 구매 시</span>
                 <Input
                   type='number'
-                  value={discount.rate * 100}
+                  value={convertDecimalToPercentage(discount.rate)}
                   onChange={e => handleChange.discountRate(e, index)}
                   className='w-16'
                   min='0'
