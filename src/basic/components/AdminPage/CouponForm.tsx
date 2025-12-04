@@ -31,6 +31,64 @@ export const CouponForm = ({
   onSubmit,
   addNotification,
 }: CouponFormProps) => {
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCouponForm({ ...couponForm, name: e.target.value });
+  };
+
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() });
+  };
+
+  const handleDiscountTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setCouponForm({
+      ...couponForm,
+      discountType: e.target.value as "amount" | "percentage",
+    });
+  };
+
+  const handleDiscountValueChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    if (isNumericInput(value)) {
+      setCouponForm({
+        ...couponForm,
+        discountValue: value === "" ? 0 : parseInt(value),
+      });
+    }
+  };
+
+  const handleDiscountValueBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 0;
+    const result =
+      couponForm.discountType === "percentage"
+        ? validateCouponPercentage(value)
+        : validateCouponAmount(value);
+
+    if (!result.isValid) {
+      if (result.error) {
+        addNotification(result.error, "error");
+      }
+      if (result.correctedValue !== undefined) {
+        setCouponForm({
+          ...couponForm,
+          discountValue: result.correctedValue,
+        });
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setShowCouponForm(false);
+  };
+
+  const discountValueLabel =
+    couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)";
+  const discountValuePlaceholder =
+    couponForm.discountType === "amount" ? "5000" : "10";
+
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <form onSubmit={onSubmit} className="space-y-4">
@@ -40,12 +98,7 @@ export const CouponForm = ({
             label="쿠폰명"
             type="text"
             value={couponForm.name}
-            onChange={(e) =>
-              setCouponForm({
-                ...couponForm,
-                name: e.target.value,
-              })
-            }
+            onChange={handleNameChange}
             placeholder="신규 가입 쿠폰"
             required
             className="text-sm"
@@ -54,12 +107,7 @@ export const CouponForm = ({
             label="쿠폰 코드"
             type="text"
             value={couponForm.code}
-            onChange={(e) =>
-              setCouponForm({
-                ...couponForm,
-                code: e.target.value.toUpperCase(),
-              })
-            }
+            onChange={handleCodeChange}
             placeholder="WELCOME2024"
             required
             className="text-sm font-mono"
@@ -67,63 +115,26 @@ export const CouponForm = ({
           <FormSelect
             label="할인 타입"
             value={couponForm.discountType}
-            onChange={(e) =>
-              setCouponForm({
-                ...couponForm,
-                discountType: e.target.value as "amount" | "percentage",
-              })
-            }
+            onChange={handleDiscountTypeChange}
           >
             <option value="amount">정액 할인</option>
             <option value="percentage">정률 할인</option>
           </FormSelect>
           <FormInput
-            label={
-              couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"
-            }
+            label={discountValueLabel}
             type="text"
             value={
               couponForm.discountValue === 0 ? "" : couponForm.discountValue
             }
-            onChange={(e) => {
-              const value = e.target.value;
-              if (isNumericInput(value)) {
-                setCouponForm({
-                  ...couponForm,
-                  discountValue: value === "" ? 0 : parseInt(value),
-                });
-              }
-            }}
-            onBlur={(e) => {
-              const value = parseInt(e.target.value) || 0;
-              const result =
-                couponForm.discountType === "percentage"
-                  ? validateCouponPercentage(value)
-                  : validateCouponAmount(value);
-
-              if (!result.isValid) {
-                if (result.error) {
-                  addNotification(result.error, "error");
-                }
-                if (result.correctedValue !== undefined) {
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: result.correctedValue,
-                  });
-                }
-              }
-            }}
-            placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
+            onChange={handleDiscountValueChange}
+            onBlur={handleDiscountValueBlur}
+            placeholder={discountValuePlaceholder}
             required
             className="text-sm"
           />
         </div>
         <div className="flex justify-end gap-3">
-          <Button
-            variant="secondary"
-            type="button"
-            onClick={() => setShowCouponForm(false)}
-          >
+          <Button variant="secondary" type="button" onClick={handleCancel}>
             취소
           </Button>
           <Button variant="primary" type="submit">
