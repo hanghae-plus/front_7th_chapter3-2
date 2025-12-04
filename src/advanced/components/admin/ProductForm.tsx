@@ -1,5 +1,11 @@
 import React from 'react';
 import { useNotificationsContext } from '../../contexts';
+import {
+  validateProductPrice,
+  validateProductStock,
+  isValidIntegerInput,
+  safeParseInt,
+} from '../../models/validators';
 
 interface ProductFormProps {
   isVisible: boolean;
@@ -77,10 +83,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               value={productForm.price === 0 ? '' : productForm.price}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === '' || /^\d+$/.test(value)) {
+                if (isValidIntegerInput(value)) {
                   onFormChange({
                     ...productForm,
-                    price: value === '' ? 0 : parseInt(value),
+                    price: safeParseInt(value, 0),
                   });
                 }
               }}
@@ -88,9 +94,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 const value = e.target.value;
                 if (value === '') {
                   onFormChange({ ...productForm, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification('가격은 0보다 커야 합니다', 'error');
-                  onFormChange({ ...productForm, price: 0 });
+                } else {
+                  const price = parseInt(value);
+                  const validation = validateProductPrice(price);
+                  if (!validation.isValid) {
+                    addNotification(validation.error!, 'error');
+                    onFormChange({ ...productForm, price: 0 });
+                  }
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -107,10 +117,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               value={productForm.stock === 0 ? '' : productForm.stock}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === '' || /^\d+$/.test(value)) {
+                if (isValidIntegerInput(value)) {
                   onFormChange({
                     ...productForm,
-                    stock: value === '' ? 0 : parseInt(value),
+                    stock: safeParseInt(value, 0),
                   });
                 }
               }}
@@ -118,15 +128,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 const value = e.target.value;
                 if (value === '') {
                   onFormChange({ ...productForm, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification('재고는 0보다 커야 합니다', 'error');
-                  onFormChange({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  addNotification(
-                    '재고는 9999개를 초과할 수 없습니다',
-                    'error'
-                  );
-                  onFormChange({ ...productForm, stock: 9999 });
+                } else {
+                  const stock = parseInt(value);
+                  const validation = validateProductStock(stock);
+                  if (!validation.isValid) {
+                    addNotification(validation.error!, 'error');
+                    const maxStock = stock > 9999 ? 9999 : 0;
+                    onFormChange({ ...productForm, stock: maxStock });
+                  }
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"

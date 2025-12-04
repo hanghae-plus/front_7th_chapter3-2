@@ -2,6 +2,12 @@ import React from 'react';
 import { Input, Select, Button } from '../primitives';
 import { SelectOption } from '../primitives/Select';
 import { useNotificationsContext } from '../../contexts';
+import {
+  validateCouponAmount,
+  validateCouponPercentage,
+  isValidIntegerInput,
+  safeParseInt,
+} from '../../models/validators';
 
 interface CouponFormProps {
   couponForm: {
@@ -28,29 +34,34 @@ export const CouponForm: React.FC<CouponFormProps> = ({
   ];
 
   const handleDiscountValueChange = (value: string) => {
-    if (value === '' || /^\d+$/.test(value)) {
+    if (isValidIntegerInput(value)) {
       onFormChange({
         ...couponForm,
-        discountValue: value === '' ? 0 : parseInt(value),
+        discountValue: safeParseInt(value, 0),
       });
     }
   };
 
   const handleDiscountValueBlur = (value: string) => {
-    const numValue = parseInt(value) || 0;
+    const numValue = safeParseInt(value, 0);
+
     if (couponForm.discountType === 'percentage') {
-      if (numValue > 100) {
-        addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
-        onFormChange({ ...couponForm, discountValue: 100 });
-      } else if (numValue < 0) {
-        onFormChange({ ...couponForm, discountValue: 0 });
+      const validation = validateCouponPercentage(numValue);
+      if (!validation.isValid) {
+        addNotification(validation.error!, 'error');
+        onFormChange({
+          ...couponForm,
+          discountValue: numValue > 100 ? 100 : 0,
+        });
       }
     } else {
-      if (numValue > 100000) {
-        addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
-        onFormChange({ ...couponForm, discountValue: 100000 });
-      } else if (numValue < 0) {
-        onFormChange({ ...couponForm, discountValue: 0 });
+      const validation = validateCouponAmount(numValue);
+      if (!validation.isValid) {
+        addNotification(validation.error!, 'error');
+        onFormChange({
+          ...couponForm,
+          discountValue: numValue > 100000 ? 100000 : 0,
+        });
       }
     }
   };
