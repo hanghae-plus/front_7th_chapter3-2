@@ -1,6 +1,6 @@
 # 과제 배포
 
-- https://daehyunk1m.github.io/front_7th_chapter3-2/
+- https://daehyunk1m.github.io/front_7th_chapter3-2/index.advanced.html
 
 ## 과제의 핵심취지
 
