@@ -3,6 +3,7 @@ import { Coupon } from '../../../../../types';
 import { checkCouponAvailability } from '../../cart.service';
 import { formatPrice } from '../../../../shared/utils/priceUtils';
 import { useNotification } from '../../../../shared/hooks/useNotification';
+import { Select } from '../../../../shared/component/ui';
 
 export const CouponSelector = ({
   selectedCoupon,
@@ -58,10 +59,10 @@ export const CouponSelector = ({
   );
 
   return (
-    <select
-      className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+    <Select
       value={selectedCoupon?.code || ''}
       onChange={onCouponChange}
+      className="rounded focus:outline-none focus:border-blue-500 shadow-none focus:ring-0"
     >
       <option value="">쿠폰 선택</option>
       {coupons.map((coupon) => (
@@ -73,6 +74,6 @@ export const CouponSelector = ({
           )
         </option>
       ))}
-    </select>
+    </Select>
   );
 };
