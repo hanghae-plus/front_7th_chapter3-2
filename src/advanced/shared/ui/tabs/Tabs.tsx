@@ -1,4 +1,20 @@
-import React, { useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+
+// Context 생성
+interface TabsContextValue {
+  activeTab: string;
+  setActiveTab: (value: string) => void;
+}
+
+const TabsContext = createContext<TabsContextValue | undefined>(undefined);
+
+function useTabsContext() {
+  const context = useContext(TabsContext);
+  if (context === undefined) {
+    throw new Error('Tabs compound components must be used within Tabs');
+  }
+  return context;
+}
 
 // TabsList 컴포넌트
 interface TabsListProps {
@@ -17,24 +33,21 @@ const TabsList: React.FC<TabsListProps> = ({ children, className = '' }) => {
 // TabsTrigger 컴포넌트
 interface TabsTriggerProps {
   value: string;
-  activeTab?: string;
-  onTabChange?: (value: string) => void;
   children: React.ReactNode;
   className?: string;
 }
 
 const TabsTrigger: React.FC<TabsTriggerProps> = ({
   value,
-  activeTab = '',
-  onTabChange = () => {},
   children,
   className = '',
 }) => {
+  const { activeTab, setActiveTab } = useTabsContext();
   const isActive = activeTab === value;
 
   return (
     <button
-      onClick={() => onTabChange(value)}
+      onClick={() => setActiveTab(value)}
       className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
         isActive
           ? 'border-gray-900 text-gray-900'
@@ -49,17 +62,17 @@ const TabsTrigger: React.FC<TabsTriggerProps> = ({
 // TabsContent 컴포넌트
 interface TabsContentProps {
   value: string;
-  activeTab?: string;
   children: React.ReactNode;
   className?: string;
 }
 
 const TabsContent: React.FC<TabsContentProps> = ({
   value,
-  activeTab = '',
   children,
   className = '',
 }) => {
+  const { activeTab } = useTabsContext();
+
   if (activeTab !== value) return null;
 
   return <div className={className}>{children}</div>;
@@ -75,43 +88,11 @@ interface TabsProps {
 export function Tabs({ defaultValue, children, className }: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultValue);
 
-  // children을 순회하면서 props 전달
-  const childrenWithProps = React.Children.map(children, (child) => {
-    if (React.isValidElement(child)) {
-      if (child.type === Tabs.List) {
-        // TabsList의 children에도 props 전달
-        const listChildren = React.Children.map(
-          (child as any).props.children,
-          (listChild) => {
-            if (
-              React.isValidElement(listChild) &&
-              listChild.type === Tabs.Trigger
-            ) {
-              return React.cloneElement(
-                listChild as React.ReactElement<TabsTriggerProps>,
-                {
-                  activeTab,
-                  onTabChange: setActiveTab,
-                }
-              );
-            }
-            return listChild;
-          }
-        );
-        return React.cloneElement(child, {}, listChildren);
-      }
-
-      if (child.type === Tabs.Content) {
-        return React.cloneElement(
-          child as React.ReactElement<TabsContentProps>,
-          { activeTab }
-        );
-      }
-    }
-    return child;
-  });
-
-  return <div className={className}>{childrenWithProps}</div>;
+  return (
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <div className={className}>{children}</div>
+    </TabsContext.Provider>
+  );
 }
 
 // Compound components로 export
