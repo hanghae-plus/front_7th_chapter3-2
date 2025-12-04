@@ -51,10 +51,6 @@ const useProducts = (addNotification: (message: string, type: "error" | "success
     return initialProducts;
   });
 
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(_products));
-  }, [_products]);
-
   const addProduct = useCallback((newProduct: Omit<ProductWithUI, "id">) => {
     const product: ProductWithUI = { ...newProduct, id: `p${Date.now()}` };
     setProducts((prev) => [...prev, product]);
@@ -71,6 +67,25 @@ const useProducts = (addNotification: (message: string, type: "error" | "success
     addNotification("상품이 삭제되었습니다.", "success");
   }, []);
 
-  return { data: _products, addProduct, updateProduct, deleteProduct };
+  const updateProductStock = (productId: string, newStock: number) => {
+    setProducts((prev) =>
+      prev.map((product) => (product.id === productId ? { ...product, stock: newStock } : product))
+    );
+  };
+
+  const addProductDiscount = () => {};
+
+  const removeProductDiscount = () => {};
+
+  return {
+    data: _products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    updateProductStock,
+    addProductDiscount,
+    removeProductDiscount,
+  };
 };
+
 export default useProducts;
