@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { Coupon } from "../types";
 import Header from "./components/ui/Header";
 import Notification from "./components/ui/Notification";
 import AdminPage from "./pages/AdminPage";
@@ -18,7 +17,7 @@ const App = () => {
   // 데이터 관리
   const products = useProducts();
   const cart = useCart();
-  const coupons = useCoupons(addNotification);
+  const coupons = useCoupons();
 
   // LocalStorage 동기화
   useLocalStorage("products", products.data);
