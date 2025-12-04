@@ -4,6 +4,7 @@ import { ShoppingBagIcon, XIcon } from '../../../components/icons';
 import { AddNotification } from '../../../hooks/notifications';
 import { CartItem } from '../../../types/carts';
 import { ProductWithUI } from '../../../types/products';
+import { removeItemFromCart, updateCartItemQuantity } from '../../../models/cart';
 
 interface CartSectionProps {
   products: ProductWithUI[];
@@ -23,9 +24,13 @@ const NoResults = () => {
 };
 
 const CartSection = ({ products, cart, setCart, calculateItemTotal, addNotification }: CartSectionProps) => {
-  const removeFromCart = useCallback((productId: string) => {
-    setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
-  }, []);
+  const removeFromCart = useCallback(
+    (productId: string) => {
+      setCart(prevCart => removeItemFromCart(prevCart, productId));
+    },
+    [setCart]
+  );
+
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
@@ -42,9 +47,9 @@ const CartSection = ({ products, cart, setCart, calculateItemTotal, addNotificat
         return;
       }
 
-      setCart(prevCart => prevCart.map(item => (item.product.id === productId ? { ...item, quantity: newQuantity } : item)));
+      setCart(prevCart => updateCartItemQuantity(prevCart, productId, newQuantity));
     },
-    [products, removeFromCart, addNotification]
+    [products, setCart, removeFromCart, addNotification]
   );
 
   return (

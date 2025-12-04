@@ -3,7 +3,8 @@ import Button from '../../../components/button';
 import { ImageIcon } from '../../../components/icons';
 import { AddNotification } from '../../../hooks/notifications';
 import { CartItem } from '../../../types/carts';
-import { Product, ProductWithUI } from '../../../types/products';
+import { ProductWithUI } from '../../../types/products';
+import { getRemainingStock, addItemToCart } from '../../../models/cart';
 import { formatPrice } from '../../../utils/format';
 
 interface NoResultsProps {
@@ -34,16 +35,9 @@ const NoResults = ({ keyword }: NoResultsProps) => {
 };
 
 const ProductItem = ({ product, cart, setCart, addNotification }: ProductItemProps) => {
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find(item => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
-
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
+      const remainingStock = getRemainingStock(product, cart);
 
       if (remainingStock <= 0) {
         addNotification('재고가 부족합니다!', 'error');
@@ -64,15 +58,15 @@ const ProductItem = ({ product, cart, setCart, addNotification }: ProductItemPro
           return prevCart.map(item => (item.product.id === product.id ? { ...item, quantity: newQuantity } : item));
         }
 
-        return [...prevCart, { product, quantity: 1 }];
+        return addItemToCart(prevCart, product);
       });
 
       addNotification('장바구니에 담았습니다', 'success');
     },
-    [cart, addNotification, getRemainingStock]
+    [cart, setCart, addNotification]
   );
 
-  const remainingStock = getRemainingStock(product);
+  const remainingStock = getRemainingStock(product, cart);
 
   return (
     <div className='bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow'>
@@ -99,7 +93,7 @@ const ProductItem = ({ product, cart, setCart, addNotification }: ProductItemPro
           <p className='text-lg font-bold text-gray-900'>
             {formatPrice(product.price, {
               prefix: '₩',
-              isSoldOut: getRemainingStock(product) <= 0
+              isSoldOut: remainingStock <= 0
             })}
           </p>
           {product.discounts.length > 0 && (
