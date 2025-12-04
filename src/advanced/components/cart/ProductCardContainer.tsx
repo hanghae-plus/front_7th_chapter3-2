@@ -2,7 +2,7 @@ import React from 'react';
 import { ProductWithUI } from '../../hooks/useProducts';
 import { ProductCardView } from './ProductCardView';
 import { useProductsContext, useCartContext } from '../../contexts';
-import { formatCurrencyKRW } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatters';
 import { getRemainingStock } from '../../models/cart';
 import {
   isOutOfStock,
@@ -26,10 +26,13 @@ export const ProductCardContainer: React.FC<ProductCardProps> = ({
   const { cart } = useCartContext();
 
   const formatPrice = (price: number, productId?: string): string => {
-    if (!productId) return formatCurrencyKRW(price);
+    if (!productId) return formatCurrency(price);
 
     const foundProduct = products.find((p) => p.id === productId);
-    if (!foundProduct) return formatCurrencyKRW(price);
+
+    if (!foundProduct) {
+      return formatCurrency(price);
+    }
 
     const remaining = getRemainingStock({ product: foundProduct, cart });
     const outOfStock = isOutOfStock(remaining);
@@ -37,8 +40,8 @@ export const ProductCardContainer: React.FC<ProductCardProps> = ({
     const quantity = cartItem?.quantity || 0;
 
     return outOfStock
-      ? `${formatCurrencyKRW(price)} (품절)`
-      : `${formatCurrencyKRW(price)} (재고: ${remaining - quantity})`;
+      ? `${formatCurrency(price)} (품절)`
+      : `${formatCurrency(price)} (재고: ${remaining - quantity})`;
   };
 
   const maxDiscountRate = getProductMaxDiscountRate(product) * 100;
