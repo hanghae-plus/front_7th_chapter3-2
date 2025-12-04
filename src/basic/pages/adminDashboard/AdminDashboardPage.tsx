@@ -7,7 +7,8 @@ import CouponTab from './coupon-tab/CouponTab';
 interface AdminDashboardPageProps {
   products: ProductWithUI[];
   coupons: Coupon[];
-
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
   setProducts: (products: ProductWithUI[]) => void;
   setCoupons: (coupons: Coupon[]) => void;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
@@ -16,6 +17,8 @@ interface AdminDashboardPageProps {
 export default function AdminDashboardPage({
   products,
   coupons,
+  selectedCoupon,
+  setSelectedCoupon,
   setProducts,
   setCoupons,
   addNotification,
@@ -60,7 +63,13 @@ export default function AdminDashboardPage({
           addNotification={addNotification}
         />
       ) : (
-        <CouponTab coupons={coupons} setCoupons={setCoupons} addNotification={addNotification} />
+        <CouponTab
+          coupons={coupons}
+          setCoupons={setCoupons}
+          addNotification={addNotification}
+          selectedCoupon={selectedCoupon}
+          setSelectedCoupon={setSelectedCoupon}
+        />
       )}
     </div>
   );

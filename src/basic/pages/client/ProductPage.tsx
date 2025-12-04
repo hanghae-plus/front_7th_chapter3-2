@@ -6,8 +6,9 @@ interface ProductPageProps {
   products: ProductWithUI[];
   cart: CartItem[];
   coupons: Coupon[];
+  selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
-
+  setSelectedCoupon: (coupon: Coupon | null) => void;
   setCart: (cart: CartItem[]) => void;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
@@ -16,6 +17,8 @@ export default function ProductPage({
   products,
   cart,
   coupons,
+  selectedCoupon,
+  setSelectedCoupon,
   debouncedSearchTerm,
   addNotification,
   setCart,
@@ -32,6 +35,8 @@ export default function ProductPage({
       <CartView
         cart={cart}
         coupons={coupons}
+        selectedCoupon={selectedCoupon}
+        setSelectedCoupon={setSelectedCoupon}
         products={products}
         setCart={setCart}
         addNotification={addNotification}

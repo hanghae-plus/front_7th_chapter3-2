@@ -48,6 +48,7 @@ const App = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -183,6 +184,8 @@ const App = () => {
           <AdminDashboardPage
             products={products}
             coupons={coupons}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
             setProducts={setProducts}
             setCoupons={setCoupons}
             addNotification={addNotification}
@@ -191,6 +194,8 @@ const App = () => {
           <ProductPage
             products={products}
             cart={cart}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
             setCart={setCart}
             coupons={coupons}
             debouncedSearchTerm={debouncedSearchTerm}

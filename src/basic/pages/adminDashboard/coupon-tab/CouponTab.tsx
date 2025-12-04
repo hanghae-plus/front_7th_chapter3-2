@@ -7,12 +7,19 @@ import { canAddCoupon } from '../../../entities/coupon/utils';
 
 interface CouponTabProps {
   coupons: Coupon[];
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
   setCoupons: (coupons: Coupon[]) => void;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
-export default function CouponTab({ coupons, setCoupons, addNotification }: CouponTabProps) {
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+export default function CouponTab({
+  coupons,
+  setCoupons,
+  addNotification,
+  selectedCoupon,
+  setSelectedCoupon,
+}: CouponTabProps) {
   const [showCouponForm, setShowCouponForm] = useState(false);
 
   const [couponForm, setCouponForm] = useState<CouponFormState>({

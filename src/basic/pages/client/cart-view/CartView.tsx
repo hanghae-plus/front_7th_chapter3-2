@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { CartItem, Coupon } from '../../../../types';
 import { calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart/utils';
 import { ProductWithUI } from '../../../entities/product/types';
@@ -10,7 +10,9 @@ import CartSection from './CartSection';
 interface CartViewProps {
   cart: CartItem[];
   coupons: Coupon[];
+  selectedCoupon: Coupon | null;
   products: ProductWithUI[];
+  setSelectedCoupon: (coupon: Coupon | null) => void;
   setCart: (cart: CartItem[]) => void;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
@@ -21,9 +23,9 @@ export default function CartView({
   products,
   setCart,
   addNotification,
+  selectedCoupon,
+  setSelectedCoupon,
 }: CartViewProps) {
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
   // Computed Values
   const originTotal = useMemo(() => {
     const total = cart.reduce((total, item) => {
