@@ -1,5 +1,5 @@
-import { ProductWithUI } from '../../types';
-import { formatPriceKRW } from '../../utils';
+import { ProductWithUI } from '../../../types';
+import { formatPriceKRW } from '../../../utils';
 
 interface ProductCardProps {
   product: ProductWithUI;

@@ -1,5 +1,5 @@
-import { CartItem } from '../../../types';
-import { formatPriceKRW } from '../../utils';
+import { CartItem } from '../../../../types';
+import { formatPriceKRW } from '../../../utils';
 interface CartListItemProps {
   item: CartItem;
   itemTotal: number;

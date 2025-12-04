@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { ProductWithUI } from '../types';
-import { Coupon } from '../../types';
-import { formatPriceKRW } from '../utils';
+import { ProductWithUI } from '../../types';
+import { Coupon } from '../../../types';
+import { formatPriceKRW } from '../../utils';
 
 interface AdminDashboardPageProps {
   products: ProductWithUI[];
