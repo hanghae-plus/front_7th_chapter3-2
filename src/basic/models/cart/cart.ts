@@ -8,7 +8,6 @@ export const getRemainingStock = (
   cart?: CartItem[],
   product?: Product
 ): number => {
-  console.log(cart, product);
   if (!cart || !product) return 0;
   const cartItem = findItemFromCartById(cart, product.id);
   const remaining = product.stock - (cartItem?.quantity || 0);

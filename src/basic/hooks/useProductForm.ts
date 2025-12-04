@@ -13,9 +13,12 @@ const initialProductForm: Omit<Product, 'id'> = {
 
 export const useProductForm = (
   onSubmitAction: (product: Omit<Product, 'id'>) => ProductValidation,
-  close: () => void
+  close: () => void,
+  initialProduct?: Product | null
 ) => {
-  const [form, setForm] = useState<Omit<Product, 'id'>>(initialProductForm);
+  const [form, setForm] = useState<Omit<Product, 'id'> | Product>(
+    initialProduct || initialProductForm
+  );
 
   const setValue = (
     field: keyof Omit<Product, 'id'>,

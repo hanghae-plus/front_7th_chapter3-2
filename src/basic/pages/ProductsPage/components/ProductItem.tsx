@@ -1,25 +1,42 @@
 import { getRemainingStock } from '@/models/cart';
-import { CartItem, Product } from '@/types';
+import { addNotification } from '@/models/notification';
+import { CartItem, CartValidation, Product } from '@/types';
+import { formatPrice } from '@/utils/formatters';
 import clsx from 'clsx';
 import { useMemo } from 'react';
+
+interface ProductItemProps {
+  product: Product;
+  cart: CartItem[];
+  onAddToCart: (product: Product) => CartValidation;
+}
 
 export const ProductItem = ({
   product,
   cart,
-}: {
-  product: Product;
-  cart: CartItem[];
-}) => {
+  onAddToCart,
+}: ProductItemProps) => {
   const remainingStock = useMemo(
     () => getRemainingStock(cart, product),
     [cart, product]
   );
 
+  const handleAddToCart = () => {
+    const result = onAddToCart(product);
+    if (!result.valid) {
+      addNotification(result.message || '장바구니에 담을 수 없습니다', 'error');
+    } else if (result.message) {
+      addNotification(result.message, 'success');
+    }
+  };
+
+  const maxDiscountRate = useMemo(() => {
+    if (product.discounts.length === 0) return 0;
+    return Math.max(...product.discounts.map((d) => d.rate)) * 100;
+  }, [product.discounts]);
+
   return (
-    <div
-      key={product.id}
-      className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-    >
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       {/* 상품 이미지 영역 (placeholder) */}
       <div className="relative">
         <div className="aspect-square bg-gray-100 flex items-center justify-center">
@@ -42,9 +59,9 @@ export const ProductItem = ({
             BEST
           </span>
         )}
-        {product.discounts.length > 0 && (
+        {maxDiscountRate > 0 && (
           <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-            ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+            ~{maxDiscountRate}%
           </span>
         )}
       </div>
@@ -65,27 +82,28 @@ export const ProductItem = ({
           </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
-              {product.discounts[0].quantity}개 이상 구매시 할인{' '}
-              {product.discounts[0].rate * 100}%
+              {product.discounts[0].quantity}개 이상 구매시{' '}
+              {product.discounts[0].rate * 100}% 할인
             </p>
           )}
         </div>
 
         {/* 재고 상태 */}
         <div className="mb-3">
-          {remainingStock <= 5 && remainingStock > 0 && (
+          {remainingStock <= 0 ? (
+            <p className="text-xs text-red-600 font-medium">품절</p>
+          ) : remainingStock <= 5 ? (
             <p className="text-xs text-red-600 font-medium">
               품절임박! {remainingStock}개 남음
             </p>
-          )}
-          {remainingStock > 5 && (
+          ) : (
             <p className="text-xs text-gray-500">재고 {remainingStock}개</p>
           )}
         </div>
 
         {/* 장바구니 버튼 */}
         <button
-          onClick={() => addToCart(product)}
+          onClick={handleAddToCart}
           disabled={remainingStock <= 0}
           className={clsx(
             'w-full py-2 px-4 rounded-md font-medium transition-colors',

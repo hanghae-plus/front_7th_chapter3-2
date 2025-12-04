@@ -2,8 +2,6 @@ import { Input } from '@/components/ui';
 import { useProductForm } from '@/hooks/useProductForm';
 import { addNotification } from '@/models/notification';
 import { Product, ProductValidation } from '@/types';
-import { useEffect } from 'react';
-
 interface ProductFormProps {
   addProduct?: (product: Omit<Product, 'id'>) => ProductValidation;
   updateProduct?: (product: Partial<Product>) => ProductValidation;
@@ -19,31 +17,23 @@ export const ProductForm = ({
 }: ProductFormProps) => {
   const isEditMode = !!editingProduct;
 
-  const {
-    form,
-    onBlurHandler,
-    onChangeHandler,
-    onSubmit,
-    loadProduct,
-    setForm,
-  } = useProductForm((product) => {
-    if (isEditMode && updateProduct && editingProduct) {
-      return updateProduct({ ...product, id: editingProduct.id });
-    } else if (addProduct) {
-      return addProduct(product);
-    }
-    return {
-      valid: false,
-      error: 'NOT_FOUND',
-      message: '작업을 수행할 수 없습니다.',
-    };
-  }, close);
-
-  useEffect(() => {
-    if (editingProduct) {
-      loadProduct(editingProduct);
-    }
-  }, [editingProduct, loadProduct]);
+  const { form, onBlurHandler, onChangeHandler, onSubmit, setForm } =
+    useProductForm(
+      (product) => {
+        if (isEditMode && updateProduct && editingProduct) {
+          return updateProduct({ ...product, id: editingProduct.id });
+        } else if (addProduct) {
+          return addProduct(product);
+        }
+        return {
+          valid: false,
+          error: 'NOT_FOUND',
+          message: '작업을 수행할 수 없습니다.',
+        };
+      },
+      close,
+      editingProduct
+    );
 
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">

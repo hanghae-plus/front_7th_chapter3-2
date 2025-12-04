@@ -1,42 +1,50 @@
-import { useFilter } from '@/hooks/useFilter';
 import { ProductItem } from '@/pages/ProductsPage/components/ProductItem';
-import { CartItem, Product } from '@/types';
+import { CartItem, CartValidation, Product } from '@/types';
 
 export const ProductList = ({
   products,
   cart,
+  addToCart,
+  isLoading,
+  query,
 }: {
   products: Product[];
   cart: CartItem[];
+  addToCart: (product: Product) => CartValidation;
+  isLoading: boolean;
+  query: string;
 }) => {
-  const productFilter = (list: Product[], query: string) => {
-    return list.filter(
-      (product) =>
-        product.name.toLowerCase().includes(query.toLowerCase()) ||
-        (product.description &&
-          product.description.toLowerCase().includes(query.toLowerCase()))
-    );
-  };
-  const { filteredList, query } = useFilter<Product>(products, productFilter);
-
   return (
     <section>
-      <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
-        <div className="text-sm text-gray-600">
-          총 {filteredList.length}개 상품
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
+          <div className="text-sm text-gray-600">
+            총 {products.length}개 상품
+            {isLoading && (
+              <span className="ml-2 text-blue-600">검색 중...</span>
+            )}
+          </div>
         </div>
       </div>
-      {filteredList.length === 0 ? (
+
+      {products.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500">
-            "{query}"에 대한 검색 결과가 없습니다.
+            {query
+              ? `"${query}"에 대한 검색 결과가 없습니다.`
+              : '상품이 없습니다.'}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredList.map((product) => (
-            <ProductItem product={product} cart={cart} />
+          {products.map((product) => (
+            <ProductItem
+              key={product.id}
+              product={product}
+              cart={cart}
+              onAddToCart={addToCart}
+            />
           ))}
         </div>
       )}

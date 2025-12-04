@@ -1,12 +1,12 @@
-import { ComponentType, useState } from 'react';
+import { ComponentType, useCallback, useState } from 'react';
 
-export interface PageItem<T = unknown> {
+export interface PageItem<T = any> {
   id: string;
   name: string;
   component: ComponentType<T>;
 }
 
-export const usePage = <T = unknown>(
+export const usePage = <T = any>(
   pages: PageItem<T>[],
   initialPageId?: string
 ) => {
@@ -16,12 +16,15 @@ export const usePage = <T = unknown>(
 
   const [currentPage, setCurrentPage] = useState<PageItem<T>>(initialPage);
 
-  const goPage = (id: string) => {
-    const targetPage = pages.find((page) => page.id === id);
-    if (targetPage) {
-      setCurrentPage(targetPage);
-    }
-  };
+  const goPage = useCallback(
+    (id: string) => {
+      const targetPage = pages.find((page) => page.id === id);
+      if (targetPage) {
+        setCurrentPage(targetPage);
+      }
+    },
+    [pages]
+  );
 
   return {
     currentPage,
