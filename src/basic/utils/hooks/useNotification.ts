@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Notification } from '../../types';
+import { useState, useCallback } from "react";
+import { Notification } from "../../../types";
 
 /**
  * 알림 메시지를 관리하는 커스텀 훅
@@ -10,7 +10,7 @@ export const useNotification = (duration: number = 3000) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+    (message: string, type: "error" | "success" | "warning" = "success") => {
       const id = Date.now().toString();
       setNotifications((prev) => [...prev, { id, message, type }]);
 
@@ -27,4 +27,3 @@ export const useNotification = (duration: number = 3000) => {
     addNotification,
   };
 };
-
