@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Coupon } from "../types";
 import { initialCoupons, initialProducts } from "./constants";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
@@ -9,7 +8,7 @@ import { useNotification } from "./hooks/useNotification";
 import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { CartIcon } from "./components/icons";
-import { useDebounce } from "./utils/hooks/useDebounce";
+import SearchBar from "./components/SearchBar";
 
 const App = () => {
   const { products, ...productActions } = useProducts(initialProducts);
@@ -17,11 +16,9 @@ const App = () => {
   const { coupons, addCoupon, removeCoupon } = useCoupons(initialCoupons);
   const [totalItemCount, setTotalItemCount] = useState(0);
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { notifications, addNotification, removeNotification } = useNotification();
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -44,15 +41,13 @@ const App = () => {
               <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
               {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
               {!isAdmin && (
-                <div className="ml-8 flex-1 max-w-md">
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="상품 검색..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                  />
-                </div>
+                <SearchBar
+                  value={searchTerm}
+                  onChange={setSearchTerm}
+                  debounceMs={500}
+                  placeholder="상품 검색..."
+                  className="ml-8 flex-1 max-w-md"
+                />
               )}
             </div>
             <nav className="flex items-center space-x-4">
@@ -87,16 +82,13 @@ const App = () => {
             coupons={coupons}
             addCoupon={addCoupon}
             deleteCoupon={removeCoupon}
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
             addNotification={addNotification}
           />
         ) : (
           <CartPage
             products={products}
             coupons={coupons}
-            setSelectedCoupon={setSelectedCoupon}
-            debouncedSearchTerm={debouncedSearchTerm}
+            debouncedSearchTerm={searchTerm}
             addNotification={addNotification}
             cart={cart}
             cartActions={cartActions}

@@ -16,20 +16,9 @@ type Props = {
   coupons: Coupon[];
   addCoupon: (coupon: Coupon) => void;
   deleteCoupon: (couponId: string) => void;
-  selectedCoupon: null | Coupon;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<null | Coupon>>;
 };
 
-export const AdminPage = ({
-  addNotification,
-  products,
-  productActions,
-  coupons,
-  addCoupon,
-  deleteCoupon,
-  selectedCoupon,
-  setSelectedCoupon,
-}: Props) => {
+export const AdminPage = ({ addNotification, products, productActions, coupons, addCoupon, deleteCoupon }: Props) => {
   const { cart } = useCart();
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -243,9 +232,6 @@ export const AdminPage = ({
                     <button
                       onClick={() => {
                         deleteCoupon(coupon.code);
-                        if (selectedCoupon?.code === coupon.code) {
-                          setSelectedCoupon(null);
-                        }
                         addNotification("쿠폰이 삭제되었습니다.", "success");
                       }}
                       className="text-gray-400 hover:text-red-600 transition-colors"

@@ -10,24 +10,13 @@ import { useCart } from "../hooks/useCart";
 type Props = {
   products: ProductWithUI[];
   coupons: Coupon[];
-  selectedCoupon: null | Coupon;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<null | Coupon>>;
   debouncedSearchTerm: string;
   addNotification: (message: string, type: "error" | "success" | "warning") => void;
   cart: CartItem[];
-  cartActions: ReturnType<typeof useCart>;
+  cartActions: Omit<ReturnType<typeof useCart>, "cart">;
 };
 
-export const CartPage = ({
-  products,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  debouncedSearchTerm,
-  addNotification,
-  cart,
-  cartActions,
-}: Props) => {
+export const CartPage = ({ products, coupons, debouncedSearchTerm, addNotification, cart, cartActions }: Props) => {
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
@@ -43,7 +32,6 @@ export const CartPage = ({
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
     cartActions.clearCart();
-    setSelectedCoupon(null);
   }, [addNotification]);
 
   const totals = cartActions.calculateCartTotal();
@@ -216,11 +204,10 @@ export const CartPage = ({
                 {coupons.length > 0 && (
                   <select
                     className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                    value={selectedCoupon?.code || ""}
+                    value={cartActions.selectedCoupon?.code || ""}
                     onChange={(e) => {
                       const coupon = coupons.find((c) => c.code === e.target.value);
                       if (coupon) cartActions.applyCoupon(coupon);
-                      else setSelectedCoupon(null);
                     }}
                   >
                     <option value="">쿠폰 선택</option>
