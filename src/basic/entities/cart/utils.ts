@@ -1,5 +1,9 @@
 import { CartItem, Product } from '../../../types';
 
+const BULK_PURCHASE_DISCOUNT = 0.05;
+const BULK_PURCHASE_QUANTITY = 10;
+const MAX_DISCOUNT = 0.5;
+
 // ADD TO CART
 export const getAddToCart = (cart: CartItem[], product: Product) => {
   const existingItem = cart.find(item => item.product.id === product.id);
@@ -47,7 +51,9 @@ export const getApplicableDiscount = (item: CartItem): number => {
 };
 
 export const getBulkPurchaseDiscount = (cartItems: CartItem[]): number => {
-  return cartItems.some(cartItem => cartItem.quantity >= 10) ? 0.05 : 0;
+  return cartItems.some(cartItem => cartItem.quantity >= BULK_PURCHASE_QUANTITY)
+    ? BULK_PURCHASE_DISCOUNT
+    : 0;
 };
 
 export const calculateItemTotal = (item: CartItem, cartItems: CartItem[]): number => {
@@ -55,7 +61,7 @@ export const calculateItemTotal = (item: CartItem, cartItems: CartItem[]): numbe
   const { quantity } = item;
   const baseDiscount = getApplicableDiscount(item);
   const bulkPurchaseDiscount = getBulkPurchaseDiscount(cartItems);
-  const discount = Math.min(baseDiscount + bulkPurchaseDiscount, 0.5);
+  const discount = Math.min(baseDiscount + bulkPurchaseDiscount, MAX_DISCOUNT);
 
   return Math.round(price * quantity * (1 - discount));
 };

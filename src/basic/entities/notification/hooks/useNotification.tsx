@@ -6,8 +6,12 @@ const NOTIFICATION_TIMEOUT = 3000;
 export function useNotification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const addNotification = (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-    const id = Date.now().toString();
+  const addNotification = (
+    message: string,
+    type: 'error' | 'success' | 'warning' = 'success',
+    idGenerator: () => string = generateId
+  ) => {
+    const id = idGenerator();
     setNotifications(prev => [...prev, { id, message, type }]);
 
     setTimeout(() => {
@@ -21,3 +25,5 @@ export function useNotification() {
     addNotification,
   };
 }
+
+const generateId = () => Date.now().toString();
