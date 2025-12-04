@@ -1,6 +1,6 @@
 import React from 'react';
-import { Product } from '../types';
-import Button from './components/ui/Button';
+import { Product } from '../../types';
+import Button from './ui/Button';
 
 interface ProductWithUI extends Product {
   description?: string;

@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-import Admin from './Admin';
-import Cart from './Cart';
-import Products from './Products';
+import Admin from './components/Admin';
+import Cart from './components/Cart';
+import Products from './components/Products';
 import Button from './components/ui/Button';
 import NotificationContainer from './components/ui/Notification';
 

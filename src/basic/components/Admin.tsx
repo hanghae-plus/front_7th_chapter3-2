@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Coupon, Product } from '../types';
-import Button from './components/ui/Button';
+import { Coupon, Product } from '../../types';
+import Button from './ui/Button';
 
 interface ProductWithUI extends Product {
   description?: string;
