@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ProductWithUI } from '../../entities/product/types';
-import { Coupon } from '../../entities/coupon/types';
+import { type ProductWithUI } from '../../entities/product';
+import { type Coupon } from '../../entities/coupon';
 import ProductTab from './product-tab/ProductTab';
 import CouponTab from './coupon-tab/CouponTab';
 

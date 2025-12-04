@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import AdminDashboardPage from './pages/adminDashboard/AdminDashboardPage';
-import { Coupon } from './entities/coupon/types';
+import { type Coupon, useCouponsStorage } from './entities/coupon';
 import ProductPage from './pages/client/ProductPage';
 import { initialProducts } from './mock/product';
 import { initialCoupons } from './mock/coupon';
-import { Notification } from './entities/notification/components/Notification';
-import { useCartStorage } from './entities/cart/hooks/useCartStorage';
-import { useProductsStorage } from './entities/product/hooks/useProductsStorage';
-import { useCouponsStorage } from './entities/coupon/hooks/useCouponsStorage';
+import { NotificationContainer, useNotification } from './entities/notification';
+import { useProductsStorage } from './entities/product';
 import { Header } from './components/Header';
 import { useDebounce } from './hooks/useDebounce';
-import { useNotification } from './entities/notification/hooks/useNotification';
+import { useCartStorage } from './entities/cart';
 
 const SEARCH_DEBOUNCE_DELAY = 500;
 
@@ -30,7 +28,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Notification notifications={notifications} setNotifications={setNotifications} />
+      <NotificationContainer notifications={notifications} setNotifications={setNotifications} />
 
       <Header
         isAdmin={isAdmin}

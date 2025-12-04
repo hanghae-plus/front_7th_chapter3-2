@@ -1,12 +1,10 @@
 import { useMemo } from 'react';
-import { calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart/utils';
-import { ProductWithUI } from '../../../entities/product/types';
-import { canApplyCoupon } from '../../../entities/coupon/utils';
+import { type ProductWithUI } from '../../../entities/product';
 import PaymentInfoSection from './PaymentInfoSection';
 import CouponSection from './CouponSection';
 import CartSection from './CartSection';
-import { CartItem } from '../../../entities/cart/types';
-import { Coupon } from '../../../entities/coupon/types';
+import { type CartItem, calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart';
+import { type Coupon, canApplyCoupon } from '../../../entities/coupon';
 interface CartViewProps {
   cart: CartItem[];
   coupons: Coupon[];

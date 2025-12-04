@@ -1,8 +1,6 @@
-import { canAddToCart, getAddToCart } from '../../../entities/cart/utils';
-import { filterProducts, getRemainingStock } from '../../../entities/product/utils';
-import { ProductWithUI } from '../../../entities/product/types';
+import { type CartItem, canAddToCart, getAddToCart } from '../../../entities/cart';
+import { type ProductWithUI, filterProducts, getRemainingStock } from '../../../entities/product';
 import ProductCard from './ProductCard';
-import { CartItem } from '../../../entities/cart/types';
 interface ProductSectionProps {
   products: ProductWithUI[];
   debouncedSearchTerm: string;

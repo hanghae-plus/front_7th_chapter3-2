@@ -1,6 +1,9 @@
-import { ProductFormState, ProductWithUI } from '../../../entities/product/types';
+import {
+  type ProductFormState,
+  type ProductWithUI,
+  getDeletedProducts,
+} from '../../../entities/product';
 import { useState } from 'react';
-import { getDeletedProducts } from '../../../entities/product/utils';
 import ProductForm from './ProductForm';
 import ProductListRowItem from './ProductListRowItem';
 

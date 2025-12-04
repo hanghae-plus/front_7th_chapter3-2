@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import CouponItem from './CouponItem';
-import { Coupon } from '../../../entities/coupon/types';
 import CouponForm from './CouponForm';
-import { canAddCoupon } from '../../../entities/coupon/utils';
+import { type Coupon, canAddCoupon } from '../../../entities/coupon';
 
 interface CouponTabProps {
   coupons: Coupon[];
