@@ -1,39 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { AdminTab } from "../../types";
 import { useProductForm } from "../hooks/useProductForm";
 import { Tabs, ProductTable, ProductForm, CouponList } from "../features";
-import { useProductStore } from "../store/useProductStore";
-import { useCouponStore } from "../store/useCouponStore";
-import { useNotificationStore } from "../store/useNotificationStore";
 
 export const AdminPage = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>("products");
-
-  // Store에서 상태 및 액션 가져오기
-  const { products, addProduct, updateProduct, deleteProduct } =
-    useProductStore();
-  const { coupons, addCoupon: addCouponAction, deleteCoupon: deleteCouponAction } =
-    useCouponStore();
-  const { addNotification } = useNotificationStore();
-
   const productForm = useProductForm();
-
-  // 쿠폰 관련 핸들러 (notification 처리 포함)
-  const handleAddCoupon = useCallback(
-    (newCoupon: typeof coupons[0]) => {
-      const result = addCouponAction(newCoupon);
-      addNotification(result.message, result.success ? "success" : "error");
-    },
-    [addCouponAction, addNotification, coupons]
-  );
-
-  const handleDeleteCoupon = useCallback(
-    (couponCode: string) => {
-      const result = deleteCouponAction(couponCode);
-      addNotification(result.message, "success");
-    },
-    [deleteCouponAction, addNotification]
-  );
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -47,9 +19,7 @@ export const AdminPage = () => {
       {activeTab === "products" && (
         <>
           <ProductTable
-            products={products}
             onEdit={productForm.startEdit}
-            onDelete={deleteProduct}
             onAddNew={productForm.openNewForm}
           />
           {productForm.showForm && (
@@ -57,7 +27,6 @@ export const AdminPage = () => {
               formData={productForm.formData}
               setFormData={productForm.setFormData}
               onSubmit={productForm.handleSubmit}
-              addNotification={addNotification}
             >
               <ProductForm.Title>
                 {productForm.mode === "create" ? "새 상품 추가" : "상품 수정"}
@@ -75,14 +44,7 @@ export const AdminPage = () => {
         </>
       )}
 
-      {activeTab === "coupons" && (
-        <CouponList
-          coupons={coupons}
-          onAddCoupon={handleAddCoupon}
-          onDeleteCoupon={handleDeleteCoupon}
-          addNotification={addNotification}
-        />
-      )}
+      {activeTab === "coupons" && <CouponList />}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 // ============ Types ============
 export interface ProductFormData {
@@ -18,7 +19,6 @@ export interface ProductFormData {
 interface ProductFormContextType {
   formData: ProductFormData;
   setFormData: Dispatch<SetStateAction<ProductFormData>>;
-  addNotification: (message: string, type: "success" | "error") => void;
 }
 
 // ============ Context ============
@@ -40,20 +40,11 @@ interface RootProps {
   formData: ProductFormData;
   setFormData: Dispatch<SetStateAction<ProductFormData>>;
   onSubmit: (e: React.FormEvent) => void;
-  addNotification: (message: string, type: "success" | "error") => void;
 }
 
-const Root = ({
-  children,
-  formData,
-  setFormData,
-  onSubmit,
-  addNotification,
-}: RootProps) => {
+const Root = ({ children, formData, setFormData, onSubmit }: RootProps) => {
   return (
-    <ProductFormContext.Provider
-      value={{ formData, setFormData, addNotification }}
-    >
+    <ProductFormContext.Provider value={{ formData, setFormData }}>
       <div className="p-6 border-t border-gray-200 bg-gray-50">
         <form onSubmit={onSubmit} className="space-y-4">
           {children}
@@ -74,7 +65,8 @@ const Title = ({ children }: TitleProps) => {
 
 // ============ Fields ============
 const Fields = () => {
-  const { formData, setFormData, addNotification } = useProductFormContext();
+  const { formData, setFormData } = useProductFormContext();
+  const { addNotification } = useNotificationStore();
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

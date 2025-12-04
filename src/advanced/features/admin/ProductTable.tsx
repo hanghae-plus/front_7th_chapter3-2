@@ -1,19 +1,23 @@
-import { ProductWithUI } from "../../hooks/useProducts";
+import { ProductWithUI } from "../../store/useProductStore";
 import { formatPriceKorean } from "../../utils/formatter";
+import { useProductStore } from "../../store/useProductStore";
 
 interface ProductTableProps {
-  products: ProductWithUI[];
   onEdit: (product: ProductWithUI) => void;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   onAddNew: () => void;
 }
 
 export const ProductTable = ({
-  products,
   onEdit,
-  onDelete,
+  onDelete: onDeleteProp,
   onAddNew,
 }: ProductTableProps) => {
+  // Store에서 상태 가져오기
+  const { products, deleteProduct } = useProductStore();
+
+  // Props가 있으면 사용, 없으면 Store에서 가져온 함수 사용
+  const onDelete = onDeleteProp || deleteProduct;
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">

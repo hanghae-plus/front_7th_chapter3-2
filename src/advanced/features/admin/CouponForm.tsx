@@ -1,17 +1,14 @@
 import { useState } from "react";
 import { Coupon } from "../../../types";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 interface CouponFormProps {
   onSubmit: (coupon: Coupon) => void;
   onCancel: () => void;
-  addNotification: (message: string, type: "success" | "error") => void;
 }
 
-export const CouponForm = ({
-  onSubmit,
-  onCancel,
-  addNotification,
-}: CouponFormProps) => {
+export const CouponForm = ({ onSubmit, onCancel }: CouponFormProps) => {
+  const { addNotification } = useNotificationStore();
   const [couponForm, setCouponForm] = useState({
     name: "",
     code: "",

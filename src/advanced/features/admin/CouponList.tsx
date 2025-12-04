@@ -2,25 +2,27 @@ import { useState } from "react";
 import { Coupon } from "../../../types";
 import { CouponItem } from "./CouponItem";
 import { CouponForm } from "./CouponForm";
+import { useCouponStore } from "../../store/useCouponStore";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
-interface CouponListProps {
-  coupons: Coupon[];
-  onAddCoupon: (coupon: Coupon) => void;
-  onDeleteCoupon: (code: string) => void;
-  addNotification: (message: string, type: "success" | "error") => void;
-}
-
-export const CouponList = ({
-  coupons,
-  onAddCoupon,
-  onDeleteCoupon,
-  addNotification,
-}: CouponListProps) => {
+export const CouponList = () => {
   const [showForm, setShowForm] = useState(false);
 
+  // Store에서 상태 및 액션 가져오기
+  const { coupons, addCoupon: addCouponAction, deleteCoupon: deleteCouponAction } =
+    useCouponStore();
+  const { addNotification } = useNotificationStore();
+
+  // Notification 래퍼 함수들
   const handleAddCoupon = (coupon: Coupon) => {
-    onAddCoupon(coupon);
+    const result = addCouponAction(coupon);
+    addNotification(result.message, result.success ? "success" : "error");
     setShowForm(false);
+  };
+
+  const handleDeleteCoupon = (code: string) => {
+    const result = deleteCouponAction(code);
+    addNotification(result.message, "success");
   };
 
   return (
@@ -34,7 +36,7 @@ export const CouponList = ({
             <CouponItem
               key={coupon.code}
               item={coupon}
-              onDelete={onDeleteCoupon}
+              onDelete={handleDeleteCoupon}
             />
           ))}
 
@@ -66,7 +68,6 @@ export const CouponList = ({
           <CouponForm
             onSubmit={handleAddCoupon}
             onCancel={() => setShowForm(false)}
-            addNotification={addNotification}
           />
         )}
       </div>

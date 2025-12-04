@@ -1,25 +1,36 @@
-import { Coupon } from "../../../types";
+import { useCartStore } from "../../store/useCartStore";
+import { useCouponStore } from "../../store/useCouponStore";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
-interface CheckoutSectionProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon) => void;
-  removeCoupon: () => void;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
+export const CheckoutSection = () => {
+  // Store에서 상태 및 액션 가져오기
+  const {
+    selectedCoupon,
+    getTotals,
+    applyCoupon: applyCouponAction,
+    removeCoupon: removeCouponAction,
+    completeOrder: completeOrderAction,
+  } = useCartStore();
+  const { coupons } = useCouponStore();
+  const { addNotification } = useNotificationStore();
+
+  // totals 계산
+  const totals = getTotals();
+
+  // Notification 래퍼 함수들
+  const applyCoupon = (coupon: typeof coupons[0]) => {
+    const result = applyCouponAction(coupon);
+    addNotification(result.message, result.success ? "success" : "error");
   };
-  completeOrder: () => void;
-}
 
-export const CheckoutSection = ({
-  coupons,
-  selectedCoupon,
-  applyCoupon,
-  removeCoupon,
-  totals,
-  completeOrder,
-}: CheckoutSectionProps) => {
+  const removeCoupon = () => {
+    removeCouponAction();
+  };
+
+  const completeOrder = () => {
+    const result = completeOrderAction();
+    addNotification(result.message, result.success ? "success" : "error");
+  };
   return (
     <>
       <section className="bg-white rounded-lg border border-gray-200 p-4">

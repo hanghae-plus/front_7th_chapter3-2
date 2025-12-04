@@ -1,20 +1,44 @@
-import { Product } from "../../../types";
-import { ProductWithUI } from "../../hooks/useProducts";
+import { ProductWithUI } from "../../store/useProductStore";
 import { ProductItem } from "./ProductItem";
+import { useProductStore } from "../../store/useProductStore";
+import { useCartStore } from "../../store/useCartStore";
+import { useNotificationStore } from "../../store/useNotificationStore";
+import { useDebounce } from "../../hooks/useDebounce";
+import { useState, useMemo } from "react";
 
-interface ProductListProps {
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  addToCart: (product: ProductWithUI) => void;
-}
+export const ProductList = () => {
+  // Store에서 상태 가져오기
+  const { products } = useProductStore();
+  const { getRemainingStock, addToCart: addToCartAction } = useCartStore();
+  const { addNotification } = useNotificationStore();
 
-export const ProductList = ({
-  filteredProducts,
-  debouncedSearchTerm,
-  getRemainingStock,
-  addToCart,
-}: ProductListProps) => {
+  // 로컬 상태: 검색어
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // 필터링된 상품 목록 계산
+  const filteredProducts = useMemo(
+    () =>
+      debouncedSearchTerm
+        ? products.filter(
+            (product) =>
+              product.name
+                .toLowerCase()
+                .includes(debouncedSearchTerm.toLowerCase()) ||
+              (product.description &&
+                product.description
+                  .toLowerCase()
+                  .includes(debouncedSearchTerm.toLowerCase()))
+          )
+        : products,
+    [products, debouncedSearchTerm]
+  );
+
+  // Notification 래퍼 함수
+  const addToCart = (product: ProductWithUI) => {
+    const result = addToCartAction(product);
+    addNotification(result.message, result.success ? "success" : "error");
+  };
   return (
     <section>
       <div className="mb-6 flex justify-between items-center">

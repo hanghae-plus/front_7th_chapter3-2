@@ -1,19 +1,25 @@
-import { CartItem as CartItemType } from "../../../types";
-import { calculateItemTotal } from "../../models/cart"; // 직접 import
+import { calculateItemTotal } from "../../models/cart";
 import { CartItem } from "./CartItem";
+import { useCartStore } from "../../store/useCartStore";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
-interface CartListProps {
-  cart: CartItemType[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  // calculateItemTotal prop 제거!
-}
+export const CartList = () => {
+  // Store에서 상태 및 액션 가져오기
+  const { cart, removeFromCart: removeFromCartAction, updateQuantity: updateQuantityAction } =
+    useCartStore();
+  const { addNotification } = useNotificationStore();
 
-export const CartList = ({
-  cart,
-  removeFromCart,
-  updateQuantity,
-}: CartListProps) => {
+  // Notification 래퍼 함수들
+  const removeFromCart = (productId: string) => {
+    removeFromCartAction(productId);
+  };
+
+  const updateQuantity = (productId: string, quantity: number) => {
+    const result = updateQuantityAction(productId, quantity);
+    if (result) {
+      addNotification(result.message, result.success ? "success" : "error");
+    }
+  };
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
