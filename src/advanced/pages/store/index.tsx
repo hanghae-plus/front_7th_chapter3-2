@@ -6,11 +6,7 @@ import CouponSection from './components/coupon-section';
 import PaymentSection from './components/payment-section';
 import ProductSection from './components/product-section';
 
-interface StorePageProps {
-  debouncedSearchTerm: string;
-}
-
-const StorePage = ({ debouncedSearchTerm }: StorePageProps) => {
+const StorePage = () => {
   const { cart, totalItemCount } = cartContext();
   const [selectedCoupon, setSelectedCoupon] = useSelectedCoupon();
   const totals = calculateCartTotal(cart, selectedCoupon);
@@ -18,7 +14,7 @@ const StorePage = ({ debouncedSearchTerm }: StorePageProps) => {
   return (
     <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
       <div className='lg:col-span-3'>
-        <ProductSection debouncedSearchTerm={debouncedSearchTerm} />
+        <ProductSection />
       </div>
 
       <div className='lg:col-span-1'>

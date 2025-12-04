@@ -1,26 +1,26 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import Button from './components/button';
 import Header from './components/header';
 import { CartIcon } from './components/icons';
 import Input from './components/input';
 import Toast from './components/toast';
 import { PAGES } from './constants/pages';
-import useDebounce from './hooks/debounce';
 import usePage from './hooks/pages';
 import AdminPage from './pages/admin';
 import StorePage from './pages/store';
 import { cartContext } from './stores/cart';
+import { searchActions, searchContext } from './stores/search';
 
 const App = () => {
   const { store, admin } = PAGES;
   const { currentPage, switchPage, isCurrentPage } = usePage(store);
   const { totalItemCount } = cartContext();
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm);
+  const { searchTerm } = searchContext();
+  const { setSearchTerm } = searchActions();
 
   const handleSwitchToAdmin = useCallback(() => switchPage(admin), [switchPage]);
   const handleSwitchToStore = useCallback(() => switchPage(store), [switchPage]);
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value), []);
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value), [setSearchTerm]);
 
   const nav = useMemo(
     () => ({
@@ -50,10 +50,10 @@ const App = () => {
 
   const page = useMemo(
     () => ({
-      [store]: <StorePage debouncedSearchTerm={debouncedSearchTerm} />,
+      [store]: <StorePage />,
       [admin]: <AdminPage />
     }),
-    [store, admin, debouncedSearchTerm]
+    [store, admin]
   );
 
   return (

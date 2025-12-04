@@ -1,9 +1,11 @@
 import Button from '../../../components/button';
 import { ImageIcon } from '../../../components/icons';
+import useDebounce from '../../../hooks/debounce';
 import { getRemainingStock } from '../../../models/cart';
 import { filterProductsBySearchTerm, formatFirstDiscount, getCartButtonText, getMaxDiscountRate, getStockStatusText } from '../../../models/product';
 import { cartActions, cartContext } from '../../../stores/cart';
 import { productsContext } from '../../../stores/products';
+import { searchContext } from '../../../stores/search';
 import { ProductWithUI } from '../../../types/products';
 import { formatPrice } from '../../../utils/format';
 
@@ -13,10 +15,6 @@ interface NoResultsProps {
 
 interface ProductItemProps {
   product: ProductWithUI;
-}
-
-interface ProductListProps {
-  debouncedSearchTerm: string;
 }
 
 const NoResults = ({ keyword }: NoResultsProps) => {
@@ -78,8 +76,10 @@ const ProductItem = ({ product }: ProductItemProps) => {
   );
 };
 
-const ProductList = ({ debouncedSearchTerm }: ProductListProps) => {
+const ProductList = () => {
   const { products } = productsContext();
+  const { searchTerm } = searchContext();
+  const debouncedSearchTerm = useDebounce(searchTerm);
   const filteredProducts = filterProductsBySearchTerm(products, debouncedSearchTerm);
 
   return filteredProducts.length === 0 ? (

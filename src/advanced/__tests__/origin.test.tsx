@@ -5,15 +5,19 @@ import '../../setupTests';
 import App from '../App';
 import { useCart } from '../stores/cart';
 import { useCoupons } from '../stores/coupons';
+import { useNotifications } from '../stores/notifications';
 import { useProducts } from '../stores/products';
+import { useSearch } from '../stores/search';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
     // localStorage 초기화
     localStorage.clear();
     useCart.getState().actions.clearCart();
-    useProducts.getState().actions.clearProducts();
     useCoupons.getState().actions.clearCoupons();
+    useNotifications.getState().actions.clearNotifications();
+    useProducts.getState().actions.clearProducts();
+    useSearch.getState().actions.clearSearchTerm();
     // console 경고 무시
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});
