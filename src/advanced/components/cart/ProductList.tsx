@@ -16,6 +16,7 @@ export const ProductList: React.FC<ProductListProps> = ({
   searchTerm = '',
 }) => {
   const { cart } = useCartContext();
+
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
