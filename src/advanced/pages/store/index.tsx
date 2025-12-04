@@ -9,12 +9,11 @@ import ProductSection from './components/product-section';
 
 interface StorePageProps {
   debouncedSearchTerm: string;
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
 }
 
-const StorePage = ({ debouncedSearchTerm, coupons, selectedCoupon, setSelectedCoupon }: StorePageProps) => {
+const StorePage = ({ debouncedSearchTerm, selectedCoupon, setSelectedCoupon }: StorePageProps) => {
   const { cart, totalItemCount } = cartContext();
   const totals = calculateCartTotal(cart, selectedCoupon);
 
@@ -30,7 +29,7 @@ const StorePage = ({ debouncedSearchTerm, coupons, selectedCoupon, setSelectedCo
 
           {totalItemCount > 0 && (
             <>
-              <CouponSection coupons={coupons} totals={totals} selectedCoupon={selectedCoupon} setSelectedCoupon={setSelectedCoupon} />
+              <CouponSection totals={totals} selectedCoupon={selectedCoupon} setSelectedCoupon={setSelectedCoupon} />
               <PaymentSection totals={totals} setSelectedCoupon={setSelectedCoupon} />
             </>
           )}

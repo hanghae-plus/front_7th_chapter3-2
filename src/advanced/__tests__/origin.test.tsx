@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import '../../setupTests';
 import App from '../App';
 import { useCart } from '../stores/cart';
+import { useCoupons } from '../stores/coupons';
 import { useProducts } from '../stores/products';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
@@ -12,6 +13,7 @@ describe('쇼핑몰 앱 통합 테스트', () => {
     localStorage.clear();
     useCart.getState().actions.clearCart();
     useProducts.getState().actions.clearProducts();
+    useCoupons.getState().actions.clearCoupons();
     // console 경고 무시
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});

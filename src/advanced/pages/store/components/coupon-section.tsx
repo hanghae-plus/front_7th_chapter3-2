@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction } from 'react';
 import Select from '../../../components/select';
 import { convertCouponsToOptions, findCouponByCode, validateCouponApplicability } from '../../../models/coupon';
+import { couponsContext } from '../../../stores/coupons';
 import { notificationsActions } from '../../../stores/notifications';
 import { Coupon } from '../../../types/coupons';
 
 interface CouponSectionProps {
-  coupons: Coupon[];
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -14,7 +14,8 @@ interface CouponSectionProps {
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
 }
 
-const CouponSection = ({ coupons, totals, selectedCoupon, setSelectedCoupon }: CouponSectionProps) => {
+const CouponSection = ({ totals, selectedCoupon, setSelectedCoupon }: CouponSectionProps) => {
+  const { coupons } = couponsContext();
   const { addNotification } = notificationsActions();
 
   return (

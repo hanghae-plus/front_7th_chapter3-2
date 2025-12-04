@@ -1,15 +1,8 @@
 import useToggle from '../../../hooks/toggle';
-import { Coupon } from '../../../types/coupons';
 import CouponForm from './coupon-form';
 import CouponList from './coupon-list';
 
-interface CouponSectionProps {
-  coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-}
-
-const CouponSection = ({ coupons, addCoupon, deleteCoupon }: CouponSectionProps) => {
+const CouponSection = () => {
   const { isOpen, close, toggle } = useToggle(false);
 
   return (
@@ -18,8 +11,8 @@ const CouponSection = ({ coupons, addCoupon, deleteCoupon }: CouponSectionProps)
         <h2 className='text-lg font-semibold'>쿠폰 관리</h2>
       </div>
       <div className='p-6'>
-        <CouponList coupons={coupons} deleteCoupon={deleteCoupon} toggle={toggle} />
-        {isOpen && <CouponForm addCoupon={addCoupon} close={close} />}
+        <CouponList toggle={toggle} />
+        {isOpen && <CouponForm close={close} />}
       </div>
     </section>
   );

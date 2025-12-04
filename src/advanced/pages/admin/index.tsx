@@ -1,21 +1,14 @@
 import { Tab, TabList, TabPanel, Tabs } from '../../components/tabs';
 import useTabs from '../../hooks/tabs';
-import { Coupon } from '../../types/coupons';
 import CouponSection from './components/coupon-section';
 import ProductSection from './components/product-section';
-
-interface AdminPageProps {
-  coupons: Coupon[];
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-}
 
 const TABS = {
   products: 'products',
   coupons: 'coupons'
 } as const;
 
-const AdminPage = ({ coupons, addCoupon, deleteCoupon }: AdminPageProps) => {
+const AdminPage = () => {
   const { activeTab, setActiveTab } = useTabs<keyof typeof TABS>(TABS.products);
 
   return (
@@ -33,7 +26,7 @@ const AdminPage = ({ coupons, addCoupon, deleteCoupon }: AdminPageProps) => {
           <ProductSection />
         </TabPanel>
         <TabPanel value={TABS.coupons}>
-          <CouponSection coupons={coupons} addCoupon={addCoupon} deleteCoupon={deleteCoupon} />
+          <CouponSection />
         </TabPanel>
       </Tabs>
     </div>

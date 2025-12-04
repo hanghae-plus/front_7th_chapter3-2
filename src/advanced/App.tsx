@@ -5,7 +5,6 @@ import { CartIcon } from './components/icons';
 import Input from './components/input';
 import Toast from './components/toast';
 import { PAGES } from './constants/pages';
-import useCoupons from './hooks/coupons';
 import useDebounce from './hooks/debounce';
 import usePage from './hooks/pages';
 import useSelectedCoupon from './hooks/selected-coupon';
@@ -16,9 +15,8 @@ import { cartContext } from './stores/cart';
 const App = () => {
   const { store, admin } = PAGES;
   const { currentPage, switchPage, isCurrentPage } = usePage(store);
-  const { coupons, addCoupon, deleteCoupon } = useCoupons();
   const { totalItemCount } = cartContext();
-  const [selectedCoupon, setSelectedCoupon] = useSelectedCoupon(coupons);
+  const [selectedCoupon, setSelectedCoupon] = useSelectedCoupon();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm);
 
@@ -54,17 +52,10 @@ const App = () => {
 
   const page = useMemo(
     () => ({
-      [store]: (
-        <StorePage
-          debouncedSearchTerm={debouncedSearchTerm}
-          coupons={coupons}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-        />
-      ),
-      [admin]: <AdminPage coupons={coupons} addCoupon={addCoupon} deleteCoupon={deleteCoupon} />
+      [store]: <StorePage debouncedSearchTerm={debouncedSearchTerm} selectedCoupon={selectedCoupon} setSelectedCoupon={setSelectedCoupon} />,
+      [admin]: <AdminPage />
     }),
-    [store, admin, debouncedSearchTerm, coupons, selectedCoupon, setSelectedCoupon, addCoupon, deleteCoupon]
+    [store, admin, debouncedSearchTerm, selectedCoupon, setSelectedCoupon]
   );
 
   return (

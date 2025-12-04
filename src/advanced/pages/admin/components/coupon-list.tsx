@@ -1,20 +1,20 @@
 import Button from '../../../components/button';
 import { PlusIcon, TrashIcon } from '../../../components/icons';
-import { Coupon } from '../../../types/coupons';
 import { formatCouponDiscount } from '../../../models/coupon';
+import { couponsActions, couponsContext } from '../../../stores/coupons';
+import { Coupon } from '../../../types/coupons';
 
 interface CouponItemProps {
   coupon: Coupon;
-  deleteCoupon: (couponCode: string) => void;
 }
 
 interface CouponListProps {
-  coupons: Coupon[];
-  deleteCoupon: (couponCode: string) => void;
   toggle: () => void;
 }
 
-const CouponItem = ({ coupon, deleteCoupon }: CouponItemProps) => {
+const CouponItem = ({ coupon }: CouponItemProps) => {
+  const { deleteCoupon } = couponsActions();
+
   return (
     <div className='relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200'>
       <div className='flex justify-between items-start'>
@@ -35,11 +35,13 @@ const CouponItem = ({ coupon, deleteCoupon }: CouponItemProps) => {
   );
 };
 
-const CouponList = ({ coupons, deleteCoupon, toggle }: CouponListProps) => {
+const CouponList = ({ toggle }: CouponListProps) => {
+  const { coupons } = couponsContext();
+
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
       {coupons.map(coupon => (
-        <CouponItem key={coupon.code} coupon={coupon} deleteCoupon={deleteCoupon} />
+        <CouponItem key={coupon.code} coupon={coupon} />
       ))}
       <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors'>
         <button onClick={toggle} className='text-gray-400 hover:text-gray-600 flex flex-col items-center'>
