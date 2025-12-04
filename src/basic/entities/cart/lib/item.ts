@@ -19,7 +19,6 @@ export const getItemDiscountRate = (
   }, 0);
 
   // 2. 장바구니 전체에서 "10개 이상" 담은 아이템이 하나라도 있는지 확인
-  // (이전 코드의 30은 제 착각이었습니다. 10이 맞습니다!)
   const hasBulkPurchase = cart.some(
     (item) => item.quantity >= CART_CONFIG.BULK_QUANTITY_THRESHOLD,
   );
