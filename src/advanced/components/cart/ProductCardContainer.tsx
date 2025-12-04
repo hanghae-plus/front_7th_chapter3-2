@@ -4,7 +4,12 @@ import { ProductCardView } from './ProductCardView';
 import { useProductsContext, useCartContext } from '../../contexts';
 import { formatCurrencyKRW } from '../../utils/formatters';
 import { getRemainingStock } from '../../models/cart';
-import { getProductMaxDiscountRate, isOutOfStock } from '../../models/product';
+import {
+  isOutOfStock,
+  isLowStock,
+  getProductMaxDiscountRate,
+} from '../../models/product';
+import { formatDiscountRate } from '../../models/discount';
 
 interface ProductCardProps {
   product: ProductWithUI;
@@ -35,30 +40,27 @@ export const ProductCardContainer: React.FC<ProductCardProps> = ({
       ? `${formatCurrencyKRW(price)} (품절)`
       : `${formatCurrencyKRW(price)} (재고: ${remaining - quantity})`;
   };
-  // 최대 할인율 계산
-  const maxDiscountRate =
-    product.discounts.length > 0
-      ? Math.max(...product.discounts.map((d) => d.rate)) * 100
-      : 0;
-  // 할인 정보 텍스트
+
+  const maxDiscountRate = getProductMaxDiscountRate(product) * 100;
+
   const discountText =
     product.discounts.length > 0
-      ? `${product.discounts[0].quantity}개 이상 구매시 할인 ${
-          product.discounts[0].rate * 100
-        }%`
+      ? `${
+          product.discounts[0].quantity
+        }개 이상 구매시 할인 ${formatDiscountRate(product.discounts[0].rate)}`
       : undefined;
 
-  // 재고 상태 판단
-  const stockStatus =
-    remainingStock === 0 ? 'out' : remainingStock <= 5 ? 'low' : 'available';
+  const stockStatus = isOutOfStock(remainingStock)
+    ? 'out'
+    : isLowStock(remainingStock)
+    ? 'low'
+    : 'available';
 
-  // 재고 상태 텍스트
-  const stockStatusText =
-    remainingStock === 0
-      ? '품절'
-      : remainingStock <= 5
-      ? `품절임박! ${remainingStock}개 남음`
-      : `재고 ${remainingStock}개`;
+  const stockStatusText = isOutOfStock(remainingStock)
+    ? '품절'
+    : isLowStock(remainingStock)
+    ? `품절임박! ${remainingStock}개 남음`
+    : `재고 ${remainingStock}개`;
 
   return (
     <ProductCardView

@@ -7,13 +7,17 @@ import {
   CartSummary,
   CouponSelectorContainer,
 } from '../components/cart';
-import { calculateCartTotal } from '../models/cart';
+import {
+  calculateCartTotal,
+  getRemainingStock,
+  isCartEmpty,
+} from '../models/cart';
+import { filterProducts, isOutOfStock } from '../models/product';
 import {
   useProductsContext,
   useCartContext,
   useNotificationsContext,
 } from '../contexts';
-import { getRemainingStock } from '../models/cart';
 
 interface CartPageProps {
   searchTerm: string;
@@ -28,16 +32,7 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const filteredProducts = useMemo(() => {
-    if (!searchTerm) {
-      return products;
-    }
-
-    return products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (product.description &&
-          product.description.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    return filterProducts({ products, searchTerm });
   }, [products, searchTerm]);
 
   const totals = useMemo(() => {
@@ -47,7 +42,8 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
   const handleAddToCart = useCallback(
     (product: ProductWithUI) => {
       const remainingStock = getRemainingStock({ cart, product });
-      if (remainingStock <= 0) {
+
+      if (isOutOfStock(remainingStock)) {
         addNotification('재고가 부족합니다!', 'error');
         return;
       }
@@ -104,7 +100,7 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
             onRemoveFromCart={removeFromCart}
           />
 
-          {cart.length > 0 && (
+          {!isCartEmpty(cart) && (
             <>
               <CouponSelectorContainer
                 selectedCoupon={selectedCoupon}

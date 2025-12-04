@@ -1,6 +1,6 @@
 import React from 'react';
 import { CartItem } from '../../../types';
-import { calculateItemTotal } from '../../models/cart';
+import { calculateItemTotal, isCartEmpty } from '../../models/cart';
 import { CartItemContainer } from './CartItemContainer';
 
 interface CartSummaryProps {
@@ -32,7 +32,7 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
         </svg>
         장바구니
       </h2>
-      {cart.length === 0 ? (
+      {isCartEmpty(cart) ? (
         <div className="text-center py-8">
           <svg
             className="w-16 h-16 text-gray-300 mx-auto mb-4"
