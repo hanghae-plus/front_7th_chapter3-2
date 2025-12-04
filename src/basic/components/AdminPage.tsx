@@ -12,16 +12,22 @@ import {
   MAX_DISCOUNT_AMOUNT,
 } from '../constants';
 import { isNumericInput, parseNumberInput } from '../utils/validators';
+import { CloseIcon, PlusIcon, TrashIcon } from './icons';
 
 interface AdminPageProps {
-  onNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
+  onNotification: (
+    message: string,
+    type: 'error' | 'success' | 'warning'
+  ) => void;
 }
 
 export function AdminPage({ onNotification }: AdminPageProps) {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const { coupons, addCoupon, removeCoupon } = useCoupons();
 
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
+    'products'
+  );
   const [showProductForm, setShowProductForm] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -234,13 +240,19 @@ export function AdminPage({ onNotification }: AdminPageProps) {
           onDelete={handleDeleteProduct}
           onSubmit={handleProductSubmit}
           onCancel={resetProductForm}
-          onNameChange={(value) => setProductForm({ ...productForm, name: value })}
-          onDescriptionChange={(value) => setProductForm({ ...productForm, description: value })}
+          onNameChange={(value) =>
+            setProductForm({ ...productForm, name: value })
+          }
+          onDescriptionChange={(value) =>
+            setProductForm({ ...productForm, description: value })
+          }
           onPriceChange={handlePriceChange}
           onPriceBlur={handlePriceBlur}
           onStockChange={handleStockChange}
           onStockBlur={handleStockBlur}
-          onDiscountsChange={(discounts) => setProductForm({ ...productForm, discounts })}
+          onDiscountsChange={(discounts) =>
+            setProductForm({ ...productForm, discounts })
+          }
         />
       ) : (
         <CouponManagement
@@ -251,9 +263,15 @@ export function AdminPage({ onNotification }: AdminPageProps) {
           onDelete={handleDeleteCoupon}
           onSubmit={handleCouponSubmit}
           onCancel={() => setShowCouponForm(false)}
-          onNameChange={(value) => setCouponForm({ ...couponForm, name: value })}
-          onCodeChange={(value) => setCouponForm({ ...couponForm, code: value.toUpperCase() })}
-          onTypeChange={(value) => setCouponForm({ ...couponForm, discountType: value })}
+          onNameChange={(value) =>
+            setCouponForm({ ...couponForm, name: value })
+          }
+          onCodeChange={(value) =>
+            setCouponForm({ ...couponForm, code: value.toUpperCase() })
+          }
+          onTypeChange={(value) =>
+            setCouponForm({ ...couponForm, discountType: value })
+          }
           onValueChange={handleDiscountValueChange}
           onValueBlur={handleDiscountValueBlur}
         />
@@ -280,7 +298,9 @@ interface ProductManagementProps {
   onPriceBlur: (value: string) => void;
   onStockChange: (value: string) => void;
   onStockBlur: (value: string) => void;
-  onDiscountsChange: (discounts: Array<{ quantity: number; rate: number }>) => void;
+  onDiscountsChange: (
+    discounts: Array<{ quantity: number; rate: number }>
+  ) => void;
 }
 
 function ProductManagement({
@@ -414,7 +434,9 @@ interface ProductFormProps {
   onPriceBlur: (value: string) => void;
   onStockChange: (value: string) => void;
   onStockBlur: (value: string) => void;
-  onDiscountsChange: (discounts: Array<{ quantity: number; rate: number }>) => void;
+  onDiscountsChange: (
+    discounts: Array<{ quantity: number; rate: number }>
+  ) => void;
 }
 
 function ProductForm({
@@ -430,7 +452,11 @@ function ProductForm({
   onStockBlur,
   onDiscountsChange,
 }: ProductFormProps) {
-  const handleDiscountChange = (index: number, field: 'quantity' | 'rate', value: number) => {
+  const handleDiscountChange = (
+    index: number,
+    field: 'quantity' | 'rate',
+    value: number
+  ) => {
     const newDiscounts = [...productForm.discounts];
     newDiscounts[index] = { ...newDiscounts[index], [field]: value };
     onDiscountsChange(newDiscounts);
@@ -452,7 +478,9 @@ function ProductForm({
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">상품명</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              상품명
+            </label>
             <input
               type="text"
               value={productForm.name}
@@ -462,7 +490,9 @@ function ProductForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">설명</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              설명
+            </label>
             <input
               type="text"
               value={productForm.description}
@@ -471,7 +501,9 @@ function ProductForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">가격</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              가격
+            </label>
             <input
               type="text"
               value={productForm.price === 0 ? '' : productForm.price}
@@ -483,7 +515,9 @@ function ProductForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">재고</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              재고
+            </label>
             <input
               type="text"
               value={productForm.stock === 0 ? '' : productForm.stock}
@@ -497,14 +531,25 @@ function ProductForm({
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">할인 정책</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            할인 정책
+          </label>
           <div className="space-y-2">
             {productForm.discounts.map((discount, index) => (
-              <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+              <div
+                key={index}
+                className="flex items-center gap-2 bg-gray-50 p-2 rounded"
+              >
                 <input
                   type="number"
                   value={discount.quantity}
-                  onChange={(e) => handleDiscountChange(index, 'quantity', parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleDiscountChange(
+                      index,
+                      'quantity',
+                      parseInt(e.target.value) || 0
+                    )
+                  }
                   className="w-20 px-2 py-1 border rounded"
                   min="1"
                   placeholder="수량"
@@ -513,7 +558,13 @@ function ProductForm({
                 <input
                   type="number"
                   value={discount.rate * 100}
-                  onChange={(e) => handleDiscountChange(index, 'rate', (parseInt(e.target.value) || 0) / 100)}
+                  onChange={(e) =>
+                    handleDiscountChange(
+                      index,
+                      'rate',
+                      (parseInt(e.target.value) || 0) / 100
+                    )
+                  }
                   className="w-16 px-2 py-1 border rounded"
                   min="0"
                   max="100"
@@ -525,9 +576,7 @@ function ProductForm({
                   onClick={() => handleRemoveDiscount(index)}
                   className="text-red-600 hover:text-red-800"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <CloseIcon />
                 </button>
               </div>
             ))}
@@ -607,9 +656,7 @@ function CouponManagement({
               onClick={onToggleForm}
               className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
             >
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
+              <PlusIcon />
               <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
             </button>
           </div>
@@ -657,14 +704,7 @@ function CouponCard({ coupon, onDelete }: CouponCardProps) {
           onClick={() => onDelete(coupon.code)}
           className="text-gray-400 hover:text-red-600 transition-colors"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
+          <TrashIcon />
         </button>
       </div>
     </div>
@@ -699,7 +739,9 @@ function CouponForm({
         <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">쿠폰명</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              쿠폰명
+            </label>
             <input
               type="text"
               value={couponForm.name}
@@ -710,7 +752,9 @@ function CouponForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">쿠폰 코드</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              쿠폰 코드
+            </label>
             <input
               type="text"
               value={couponForm.code}
@@ -721,10 +765,14 @@ function CouponForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">할인 타입</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              할인 타입
+            </label>
             <select
               value={couponForm.discountType}
-              onChange={(e) => onTypeChange(e.target.value as 'amount' | 'percentage')}
+              onChange={(e) =>
+                onTypeChange(e.target.value as 'amount' | 'percentage')
+              }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
             >
               <option value="amount">정액 할인</option>
@@ -737,7 +785,9 @@ function CouponForm({
             </label>
             <input
               type="text"
-              value={couponForm.discountValue === 0 ? '' : couponForm.discountValue}
+              value={
+                couponForm.discountValue === 0 ? '' : couponForm.discountValue
+              }
               onChange={(e) => onValueChange(e.target.value)}
               onBlur={onValueBlur}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
