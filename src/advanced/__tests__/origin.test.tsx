@@ -1,11 +1,20 @@
 // @ts-nocheck
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
+import { getDefaultStore } from 'jotai';
 import App from '../App';
+import { notificationsAtom } from '../store/atoms/notificationAtom';
+import { cartAtom } from '../store/atoms/cartAtom';
+import { couponsAtom } from '../store/atoms/couponsAtom';
 import '../../setupTests';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
+    // Jotai 전역 상태 초기화
+    const store = getDefaultStore();
+    store.set(notificationsAtom, []);
+    store.set(cartAtom, []);
+
     // localStorage 초기화
     localStorage.clear();
     // console 경고 무시
