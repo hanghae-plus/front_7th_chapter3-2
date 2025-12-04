@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Button from './components/button';
 import Header from './components/header';
 import { CartIcon } from './components/icons';
@@ -30,8 +30,6 @@ const App = () => {
   const handleSwitchToStore = useCallback(() => switchPage(store), [switchPage, store]);
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value), []);
 
-  const hasCartItems = useMemo(() => cart.length > 0, [cart.length]);
-
   const nav = {
     [store]: (
       <>
@@ -40,7 +38,7 @@ const App = () => {
         </Button>
         <div className='relative'>
           <CartIcon className='text-gray-700' />
-          {hasCartItems && (
+          {totalItemCount > 0 && (
             <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
               {totalItemCount}
             </span>
