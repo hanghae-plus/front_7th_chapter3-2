@@ -14,3 +14,5 @@ export interface Discount {
   quantity: number;
   rate: number;
 }
+
+export type NewProduct = Omit<Product, 'id'>;
