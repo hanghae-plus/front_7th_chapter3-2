@@ -6,15 +6,12 @@ import Noti from "./components/Notification";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
 
   return (
     <div className="min-hx-screen bg-gray-50">
       <Noti />
       <Header isAdmin={isAdmin} setIsAdmin={setIsAdmin} />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? <AdminPage activeTab={activeTab} setActiveTab={setActiveTab} /> : <ShoppingMallTemplate />}
-      </main>
+      <main className="max-w-7xl mx-auto px-4 py-8">{isAdmin ? <AdminPage /> : <ShoppingMallTemplate />}</main>
     </div>
   );
 };

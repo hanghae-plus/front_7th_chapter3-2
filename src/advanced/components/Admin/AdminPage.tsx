@@ -1,13 +1,10 @@
 import ProductManagement from "./ProductManagement";
 import CouponManagement from "./CouponManagement";
 import AdminTabBar from "./AdminTabBar";
+import { useState } from "react";
 
-type Props = {
-  activeTab: "products" | "coupons";
-  setActiveTab: React.Dispatch<React.SetStateAction<"products" | "coupons">>;
-};
-
-const AdminPage = ({ activeTab, setActiveTab }: Props) => {
+const AdminPage = () => {
+  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">

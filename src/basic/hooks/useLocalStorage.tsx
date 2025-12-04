@@ -11,6 +11,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
         return initialValue; // 파싱 실패 시 초기값 사용
       }
     }
+
     return initialValue;
   });
 
