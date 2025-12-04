@@ -1,5 +1,5 @@
 import { canAddToCart, getAddToCart } from '../../../entities/cart';
-import { getRemainingStock } from '../../../entities/product';
+import { filterProducts, getRemainingStock } from '../../../entities/product';
 import { CartItem } from '../../../../types';
 import { ProductWithUI } from '../../../types';
 import ProductCard from './ProductCard';
@@ -19,14 +19,7 @@ export default function ProductSection({
   setCart,
   addNotification,
 }: ProductSectionProps) {
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        product =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   // Events
   const addToCart = (product: ProductWithUI) => {
