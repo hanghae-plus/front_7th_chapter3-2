@@ -23,13 +23,14 @@ export function useValidate(addNotification?: NotifyFn) {
   /**
    * 숫자만 입력 허용하는 핸들러
    * @param value - 입력값
-   * @returns 숫자만 포함된 문자열 또는 빈 문자열
+   * @returns 숫자만 포함된 문자열, 빈 문자열, 또는 null (무시해야 할 경우)
    */
-  const handleNumericInput = useCallback((value: string): string => {
+  const handleNumericInput = useCallback((value: string): string | null => {
     if (value === "" || isNumericString(value)) {
       return value;
     }
-    return extractNumbers(value);
+    // 숫자가 아닌 문자가 포함된 경우 입력 무시 (null 반환)
+    return null;
   }, []);
 
   /**
@@ -171,6 +172,8 @@ export function useValidate(addNotification?: NotifyFn) {
       fieldName: keyof T
     ) => {
       const numericValue = handleNumericInput(value);
+      // null이면 입력 무시 (이전 값 유지)
+      if (numericValue === null) return;
       setValue((prev: T) => ({
         ...prev,
         [fieldName]: numericValue === "" ? 0 : parseInt(numericValue),

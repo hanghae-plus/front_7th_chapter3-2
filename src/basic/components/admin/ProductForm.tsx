@@ -95,6 +95,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               value={formData.price === 0 ? "" : formData.price}
               onChange={(e) => {
                 const value = handleNumericInput(e.target.value);
+                // null이면 입력 무시 (이전 값 유지)
+                if (value === null) return;
                 setFormData({
                   ...formData,
                   price: value === "" ? 0 : parseInt(value),
@@ -117,6 +119,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               value={formData.stock === 0 ? "" : formData.stock}
               onChange={(e) => {
                 const value = handleNumericInput(e.target.value);
+                // null이면 입력 무시 (이전 값 유지)
+                if (value === null) return;
                 setFormData({
                   ...formData,
                   stock: value === "" ? 0 : parseInt(value),

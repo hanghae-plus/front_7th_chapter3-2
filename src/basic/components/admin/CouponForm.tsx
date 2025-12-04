@@ -115,6 +115,8 @@ export const CouponForm: React.FC<CouponFormProps> = ({
               value={formData.discountValue === 0 ? "" : formData.discountValue}
               onChange={(e) => {
                 const value = handleNumericInput(e.target.value);
+                // null이면 입력 무시 (이전 값 유지)
+                if (value === null) return;
                 setFormData({
                   ...formData,
                   discountValue: value === "" ? 0 : parseInt(value),
