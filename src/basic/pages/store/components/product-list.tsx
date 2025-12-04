@@ -1,11 +1,11 @@
 import Button from '../../../components/button';
 import { ImageIcon } from '../../../components/icons';
+import { getRemainingStock } from '../../../models/cart';
+import { formatFirstDiscount, getMaxDiscountRate } from '../../../models/product';
 import { CartItem } from '../../../types/carts';
 import { ProductWithUI } from '../../../types/products';
-import { getRemainingStock } from '../../../models/cart';
-import { getMaxDiscountRate, formatFirstDiscount } from '../../../models/product';
-import { filterProductsBySearchTerm, getStockStatusText, getCartButtonText } from '../../../utils/product';
 import { formatPrice } from '../../../utils/format';
+import { filterProductsBySearchTerm, getCartButtonText, getStockStatusText } from '../../../utils/product';
 
 interface NoResultsProps {
   keyword: string;
@@ -34,6 +34,7 @@ const NoResults = ({ keyword }: NoResultsProps) => {
 
 const ProductItem = ({ product, cart, addToCart }: ProductItemProps) => {
   const remainingStock = getRemainingStock(product, cart);
+  const stockStatus = getStockStatusText(remainingStock);
 
   return (
     <div className='bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow'>
@@ -44,9 +45,7 @@ const ProductItem = ({ product, cart, addToCart }: ProductItemProps) => {
         </div>
         {product.isRecommended && <span className='absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded'>BEST</span>}
         {product.discounts.length > 0 && (
-          <span className='absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded'>
-            ~{getMaxDiscountRate(product)}%
-          </span>
+          <span className='absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded'>~{getMaxDiscountRate(product)}%</span>
         )}
       </div>
 
@@ -67,15 +66,14 @@ const ProductItem = ({ product, cart, addToCart }: ProductItemProps) => {
         </div>
 
         {/* 재고 상태 */}
-        <div className='mb-3'>
-          {(() => {
-            const stockStatus = getStockStatusText(remainingStock);
-            return stockStatus ? <p className={stockStatus.className}>{stockStatus.text}</p> : null;
-          })()}
-        </div>
+        {stockStatus && (
+          <div className='mb-3'>
+            <p className={stockStatus.className}>{stockStatus.text}</p>
+          </div>
+        )}
 
         {/* 장바구니 버튼 */}
-        <Button size='lg' variant='dark' onClick={() => addToCart(product)} disabled={remainingStock <= 0} className={'w-full'}>
+        <Button size='lg' variant='dark' onClick={() => addToCart(product)} disabled={remainingStock <= 0} className='w-full'>
           {getCartButtonText(remainingStock)}
         </Button>
       </div>
