@@ -14,7 +14,20 @@ interface Notification {
 
 const App = () => {
   const { products } = useProducts();
-  const { cart, totalItemCount } = useCart(products);
+  const {
+    cart,
+    totalItemCount,
+    selectedCoupon,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    applyCoupon,
+    clearCoupon,
+    clearCart,
+    calculateItemTotal,
+    calculateCartTotal,
+    getRemainingStock,
+  } = useCart(products);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -143,6 +156,17 @@ const App = () => {
           <CartPage
             searchTerm={debouncedSearchTerm}
             onNotification={addNotification}
+            cart={cart}
+            selectedCoupon={selectedCoupon}
+            addToCart={addToCart}
+            removeFromCart={removeFromCart}
+            updateQuantity={updateQuantity}
+            applyCoupon={applyCoupon}
+            clearCoupon={clearCoupon}
+            clearCart={clearCart}
+            calculateItemTotal={calculateItemTotal}
+            calculateCartTotal={calculateCartTotal}
+            getRemainingStock={getRemainingStock}
           />
         )}
       </main>

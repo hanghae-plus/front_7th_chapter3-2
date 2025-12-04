@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
-import { Coupon } from '../../types';
+import { CartItem, Coupon } from '../../types';
 import { ProductWithUI } from '../models/product';
 import { useProducts } from '../hooks/useProducts';
 import { useCoupons } from '../hooks/useCoupons';
-import { useCart } from '../hooks/useCart';
 import { ProductCard } from './ProductCard';
 import { Cart } from './Cart';
 import { filterProductsBySearchTerm } from '../models/product';
@@ -11,24 +10,36 @@ import { filterProductsBySearchTerm } from '../models/product';
 interface CartPageProps {
   searchTerm: string;
   onNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
+  cart: CartItem[];
+  selectedCoupon: Coupon | null;
+  addToCart: (product: ProductWithUI) => { success: boolean; message?: string };
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQuantity: number) => { success: boolean; message?: string };
+  applyCoupon: (coupon: Coupon) => { success: boolean; message?: string };
+  clearCoupon: () => void;
+  clearCart: () => void;
+  calculateItemTotal: (item: CartItem) => number;
+  calculateCartTotal: () => { totalBeforeDiscount: number; totalAfterDiscount: number };
+  getRemainingStock: (product: ProductWithUI) => number;
 }
 
-export function CartPage({ searchTerm, onNotification }: CartPageProps) {
+export function CartPage({
+  searchTerm,
+  onNotification,
+  cart,
+  selectedCoupon,
+  addToCart: addToCartHook,
+  removeFromCart: removeFromCartHook,
+  updateQuantity: updateQuantityHook,
+  applyCoupon: applyCouponHook,
+  clearCoupon,
+  clearCart,
+  calculateItemTotal,
+  calculateCartTotal,
+  getRemainingStock,
+}: CartPageProps) {
   const { products } = useProducts();
   const { coupons } = useCoupons();
-  const {
-    cart,
-    selectedCoupon,
-    addToCart: addToCartHook,
-    removeFromCart: removeFromCartHook,
-    updateQuantity: updateQuantityHook,
-    applyCoupon: applyCouponHook,
-    clearCoupon,
-    clearCart,
-    calculateItemTotal,
-    calculateCartTotal,
-    getRemainingStock,
-  } = useCart(products);
 
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
