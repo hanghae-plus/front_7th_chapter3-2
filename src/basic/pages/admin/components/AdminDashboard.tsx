@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ProductWithUI } from '../../../features/product/hook/useProduct';
+import { ProductWithUI } from '../../../features/product/hooks/useProduct';
 import { AdminTitle } from './AdminTitle';
 import { AdminViewTab } from './AdminViewTab';
 import { AdminProductList } from '../../../features/product/admin/AdminProductList';

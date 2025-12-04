@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { ProductWithUI } from '../hook/useProduct';
+import { ProductWithUI } from '../hooks/useProduct';
 import { AddNewProductButton } from './AddNewProductButton';
 import { ProductAddForm } from './ProductAddForm';
 import { AdminProductTable } from './AdminProductTable';

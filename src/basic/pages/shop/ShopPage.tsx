@@ -1,8 +1,8 @@
 import { ProductList } from '../../features/product/ProductList';
 import { Cart } from '../../features/cart/Cart';
 import { Header } from '../../shared/component/Header';
-import { useProduct } from '../../features/product/hook/useProduct';
-import { useSearchProduct } from '../../features/product/hook/useSearchProduct';
+import { useProduct } from '../../features/product/hooks/useProduct';
+import { useSearchProduct } from '../../features/product/hooks/useSearchProduct';
 import { useCart } from '../../features/cart/hooks/useCart';
 import { useManageCoupon } from '../../features/coupon/hooks/useManageCoupon';
 

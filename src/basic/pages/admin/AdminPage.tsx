@@ -1,6 +1,6 @@
 import { AdminDashboard } from './components/AdminDashboard';
 import { Header } from '../../shared/component/Header';
-import { useProduct } from '../../features/product/hook/useProduct';
+import { useProduct } from '../../features/product/hooks/useProduct';
 
 interface AdminPageProps {
   isAdmin: boolean;

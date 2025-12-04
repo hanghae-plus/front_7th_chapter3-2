@@ -1,5 +1,5 @@
 import { useState, useCallback, SetStateAction, Dispatch } from 'react';
-import { ProductWithUI } from '../../hook/useProduct';
+import { ProductWithUI } from '../../hooks/useProduct';
 import { ProductForm } from '../AdminProductList';
 
 export const useManageProducts = ({

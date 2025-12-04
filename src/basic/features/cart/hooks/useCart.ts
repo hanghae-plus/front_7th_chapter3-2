@@ -8,7 +8,7 @@ import {
 import { CartItem, Coupon, Product } from '../../../../types';
 import { calculateCartTotalPrice } from '../service/cart.service';
 import { applyCouponDiscount } from '../../coupon/services/coupon.service';
-import { ProductWithUI } from '../../product/hook/useProduct';
+import { ProductWithUI } from '../../product/hooks/useProduct';
 
 export const useCart = ({
   products,

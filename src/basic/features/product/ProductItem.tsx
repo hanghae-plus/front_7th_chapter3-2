@@ -1,5 +1,5 @@
 import { formatPrice } from '../../shared/utils/priceUtils';
-import { ProductWithUI } from './hook/useProduct';
+import { ProductWithUI } from './hooks/useProduct';
 
 const ProductImage = () => {
   return (
