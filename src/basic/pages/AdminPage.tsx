@@ -24,7 +24,7 @@ export const AdminPage: React.FC = () => {
   } = useProducts("", addNotification, true);
 
   // 쿠폰 관리 훅
-  const { coupons, handleAddCoupon, handleDeleteCoupon } =
+  const { coupons, addCoupon, removeCoupon } =
     useCoupons(addNotification);
 
   // 가격 포맷팅
@@ -55,8 +55,8 @@ export const AdminPage: React.FC = () => {
         ) : (
           <CouponManagement
             coupons={coupons}
-            onAdd={handleAddCoupon}
-            onDelete={handleDeleteCoupon}
+            onAdd={addCoupon}
+            onDelete={removeCoupon}
             addNotification={addNotification}
           />
         )}

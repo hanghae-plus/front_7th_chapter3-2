@@ -18,7 +18,8 @@ export function useCoupons(addNotification?: NotifyFn) {
     initialCoupons
   );
 
-  const handleAddCoupon = useCallback(
+  // 새 쿠폰 추가
+  const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
@@ -32,7 +33,8 @@ export function useCoupons(addNotification?: NotifyFn) {
     [coupons, setCoupons, addNotification]
   );
 
-  const handleDeleteCoupon = useCallback(
+  // 쿠폰 삭제
+  const removeCoupon = useCallback(
     (couponCode: string) => {
       setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
       addNotification?.("쿠폰이 삭제되었습니다.", "success");
@@ -42,7 +44,7 @@ export function useCoupons(addNotification?: NotifyFn) {
 
   return {
     coupons,
-    handleAddCoupon,
-    handleDeleteCoupon,
+    addCoupon,
+    removeCoupon,
   };
 }
