@@ -11,6 +11,7 @@ const ProductListItem = ({
   getRemainingStock: (product: Product) => number;
 }) => {
   const remainingStock = getRemainingStock(product);
+  console.log(remainingStock);
   return (
     <div
       key={product.id}
@@ -45,7 +46,9 @@ const ProductListItem = ({
 
         {/* 가격 정보 */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-gray-900">{formatter.formatPrice(product.price)}</p>
+          <p className="text-lg font-bold text-gray-900">
+            {remainingStock > 0 ? formatter.formatPrice(product.price) : "SOLD OUT"}
+          </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
               {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%

@@ -10,6 +10,10 @@ const formatPrice = (price: number): string => {
   return `₩${price.toLocaleString()}`;
 };
 
+const formatPriceWon = (price: number): string => {
+  return `${price.toLocaleString()}원`;
+};
+
 const formatDate = (date: Date): string => {
   return date.toISOString().split("T")[0];
 };
@@ -18,4 +22,4 @@ const formatPercentage = (rate: number): string => {
   return `${Math.round(rate)}%`;
 };
 
-export default { formatPrice, formatDate, formatPercentage };
+export default { formatPrice, formatPriceWon, formatDate, formatPercentage };

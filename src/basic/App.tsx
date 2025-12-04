@@ -7,18 +7,16 @@ import CartPage from "./pages/CartPage";
 import useProducts from "./hooks/useProducts";
 import useCart from "./hooks/useCart";
 import useCoupons from "./hooks/useCoupons";
-import { useDebounce } from "./hooks/useDebounce";
-import { useLocalStorage } from "./hooks/useLocalStorage";
-import { useNotification } from "./hooks/useNotification";
-import cartModel from "./models/cart";
-import formatter from "./utils/formatter";
+import { useDebounce } from "./utils/hooks/useDebounce";
+import { useLocalStorage } from "./utils/hooks/useLocalStorage";
+import { useNotification } from "./utils/hooks/useNotification";
 
 const App = () => {
   // Notification 관리
   const { notifications, setNotifications, addNotification } = useNotification();
 
   // 데이터 관리
-  const products = useProducts(addNotification);
+  const products = useProducts();
   const cart = useCart();
   const coupons = useCoupons(addNotification);
 
@@ -28,40 +26,18 @@ const App = () => {
   useLocalStorage("coupons", coupons.data);
 
   // 상태 관리
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Debounce 적용
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  // 가격 포맷팅 (관리자 모드에 따라 다른 형식 적용)
-  const formatPrice = useCallback(
-    (price: number, productId?: string): string => {
-      // 재고 체크
-      if (productId) {
-        const product = products.data.find((p) => p.id === productId);
-        if (product && cartModel.getRemainingStock(cart.data, product) <= 0) {
-          return "SOLD OUT";
-        }
-      }
-
-      // 관리자 모드에서는 원화 표시 방식 변경
-      if (isAdmin) {
-        return `${price.toLocaleString()}원`;
-      }
-
-      return formatter.formatPrice(price);
-    },
-    [products.data, cart.data, isAdmin]
-  );
-
   // 주문 완료 핸들러
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
     cart.clearCart();
-    setSelectedCoupon(null);
+    cart.applyCoupon(null);
   }, [addNotification, cart]);
 
   return (
@@ -90,9 +66,8 @@ const App = () => {
             coupons={coupons.data}
             addCoupon={coupons.addCoupon}
             deleteCoupon={coupons.deleteCoupon}
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
-            formatPrice={formatPrice}
+            selectedCoupon={cart.selectedCoupon}
+            setSelectedCoupon={cart.applyCoupon}
             addNotification={addNotification}
           />
         ) : (
@@ -100,7 +75,7 @@ const App = () => {
             products={products.data}
             cart={cart.data}
             coupons={coupons.data}
-            selectedCoupon={selectedCoupon}
+            selectedCoupon={cart.selectedCoupon}
             debouncedSearchTerm={debouncedSearchTerm}
             addNotification={addNotification}
             completeOrder={completeOrder}

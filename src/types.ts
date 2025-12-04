@@ -33,3 +33,11 @@ export interface Notification {
   message: string;
   type: "error" | "success" | "warning";
 }
+
+export interface ProductForm {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: { quantity: number; rate: number }[];
+}
