@@ -2,30 +2,18 @@ import React from 'react';
 import { CouponList } from './CouponList';
 import { CouponForm } from './CouponForm';
 import { useCouponsContext } from '../../contexts';
+import { useCouponForm } from '../../hooks/useCouponForm';
 
-interface CouponManagementProps {
-  showCouponForm: boolean;
-  couponForm: {
-    name: string;
-    code: string;
-    discountType: 'amount' | 'percentage';
-    discountValue: number;
-  };
-  onToggleCouponForm: () => void;
-  onCouponFormChange: (form: any) => void;
-  onCouponSubmit: (e: React.FormEvent) => void;
-  onCouponFormCancel: () => void;
-}
-
-export const CouponManagement: React.FC<CouponManagementProps> = ({
-  showCouponForm,
-  couponForm,
-  onToggleCouponForm,
-  onCouponFormChange,
-  onCouponSubmit,
-  onCouponFormCancel,
-}) => {
+export const CouponManagement: React.FC = () => {
   const { deleteCoupon } = useCouponsContext();
+  const {
+    showForm,
+    formData,
+    setFormData,
+    handleToggleForm,
+    handleSubmit,
+    handleCancel,
+  } = useCouponForm();
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -35,15 +23,15 @@ export const CouponManagement: React.FC<CouponManagementProps> = ({
       <div className="p-6">
         <CouponList
           onDeleteCoupon={deleteCoupon}
-          onToggleCouponForm={onToggleCouponForm}
+          onToggleCouponForm={handleToggleForm}
         />
 
-        {showCouponForm && (
+        {showForm && (
           <CouponForm
-            couponForm={couponForm}
-            onFormChange={onCouponFormChange}
-            onSubmit={onCouponSubmit}
-            onCancel={onCouponFormCancel}
+            couponForm={formData}
+            onFormChange={setFormData}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
           />
         )}
       </div>

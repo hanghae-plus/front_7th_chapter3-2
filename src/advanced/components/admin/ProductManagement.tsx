@@ -1,53 +1,37 @@
 import React from 'react';
-import { ProductWithUI } from '../../hooks/useProducts';
 import { ProductTable } from './ProductTable';
 import { ProductForm } from './ProductForm';
+import { useProductForm } from '../../hooks/useProductForm';
 
-interface ProductManagementProps {
-  showProductForm: boolean;
-  editingProduct: string | null;
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Array<{ quantity: number; rate: number }>;
-  };
-  onEditProduct: (product: ProductWithUI) => void;
-  onDeleteProduct: (productId: string) => void;
-  onAddProductClick: () => void;
-  onProductFormChange: (form: any) => void;
-  onProductSubmit: (e: React.FormEvent) => void;
-  onProductFormCancel: () => void;
-}
+export const ProductManagement: React.FC = () => {
+  const {
+    showForm,
+    isEditing,
+    formData,
+    setFormData,
+    handleAddClick,
+    handleEdit,
+    handleSubmit,
+    handleCancel,
+    handleDelete,
+  } = useProductForm();
 
-export const ProductManagement: React.FC<ProductManagementProps> = ({
-  showProductForm,
-  editingProduct,
-  productForm,
-  onEditProduct,
-  onDeleteProduct,
-  onAddProductClick,
-  onProductFormChange,
-  onProductSubmit,
-  onProductFormCancel,
-}) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <ProductTable
-        onEditProduct={onEditProduct}
-        onDeleteProduct={onDeleteProduct}
-        onAddProduct={onAddProductClick}
+        onEditProduct={handleEdit}
+        onDeleteProduct={handleDelete}
+        onAddProduct={handleAddClick}
       />
 
-      {showProductForm && (
+      {showForm && (
         <ProductForm
-          isVisible={showProductForm}
-          isEditing={editingProduct !== 'new'}
-          productForm={productForm}
-          onFormChange={onProductFormChange}
-          onSubmit={onProductSubmit}
-          onCancel={onProductFormCancel}
+          isVisible={showForm}
+          isEditing={isEditing}
+          productForm={formData}
+          onFormChange={setFormData}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
         />
       )}
     </section>

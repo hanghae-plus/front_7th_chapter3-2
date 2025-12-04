@@ -32,7 +32,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
   const { addNotification } = useNotificationsContext();
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
