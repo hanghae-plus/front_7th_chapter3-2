@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { CartItem, Product } from "../types";
 import { calculateRemainingStock } from "../models/calculateRemainingStock";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCart = ({
   addNotification,
@@ -10,17 +11,7 @@ export const useCart = ({
     type: "error" | "success" | "warning"
   ) => void;
 }) => {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   const addToCart = useCallback(
     (product: Product) => {
@@ -58,14 +49,17 @@ export const useCart = ({
 
       addNotification("장바구니에 담았습니다", "success");
     },
-    [cart, addNotification]
+    [cart, addNotification, setCart]
   );
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
-  }, []);
+  const removeFromCart = useCallback(
+    (productId: string) => {
+      setCart((prevCart) =>
+        prevCart.filter((item) => item.product.id !== productId)
+      );
+    },
+    [setCart]
+  );
 
   const updateQuantity = useCallback(
     (product: Product, newQuantity: number) => {
@@ -88,7 +82,7 @@ export const useCart = ({
         )
       );
     },
-    [removeFromCart, addNotification]
+    [removeFromCart, addNotification, setCart]
   );
 
   return {

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Header } from "./components/Header";
 import type { Notification } from "./types";
 import { AdminPage } from "./pages/AdminPage";
@@ -65,23 +65,7 @@ const App = () => {
     );
     setCart([]);
     setSelectedCoupon(null);
-  }, [addNotification]);
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
+  }, [addNotification, setCart]);
 
   return (
     <div className="min-h-screen bg-gray-50">

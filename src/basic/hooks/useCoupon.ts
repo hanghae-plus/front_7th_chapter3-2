@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { Coupon } from "../types";
 import { initialCoupons } from "../constants";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCoupon = ({
   addNotification,
@@ -11,17 +12,10 @@ export const useCoupon = ({
   ) => void;
 }) => {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
@@ -33,7 +27,7 @@ export const useCoupon = ({
       setCoupons((prev) => [...prev, newCoupon]);
       addNotification("쿠폰이 추가되었습니다.", "success");
     },
-    [coupons, addNotification]
+    [coupons, addNotification, setCoupons]
   );
 
   const deleteCoupon = useCallback(
@@ -44,7 +38,7 @@ export const useCoupon = ({
       }
       addNotification("쿠폰이 삭제되었습니다.", "success");
     },
-    [selectedCoupon, addNotification]
+    [selectedCoupon, addNotification, setCoupons]
   );
 
   const applyCoupon = useCallback(

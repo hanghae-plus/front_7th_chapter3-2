@@ -1,7 +1,8 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ProductWithUI } from "../types";
 import { initialProducts } from "../constants";
 import { useDebounce } from "../utils/hooks/useDebounce";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useProduct = ({
   addNotification,
@@ -11,17 +12,10 @@ export const useProduct = ({
     type: "error" | "success" | "warning"
   ) => void;
 }) => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
+    "products",
+    initialProducts
+  );
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
@@ -32,7 +26,7 @@ export const useProduct = ({
       setProducts((prev) => [...prev, product]);
       addNotification("상품이 추가되었습니다.", "success");
     },
-    [addNotification]
+    [addNotification, setProducts]
   );
 
   const updateProduct = useCallback(
@@ -44,7 +38,7 @@ export const useProduct = ({
       );
       addNotification("상품이 수정되었습니다.", "success");
     },
-    [addNotification]
+    [addNotification, setProducts]
   );
 
   const deleteProduct = useCallback(
@@ -52,7 +46,7 @@ export const useProduct = ({
       setProducts((prev) => prev.filter((p) => p.id !== productId));
       addNotification("상품이 삭제되었습니다.", "success");
     },
-    [addNotification]
+    [addNotification, setProducts]
   );
 
   const [searchTerm, setSearchTerm] = useState("");
