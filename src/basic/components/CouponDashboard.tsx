@@ -4,37 +4,33 @@ import { CouponCard } from "./CouponCard";
 import { CouponForm } from "./CouponForm";
 import { useState } from "react";
 
+const getInitialCouponForm = (): Coupon => {
+  return {
+    name: "",
+    code: "",
+    discountType: "amount",
+    discountValue: 0,
+  };
+};
+
 export function CouponDashboard({
   coupons,
   addCoupon,
   deleteCoupon,
-  addNotification,
+  notify,
 }: {
   coupons: Coupon[];
   addCoupon: (coupon: Coupon) => void;
   deleteCoupon: (code: string) => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  notify: (message: string, type: "error" | "success" | "warning") => void;
 }) {
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState({
-    name: "",
-    code: "",
-    discountType: "amount" as "amount" | "percentage",
-    discountValue: 0,
-  });
+  const [couponForm, setCouponForm] = useState(getInitialCouponForm());
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addCoupon(couponForm);
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    });
+    setCouponForm(getInitialCouponForm());
     setShowCouponForm(false);
   };
 
@@ -49,7 +45,7 @@ export function CouponDashboard({
             <CouponCard
               key={coupon.code}
               coupon={coupon}
-              deleteCoupon={deleteCoupon}
+              onDelete={deleteCoupon}
             />
           ))}
 
@@ -66,11 +62,11 @@ export function CouponDashboard({
 
         {showCouponForm && (
           <CouponForm
-            handleCouponSubmit={handleCouponSubmit}
             couponForm={couponForm}
-            setCouponForm={setCouponForm}
-            setShowCouponForm={setShowCouponForm}
-            addNotification={addNotification}
+            onSubmit={handleSubmit}
+            onChange={setCouponForm}
+            onCancel={setShowCouponForm}
+            notify={notify}
           />
         )}
       </div>

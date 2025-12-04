@@ -124,7 +124,7 @@ const App = () => {
             coupons={coupons}
             addCoupon={addCoupon}
             deleteCoupon={deleteCoupon}
-            addNotification={addNotification}
+            notify={addNotification}
             deleteProduct={deleteProduct}
             updateProduct={updateProduct}
             addProduct={addProduct}

@@ -1,14 +1,20 @@
 import { ProductWithUI } from "../types";
 import { formatPriceWon } from "../utils/formatPriceWon";
 
+const getStockColor = (stock: number) => {
+  if (stock > 10) return "bg-green-100 text-green-800";
+  if (stock > 0) return "bg-yellow-100 text-yellow-800";
+  return "bg-red-100 text-red-800";
+};
+
 export function ProductTable({
   products,
-  startEditProduct,
-  deleteProduct,
+  onEdit,
+  onDelete,
 }: {
   products: ProductWithUI[];
-  startEditProduct: (product: ProductWithUI) => void;
-  deleteProduct: (productId: string) => void;
+  onEdit: (product: ProductWithUI) => void;
+  onDelete: (productId: string) => void;
 }) {
   return (
     <table className="w-full">
@@ -42,13 +48,9 @@ export function ProductTable({
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  product.stock > 10
-                    ? "bg-green-100 text-green-800"
-                    : product.stock > 0
-                    ? "bg-yellow-100 text-yellow-800"
-                    : "bg-red-100 text-red-800"
-                }`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStockColor(
+                  product.stock
+                )}`}
               >
                 {product.stock}개
               </span>
@@ -58,13 +60,13 @@ export function ProductTable({
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button
-                onClick={() => startEditProduct(product)}
+                onClick={() => onEdit(product)}
                 className="text-indigo-600 hover:text-indigo-900 mr-3"
               >
                 수정
               </button>
               <button
-                onClick={() => deleteProduct(product.id)}
+                onClick={() => onDelete(product.id)}
                 className="text-red-600 hover:text-red-900"
               >
                 삭제

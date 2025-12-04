@@ -1,24 +1,47 @@
+import { validateCoupon } from "../models/validateCoupon";
 import { Coupon } from "../types";
+import { isValidNumber } from "../utils/isValidNumber";
+import { toNumber } from "../utils/toNumber";
 
 export function CouponForm({
-  handleCouponSubmit,
   couponForm,
-  setCouponForm,
-  setShowCouponForm,
-  addNotification,
+  notify,
+  onChange,
+  onCancel,
+  onSubmit,
 }: {
-  handleCouponSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent) => void;
   couponForm: Coupon;
-  setCouponForm: (couponForm: Coupon) => void;
-  setShowCouponForm: (show: boolean) => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  onChange: (couponForm: Coupon) => void;
+  onCancel: (show: boolean) => void;
+  notify: (message: string, type: "error" | "success" | "warning") => void;
 }) {
+  const handleDiscountBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = toNumber(e.target.value);
+    const error = validateCoupon(couponForm.discountType, value);
+    switch (error) {
+      case "DISCOUNT_RATE_OVER_100":
+        notify("할인율은 100%를 초과할 수 없습니다", "error");
+        onChange({ ...couponForm, discountValue: 100 });
+        return;
+      case "DISCOUNT_RATE_UNDER_0":
+        notify("할인율은 0% 이하일 수 없습니다", "error");
+        onChange({ ...couponForm, discountValue: 0 });
+        return;
+      case "DISCOUNT_AMOUNT_OVER_100000":
+        notify("할인 금액은 100,000원을 초과할 수 없습니다", "error");
+        onChange({ ...couponForm, discountValue: 100000 });
+        return;
+      case "DISCOUNT_AMOUNT_UNDER_0":
+        notify("할인 금액은 0원 이하일 수 없습니다", "error");
+        onChange({ ...couponForm, discountValue: 0 });
+        return;
+    }
+  };
+
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-      <form onSubmit={handleCouponSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -29,10 +52,7 @@ export function CouponForm({
               type="text"
               value={couponForm.name}
               onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  name: e.target.value,
-                })
+                onChange({ ...couponForm, name: e.target.value })
               }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder="신규 가입 쿠폰"
@@ -47,7 +67,7 @@ export function CouponForm({
               type="text"
               value={couponForm.code}
               onChange={(e) =>
-                setCouponForm({
+                onChange({
                   ...couponForm,
                   code: e.target.value.toUpperCase(),
                 })
@@ -64,7 +84,7 @@ export function CouponForm({
             <select
               value={couponForm.discountType}
               onChange={(e) =>
-                setCouponForm({
+                onChange({
                   ...couponForm,
                   discountType: e.target.value as "amount" | "percentage",
                 })
@@ -86,49 +106,14 @@ export function CouponForm({
               }
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setCouponForm({
+                if (isValidNumber(value)) {
+                  onChange({
                     ...couponForm,
-                    discountValue: value === "" ? 0 : parseInt(value),
+                    discountValue: toNumber(value),
                   });
                 }
               }}
-              onBlur={(e) => {
-                const value = parseInt(e.target.value) || 0;
-                if (couponForm.discountType === "percentage") {
-                  if (value > 100) {
-                    addNotification(
-                      "할인율은 100%를 초과할 수 없습니다",
-                      "error"
-                    );
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100,
-                    });
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    });
-                  }
-                } else {
-                  if (value > 100000) {
-                    addNotification(
-                      "할인 금액은 100,000원을 초과할 수 없습니다",
-                      "error"
-                    );
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100000,
-                    });
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    });
-                  }
-                }
-              }}
+              onBlur={handleDiscountBlur}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
               required
@@ -138,7 +123,7 @@ export function CouponForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => setShowCouponForm(false)}
+            onClick={() => onCancel(false)}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소

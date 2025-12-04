@@ -3,10 +3,10 @@ import { Coupon } from "../types";
 
 export function CouponCard({
   coupon,
-  deleteCoupon,
+  onDelete,
 }: {
   coupon: Coupon;
-  deleteCoupon: (code: string) => void;
+  onDelete: (code: string) => void;
 }) {
   return (
     <div className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
@@ -23,7 +23,7 @@ export function CouponCard({
           </div>
         </div>
         <button
-          onClick={() => deleteCoupon(coupon.code)}
+          onClick={() => onDelete(coupon.code)}
           className="text-gray-400 hover:text-red-600 transition-colors"
         >
           <IconTrash className="w-5 h-5" />

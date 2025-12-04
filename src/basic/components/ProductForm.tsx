@@ -1,31 +1,30 @@
 import { IconClose } from "./icons";
 import { ProductForm as ProductFormType } from "../types";
+import { isValidNumber } from "../utils/isValidNumber";
+import { toNumber } from "../utils/toNumber";
 
 export function ProductForm({
-  handleProductSubmit,
+  onSubmit,
   editingProduct,
   productForm,
-  setProductForm,
-  addNotification,
-  setEditingProduct,
-  setShowProductForm,
+  onChange,
+  notify,
+  onCancel,
 }: {
-  handleProductSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent) => void;
   editingProduct: string | null;
   productForm: ProductFormType;
-  setProductForm: (product: ProductFormType) => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-  setEditingProduct: (id: string | null) => void;
-  setShowProductForm: (show: boolean) => void;
+  onChange: (product: ProductFormType) => void;
+  notify: (message: string, type: "error" | "success" | "warning") => void;
+  onCancel: () => void;
 }) {
+  const isNewProduct = editingProduct === "new";
+
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
-      <form onSubmit={handleProductSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">
-          {editingProduct === "new" ? "새 상품 추가" : "상품 수정"}
+          {isNewProduct ? "새 상품 추가" : "상품 수정"}
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
@@ -36,10 +35,7 @@ export function ProductForm({
               type="text"
               value={productForm.name}
               onChange={(e) =>
-                setProductForm({
-                  ...productForm,
-                  name: e.target.value,
-                })
+                onChange({ ...productForm, name: e.target.value })
               }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               required
@@ -53,10 +49,7 @@ export function ProductForm({
               type="text"
               value={productForm.description}
               onChange={(e) =>
-                setProductForm({
-                  ...productForm,
-                  description: e.target.value,
-                })
+                onChange({ ...productForm, description: e.target.value })
               }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
             />
@@ -70,20 +63,17 @@ export function ProductForm({
               value={productForm.price === 0 ? "" : productForm.price}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    price: value === "" ? 0 : parseInt(value),
-                  });
+                if (isValidNumber(value)) {
+                  onChange({ ...productForm, price: toNumber(value) });
                 }
               }}
               onBlur={(e) => {
                 const value = e.target.value;
                 if (value === "") {
-                  setProductForm({ ...productForm, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("가격은 0보다 커야 합니다", "error");
-                  setProductForm({ ...productForm, price: 0 });
+                  onChange({ ...productForm, price: 0 });
+                } else if (toNumber(value) < 0) {
+                  notify("가격은 0보다 커야 합니다", "error");
+                  onChange({ ...productForm, price: 0 });
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -100,26 +90,20 @@ export function ProductForm({
               value={productForm.stock === 0 ? "" : productForm.stock}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    stock: value === "" ? 0 : parseInt(value),
-                  });
+                if (isValidNumber(value)) {
+                  onChange({ ...productForm, stock: toNumber(value) });
                 }
               }}
               onBlur={(e) => {
                 const value = e.target.value;
                 if (value === "") {
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("재고는 0보다 커야 합니다", "error");
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  addNotification(
-                    "재고는 9999개를 초과할 수 없습니다",
-                    "error"
-                  );
-                  setProductForm({ ...productForm, stock: 9999 });
+                  onChange({ ...productForm, stock: 0 });
+                } else if (toNumber(value) < 0) {
+                  notify("재고는 0보다 커야 합니다", "error");
+                  onChange({ ...productForm, stock: 0 });
+                } else if (toNumber(value) > 9999) {
+                  notify("재고는 9999개를 초과할 수 없습니다", "error");
+                  onChange({ ...productForm, stock: 9999 });
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -143,12 +127,8 @@ export function ProductForm({
                   value={discount.quantity}
                   onChange={(e) => {
                     const newDiscounts = [...productForm.discounts];
-                    newDiscounts[index].quantity =
-                      parseInt(e.target.value) || 0;
-                    setProductForm({
-                      ...productForm,
-                      discounts: newDiscounts,
-                    });
+                    newDiscounts[index].quantity = toNumber(e.target.value);
+                    onChange({ ...productForm, discounts: newDiscounts });
                   }}
                   className="w-20 px-2 py-1 border rounded"
                   min="1"
@@ -160,12 +140,8 @@ export function ProductForm({
                   value={discount.rate * 100}
                   onChange={(e) => {
                     const newDiscounts = [...productForm.discounts];
-                    newDiscounts[index].rate =
-                      (parseInt(e.target.value) || 0) / 100;
-                    setProductForm({
-                      ...productForm,
-                      discounts: newDiscounts,
-                    });
+                    newDiscounts[index].rate = toNumber(e.target.value) / 100;
+                    onChange({ ...productForm, discounts: newDiscounts });
                   }}
                   className="w-16 px-2 py-1 border rounded"
                   min="0"
@@ -179,10 +155,7 @@ export function ProductForm({
                     const newDiscounts = productForm.discounts.filter(
                       (_, i) => i !== index
                     );
-                    setProductForm({
-                      ...productForm,
-                      discounts: newDiscounts,
-                    });
+                    onChange({ ...productForm, discounts: newDiscounts });
                   }}
                   className="text-red-600 hover:text-red-800"
                 >
@@ -193,7 +166,7 @@ export function ProductForm({
             <button
               type="button"
               onClick={() => {
-                setProductForm({
+                onChange({
                   ...productForm,
                   discounts: [
                     ...productForm.discounts,
@@ -211,17 +184,7 @@ export function ProductForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => {
-              setEditingProduct(null);
-              setProductForm({
-                name: "",
-                price: 0,
-                stock: 0,
-                description: "",
-                discounts: [],
-              });
-              setShowProductForm(false);
-            }}
+            onClick={onCancel}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소
@@ -230,7 +193,7 @@ export function ProductForm({
             type="submit"
             className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
           >
-            {editingProduct === "new" ? "추가" : "수정"}
+            {isNewProduct ? "추가" : "수정"}
           </button>
         </div>
       </form>
