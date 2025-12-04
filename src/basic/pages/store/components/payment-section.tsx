@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useCallback } from 'react';
 import Button from '../../../components/button';
 import { AddNotification } from '../../../hooks/notifications';
 import { Coupon } from '../../../types/coupons';
+import { generateOrderNumber } from '../../../utils/order';
 
 interface PaymentSectionProps {
   totals: {
@@ -15,7 +16,7 @@ interface PaymentSectionProps {
 
 const PaymentSection = ({ totals, addNotification, clearCart, setSelectedCoupon }: PaymentSectionProps) => {
   const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
+    const orderNumber = generateOrderNumber();
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     clearCart();
     setSelectedCoupon(null);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Button from './components/button';
 import Header from './components/header';
 import { CartIcon } from './components/icons';
@@ -11,9 +11,9 @@ import useDebounce from './hooks/debounce';
 import useNotifications from './hooks/notifications';
 import usePage from './hooks/pages';
 import useProducts from './hooks/products';
+import useSelectedCoupon from './hooks/selected-coupon';
 import AdminPage from './pages/admin';
 import StorePage from './pages/store';
-import { Coupon } from './types/coupons';
 
 const App = () => {
   const { store, admin } = PAGES;
@@ -22,16 +22,9 @@ const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
   const { coupons, addCoupon, deleteCoupon } = useCoupons(addNotification);
   const { cart, totalItemCount, addToCart, removeFromCart, updateQuantity, clearCart } = useCart(addNotification);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useSelectedCoupon(coupons);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm);
-
-  // 선택된 쿠폰이 삭제되면 자동으로 초기화
-  useEffect(() => {
-    if (selectedCoupon && !coupons.find(c => c.code === selectedCoupon.code)) {
-      setSelectedCoupon(null);
-    }
-  }, [coupons, selectedCoupon]);
 
   const nav = {
     [store]: (

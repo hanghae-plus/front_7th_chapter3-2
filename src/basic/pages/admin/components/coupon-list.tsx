@@ -1,6 +1,7 @@
 import Button from '../../../components/button';
 import { PlusIcon, TrashIcon } from '../../../components/icons';
 import { Coupon } from '../../../types/coupons';
+import { formatCouponDiscount } from '../../../utils/coupon';
 
 interface CouponItemProps {
   coupon: Coupon;
@@ -22,7 +23,7 @@ const CouponItem = ({ coupon, deleteCoupon }: CouponItemProps) => {
           <p className='text-sm text-gray-600 mt-1 font-mono'>{coupon.code}</p>
           <div className='mt-2'>
             <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700'>
-              {coupon.discountType === 'amount' ? `${coupon.discountValue.toLocaleString()}원 할인` : `${coupon.discountValue}% 할인`}
+              {formatCouponDiscount(coupon)}
             </span>
           </div>
         </div>

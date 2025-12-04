@@ -2,6 +2,7 @@ import Button from '../../../components/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/table';
 import { ProductWithUI } from '../../../types/products';
 import { formatPrice } from '../../../utils/format';
+import { getStockStatusStyle } from '../../../utils/product';
 
 interface ProductListProps {
   products: ProductWithUI[];
@@ -38,11 +39,7 @@ const ProductList = ({ products, setEditingProduct, deleteProduct, open }: Produ
               })}
             </TableCell>
             <TableCell className='text-gray-500'>
-              <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  product.stock > 10 ? 'bg-green-100 text-green-800' : product.stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                }`}
-              >
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStockStatusStyle(product.stock)}`}>
                 {product.stock}개
               </span>
             </TableCell>
