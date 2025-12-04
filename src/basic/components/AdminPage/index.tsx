@@ -3,7 +3,7 @@ import { Product, CartItem, Coupon } from "../../../types";
 import { EMPTY_PRODUCT_FORM, EMPTY_COUPON_FORM } from "../../constants";
 import { Tabs } from "../ui";
 import { ProductForm } from "./ProductForm";
-import { ProductAccordion } from "./ProductAccordion";
+import { ProductAccordion } from "./ProductAccordion/ProductAccordion";
 import { CouponForm } from "./CouponForm";
 import { CouponList } from "./CouponList";
 
