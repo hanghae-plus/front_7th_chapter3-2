@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CartItem, Coupon, ProductWithUI, Notification } from "../../types";
+import { useAtom } from "jotai";
+import { Coupon, ProductWithUI } from "../../types";
 import {
   addItemToCart,
   calculateCartTotal,
@@ -7,28 +7,31 @@ import {
   removeItemFromCart,
   updateCartItemQuantity,
 } from "../models/cart";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { cartAtom, selectedCouponAtom } from "../stores/atoms";
+import { useAddNotification } from "./useNotification";
 
-export const useCart = (
-  addNotification: (message: string, type: Notification["type"]) => void
-) => {
-  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+export const useCart = () => {
+  const [cart, setCart] = useAtom(cartAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  const addNotification = useAddNotification();
 
   const addToCart = (product: ProductWithUI) => {
     if (getStock(product) <= 0) {
       addNotification("재고가 부족합니다!", "error");
       return;
     }
-    setCart((prev) => {
-      const newCart = addItemToCart(prev, product);
 
-      if (newCart === prev) {
-        addNotification(`재고는 ${product.stock}개까지만 있습니다`, "error");
-      }
-      addNotification("장바구니에 담았습니다", "success");
-      return newCart;
-    });
+    // 먼저 재고 체크
+    const currentItem = cart.find((item) => item.product.id === product.id);
+    const currentQty = currentItem?.quantity || 0;
+
+    if (currentQty >= product.stock) {
+      addNotification(`재고는 ${product.stock}개까지만 있습니다`, "error");
+      return;
+    }
+
+    setCart((prev) => addItemToCart(prev, product));
+    addNotification("장바구니에 담았습니다", "success");
   };
 
   const removeFromCart = (productId: string) => {

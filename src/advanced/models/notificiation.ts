@@ -1,10 +1,12 @@
 import { Notification } from "../../types";
 
+let notificationCounter = 0;
+
 export const createNotification = (
   message: string,
   type: Notification["type"] = "success"
 ): Notification => ({
-  id: Date.now().toString(),
+  id: `${Date.now()}-${++notificationCounter}`,
   message,
   type,
 });

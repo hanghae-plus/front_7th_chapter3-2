@@ -2,11 +2,12 @@ import { useState, type FC } from "react";
 import ProductListTable from "../../components/adminPage/ProductListTable";
 import ProductForm from "../../components/adminPage/ProductForm";
 import { useProducts } from "../../hooks/useProducts";
-import { ProductWithUI, Notification } from "../../../types";
+import { ProductWithUI } from "../../../types";
 import Section from "../../components/_common/Section";
 import Button from "../../components/_common/Button";
 import { useForm } from "../../utils/hooks/useForm";
 import { validateStock, validatePrice } from "../../models/validation";
+import { useAddNotification } from "../../hooks/useNotification";
 
 const INITIAL_PRODUCT_FORM: Omit<ProductWithUI, "id"> = {
   name: "",
@@ -15,12 +16,11 @@ const INITIAL_PRODUCT_FORM: Omit<ProductWithUI, "id"> = {
   description: "",
   discounts: [],
 };
-interface IProps {
-  addNotification: (message: string, type: Notification["type"]) => void;
-}
-const ProductManagement: FC<IProps> = ({ addNotification }) => {
+
+const ProductManagement: FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const addNotification = useAddNotification();
   const {
     values: productForm,
     handleChange,
@@ -28,8 +28,7 @@ const ProductManagement: FC<IProps> = ({ addNotification }) => {
     setValues: setProductForm,
   } = useForm<Omit<ProductWithUI, "id">>(INITIAL_PRODUCT_FORM);
 
-  const { products, addProduct, updateProduct, deleteProduct } =
-    useProducts(addNotification);
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
 
   const handleAddNew = () => {
     resetForm();
@@ -67,9 +66,8 @@ const ProductManagement: FC<IProps> = ({ addNotification }) => {
   const handleDescriptionChange = (value: string) =>
     handleChange("description", value);
   const handlePriceChange = (value: string) => {
-    // 빈 문자열이거나 순수 숫자가 아니면 무시
     if (value !== "" && !/^\d+$/.test(value)) {
-      return; // 이전 값 유지
+      return;
     }
 
     const numValue = value === "" ? 0 : parseInt(value);
@@ -83,9 +81,8 @@ const ProductManagement: FC<IProps> = ({ addNotification }) => {
     handleChange("price", numValue);
   };
   const handleStockChange = (value: string) => {
-    // 빈 문자열이거나 순수 숫자가 아니면 무시
     if (value !== "" && !/^\d+$/.test(value)) {
-      return; // 이전 값 유지
+      return;
     }
 
     const numValue = value === "" ? 0 : parseInt(value);

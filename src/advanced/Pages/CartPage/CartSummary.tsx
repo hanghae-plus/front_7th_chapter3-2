@@ -3,32 +3,24 @@ import CartItems from "../../components/cartPage/CartItems";
 import PayItem from "../../components/cartPage/PayItem";
 import ShoppingBagIcon from "../../components/_icons/ShoppingBagIcon";
 import CouponSelector from "../../components/cartPage/CouponSelector";
-import { calculateCartTotal } from "../../models/cart";
-import { CartItem, Coupon } from "../../../types";
-import { Notification } from "../../models/notificiation";
+import { useCart } from "../../hooks/useCart";
+import { useCoupons } from "../../hooks/useCoupons";
+import { useAddNotification } from "../../hooks/useNotification";
 
-interface IProps {
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon | null) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
-  emptyCart: () => void;
-  addNotification: (message: string, type: Notification["type"]) => void;
-}
-
-const CartSummary: FC<IProps> = ({
-  cart,
-  coupons,
-  selectedCoupon,
-  applyCoupon,
-  removeFromCart,
-  updateQuantity,
-  emptyCart,
-  addNotification,
-}) => {
-  const totals = calculateCartTotal(cart, selectedCoupon);
+const CartSummary: FC = () => {
+  const {
+    cart,
+    selectedCoupon,
+    applyCoupon,
+    removeFromCart,
+    updateQuantity,
+    emptyCart,
+    calculateTotal,
+  } = useCart();
+  
+  const { coupons } = useCoupons();
+  const addNotification = useAddNotification();
+  const totals = calculateTotal();
 
   const handleCompleteOrder = () => {
     const orderNumber = `ORD-${Date.now()}`;

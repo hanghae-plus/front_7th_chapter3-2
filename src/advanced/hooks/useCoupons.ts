@@ -1,15 +1,14 @@
-import { useCallback } from "react";
-import { Coupon, Notification } from "../../types";
-import { initialCoupons } from "../constants";
+import { useAtom } from "jotai";
+import { Coupon } from "../../types";
 import { addCouponToList, deleteCouponToList } from "../models/coupon";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { couponsAtom } from "../stores/atoms";
+import { useAddNotification } from "./useNotification";
 
-export const useCoupons = (
-  addNotification: (message: string, type: Notification["type"]) => void
-) => {
-  const [coupons, setCoupons] = useLocalStorage("coupons", initialCoupons);
+export const useCoupons = () => {
+  const [coupons, setCoupons] = useAtom(couponsAtom);
+  const addNotification = useAddNotification();
 
-  const addCoupon = useCallback((newCoupon: Coupon) => {
+  const addCoupon = (newCoupon: Coupon) => {
     setCoupons((prev) => {
       const newCoupons = addCouponToList(prev, newCoupon);
 
@@ -20,13 +19,11 @@ export const useCoupons = (
       }
       return newCoupons;
     });
-  }, []);
+  };
 
-  const deleteCoupon = useCallback((couponCode: string) => {
+  const deleteCoupon = (couponCode: string) => {
     setCoupons((prev) => {
       const newCoupons = deleteCouponToList(prev, couponCode);
-
-      // 삭제 성공 여부 확인
       const wasDeleted = newCoupons.length < prev.length;
 
       if (wasDeleted) {
@@ -35,11 +32,7 @@ export const useCoupons = (
 
       return newCoupons;
     });
-  }, []);
-
-  return {
-    coupons,
-    addCoupon,
-    deleteCoupon,
   };
+
+  return { coupons, addCoupon, deleteCoupon };
 };

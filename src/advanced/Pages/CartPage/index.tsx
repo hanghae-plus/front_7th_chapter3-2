@@ -2,33 +2,20 @@ import { type FC } from "react";
 import ProductCards from "./ProductCards";
 import CartSummary from "./CartSummary";
 import { useCart } from "../../hooks/useCart";
-import { Notification } from "../../models/notificiation";
 import { useProducts } from "../../hooks/useProducts";
-import { useCoupons } from "../../hooks/useCoupons";
 import CartHeader from "../../components/layout/CartHeader";
 import { useSearch } from "../../hooks/useSearch";
 
 interface IProps {
   onChange: () => void;
-  addNotification: (message: string, type: Notification["type"]) => void;
 }
 
-const CartPage: FC<IProps> = ({ addNotification, onChange }) => {
-  const {
-    cart,
-    selectedCoupon,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    emptyCart,
-    getStock,
-    applyCoupon,
-  } = useCart(addNotification);
-
-  const { products } = useProducts(addNotification);
-  const { coupons } = useCoupons(addNotification);
+const CartPage: FC<IProps> = ({ onChange }) => {
+  const { cart, addToCart, getStock } = useCart();
+  const { products } = useProducts();
   const { searchTerm, setSearchTerm } = useSearch();
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <>
       <CartHeader
@@ -49,16 +36,7 @@ const CartPage: FC<IProps> = ({ addNotification, onChange }) => {
           </div>
 
           <div className="lg:col-span-1">
-            <CartSummary
-              cart={cart}
-              coupons={coupons}
-              selectedCoupon={selectedCoupon}
-              applyCoupon={applyCoupon}
-              removeFromCart={removeFromCart}
-              updateQuantity={updateQuantity}
-              emptyCart={emptyCart}
-              addNotification={addNotification}
-            />
+            <CartSummary />
           </div>
         </div>
       </main>

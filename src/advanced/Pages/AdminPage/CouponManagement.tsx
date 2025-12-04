@@ -1,12 +1,13 @@
 import { type FC, useState } from "react";
 import { useCoupons } from "../../hooks/useCoupons";
-import { Coupon, Notification } from "../../../types";
+import { Coupon } from "../../../types";
 import CouponList from "../../components/adminPage/CouponList";
 import CouponForm from "../../components/adminPage/CouponForm";
 import Section from "../../components/_common/Section";
 import { useForm } from "../../utils/hooks/useForm";
 import { formatCouponCode } from "../../utils/validators";
 import { validateDiscountRate } from "../../models/validation";
+import { useAddNotification } from "../../hooks/useNotification";
 
 const INITIAL_COUPON: Coupon = {
   name: "",
@@ -15,18 +16,16 @@ const INITIAL_COUPON: Coupon = {
   discountValue: 0,
 };
 
-interface IProps {
-  addNotification: (message: string, type: Notification["type"]) => void;
-}
-const CouponManagement: FC<IProps> = ({ addNotification }) => {
+const CouponManagement: FC = () => {
   const [showCouponForm, setShowCouponForm] = useState(false);
+  const addNotification = useAddNotification();
   const {
     values: couponForm,
     handleChange,
     resetForm,
   } = useForm<Coupon>(INITIAL_COUPON);
 
-  const { coupons, addCoupon, deleteCoupon } = useCoupons(addNotification);
+  const { coupons, addCoupon, deleteCoupon } = useCoupons();
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,14 +51,12 @@ const CouponManagement: FC<IProps> = ({ addNotification }) => {
           }
           onDiscountTypeChange={(value) => handleChange("discountType", value)}
           onDiscountValueChange={(value) => {
-            // 빈 문자열이거나 순수 숫자가 아니면 무시
             if (value !== "" && !/^\d+$/.test(value)) {
-              return; // 이전 값 유지
+              return;
             }
 
             const numValue = value === "" ? 0 : parseInt(value);
 
-            // 퍼센트 타입일 때만 검증
             if (couponForm.discountType === "percentage") {
               const error = validateDiscountRate(numValue);
               if (error) {

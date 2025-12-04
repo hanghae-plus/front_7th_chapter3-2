@@ -1,29 +1,32 @@
 import { useState } from "react";
+import { Provider } from "jotai";
 import AdminPage from "./Pages/AdminPage";
 import CartPage from "./Pages/CartPage";
 
 import { useNotification } from "./hooks/useNotification";
 import NotificationList from "./components/NotificationList";
 
-const App = () => {
+const AppContent = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const { notifications, addNotification, remove } = useNotification();
+  const { notifications, remove } = useNotification();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <NotificationList notifications={notifications} onClose={remove} />
       {isAdmin ? (
-        <AdminPage
-          addNotification={addNotification}
-          onChange={() => setIsAdmin(false)}
-        />
+        <AdminPage onChange={() => setIsAdmin(false)} />
       ) : (
-        <CartPage
-          addNotification={addNotification}
-          onChange={() => setIsAdmin(true)}
-        />
+        <CartPage onChange={() => setIsAdmin(true)} />
       )}
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Provider>
+      <AppContent />
+    </Provider>
   );
 };
 

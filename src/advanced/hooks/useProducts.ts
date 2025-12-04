@@ -1,14 +1,11 @@
-import { ProductWithUI, Notification } from "../../types";
-import { initialProducts } from "../constants";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { useAtom } from "jotai";
+import { ProductWithUI } from "../../types";
+import { productsAtom } from "../stores/atoms";
+import { useAddNotification } from "./useNotification";
 
-export const useProducts = (
-  addNotification: (message: string, type: Notification["type"]) => void
-) => {
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    "products",
-    initialProducts
-  );
+export const useProducts = () => {
+  const [products, setProducts] = useAtom(productsAtom);
+  const addNotification = useAddNotification();
 
   const addProduct = (newProduct: Omit<ProductWithUI, "id">) => {
     const product: ProductWithUI = {

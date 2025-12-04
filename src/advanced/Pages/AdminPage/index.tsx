@@ -3,14 +3,12 @@ import ProductManagement from "./ProductManagement";
 import CouponManagement from "./CouponManagement";
 import NaviTab from "./NaviTab";
 import AdminHeader from "../../components/layout/AdminHeader";
-import { Notification } from "../../../types";
 
 interface IProps {
   onChange: () => void;
-  addNotification: (message: string, type: Notification["type"]) => void;
 }
 
-const AdminPage: FC<IProps> = ({ addNotification, onChange }) => {
+const AdminPage: FC<IProps> = ({ onChange }) => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -30,9 +28,9 @@ const AdminPage: FC<IProps> = ({ addNotification, onChange }) => {
           <NaviTab activeTab={activeTab} onChange={setActiveTab} />
 
           {activeTab === "products" ? (
-            <ProductManagement addNotification={addNotification} />
+            <ProductManagement />
           ) : (
-            <CouponManagement addNotification={addNotification} />
+            <CouponManagement />
           )}
         </div>
       </main>
