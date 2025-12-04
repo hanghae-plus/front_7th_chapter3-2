@@ -245,10 +245,19 @@ export default function ProductPage({
             ) : (
               <div className="space-y-3">
                 {cart.map(item => {
+                  const itemTotal = calculateItemTotal(item);
+                  const originalPrice = item.product.price * item.quantity;
+                  const discountRate =
+                    itemTotal < originalPrice
+                      ? Math.round((1 - itemTotal / originalPrice) * 100)
+                      : 0;
+
                   return (
                     <CartListItem
                       key={`cart-list-item-${item.product.id}`}
                       item={item}
+                      itemTotal={itemTotal}
+                      discountRate={discountRate}
                       removeFromCart={removeFromCart}
                       updateQuantity={updateQuantity}
                     />
