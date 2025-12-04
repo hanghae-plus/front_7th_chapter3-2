@@ -1,18 +1,7 @@
-import { useState } from "react";
 import { ProductWithUI } from "../../../types/types";
 import AdminProductForm from "./AdminProductForm";
 import AdminProductsTable from "./AdminProductsTable";
-
-interface ProductForm {
-  name: string;
-  price: number;
-  stock: number;
-  description: string;
-  discounts: {
-    quantity: number;
-    rate: number;
-  }[];
-}
+import { useProductForm } from "../../../hooks/useProductForm";
 
 interface AdminProductsProps {
   products: ProductWithUI[];
@@ -32,41 +21,16 @@ export const AdminProducts = ({
   deleteProduct,
   addNotification,
 }: AdminProductsProps) => {
-  const [productForm, setProductForm] = useState<ProductForm>({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null); // new / productId / null
-
-  // 상품 추가 시작할 때
-  const startNewProduct = () => {
-    setEditingProduct("new");
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    });
-    setShowProductForm(true);
-  };
-
-  // 상품 수정 시작할 때
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
+  const {
+    productForm,
+    setProductForm,
+    showProductForm,
+    editingProduct,
+    startNewProduct,
+    startEditProduct,
+    handleProductSubmit,
+    resetProductFormState,
+  } = useProductForm({ addProduct, updateProduct });
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -94,11 +58,9 @@ export const AdminProducts = ({
           productForm={productForm}
           setProductForm={setProductForm}
           editingProduct={editingProduct}
-          addProduct={addProduct}
-          updateProduct={updateProduct}
-          setEditingProduct={setEditingProduct}
-          setShowProductForm={setShowProductForm}
           addNotification={addNotification}
+          handleProductSubmit={handleProductSubmit}
+          resetProductFormState={resetProductFormState}
         />
       )}
     </section>

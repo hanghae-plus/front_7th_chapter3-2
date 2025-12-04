@@ -1,56 +1,26 @@
-import { ProductForm, ProductWithUI } from "../../../types/types";
+import { ProductForm } from "../../../types/types";
 import { IconClose } from "../../icons/IconClose";
 
 interface AdminProductFormProps {
   productForm: ProductForm;
   setProductForm: React.Dispatch<React.SetStateAction<ProductForm>>;
   editingProduct: string | null;
-  setEditingProduct: React.Dispatch<React.SetStateAction<string | null>>;
-  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  setShowProductForm: React.Dispatch<React.SetStateAction<boolean>>;
   addNotification: (
     message: string,
     type?: "error" | "success" | "warning"
   ) => void;
+  handleProductSubmit: (e: React.FormEvent<Element>) => void;
+  resetProductFormState: () => void;
 }
 
 const AdminProductForm = ({
   productForm,
   setProductForm,
   editingProduct,
-  setEditingProduct,
-  addProduct,
-  updateProduct,
-  setShowProductForm,
   addNotification,
+  handleProductSubmit,
+  resetProductFormState,
 }: AdminProductFormProps) => {
-  // 생성 or 수정 후 상태 초기화
-  const resetProductFormState = () => {
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
-
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
-    } else {
-      addProduct({
-        ...productForm,
-      });
-    }
-
-    resetProductFormState();
-  };
-
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
       <form onSubmit={handleProductSubmit} className="space-y-4">
