@@ -1,5 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { CartItem, Product, Coupon } from "../../types";
+import { getRemainingStock } from "../App";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -9,7 +10,6 @@ interface ProductWithUI extends Product {
 const ProductPage = ({
   products,
   debouncedSearchTerm,
-  getRemainingStock,
   formatPrice,
   addToCart,
   cart,
@@ -17,14 +17,12 @@ const ProductPage = ({
   removeFromCart,
   selectedCoupon,
   coupons,
-  // calculateItemTotal,
   completeOrder,
   setSelectedCoupon,
   addNotification,
 }: {
   products: ProductWithUI[];
   debouncedSearchTerm: string;
-  getRemainingStock: (product: ProductWithUI) => number;
   formatPrice: (price: number, productId?: string) => string;
   cart: CartItem[];
 
@@ -33,7 +31,6 @@ const ProductPage = ({
   removeFromCart: (productId: string) => void;
   selectedCoupon: Coupon | null;
   coupons: Coupon[];
-  // calculateItemTotal: (item: CartItem) => number;
   completeOrder: () => void;
   setSelectedCoupon: (coupon: Coupon | null) => void;
   addNotification: (message: string, type: "error" | "success" | "warning") => void;
@@ -130,7 +127,7 @@ const ProductPage = ({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => {
-                const remainingStock = getRemainingStock(product);
+                const remainingStock = getRemainingStock(cart, product);
 
                 return (
                   <div

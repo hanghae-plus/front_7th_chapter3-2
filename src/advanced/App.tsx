@@ -5,13 +5,7 @@ import Notification from "./components/Notification";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
 import useProducts from "./hooks/useProducts";
-
-// 초기 데이터
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
+import useCart from "./hooks/useCart";
 
 const initialCoupons: Coupon[] = [
   {
@@ -28,32 +22,25 @@ const initialCoupons: Coupon[] = [
   },
 ];
 
+export const getRemainingStock = (cart: CartItem[], product: Product): number => {
+  const cartItem = cart.find((item) => item.product.id === product.id);
+  const remaining = product.stock - (cartItem?.quantity || 0);
+
+  return remaining;
+};
+
 const App = () => {
-  const products = useProducts();
+  const addNotification = useCallback((message: string, type: "error" | "success" | "warning" = "success") => {
+    const id = Date.now().toString();
+    setNotifications((prev) => [...prev, { id, message, type }]);
 
-  const addProduct = (newProduct: Omit<ProductWithUI, "id">) => {
-    products.addProduct(newProduct, () => addNotification("상품이 추가되었습니다.", "success"));
-  };
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 3000);
+  }, []);
 
-  const updateProduct = (productId: string, updates: Partial<ProductWithUI>) => {
-    products.updateProduct(productId, updates, () => addNotification("상품이 수정되었습니다.", "success"));
-  };
-
-  const deleteProduct = (productId: string) => {
-    products.deleteProduct(productId, () => addNotification("상품이 삭제되었습니다.", "success"));
-  };
-
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const products = useProducts(addNotification);
+  const cart = useCart(addNotification);
 
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem("coupons");
@@ -84,7 +71,7 @@ const App = () => {
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.data.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
+      if (product && getRemainingStock(cart.data, product) <= 0) {
         return "SOLD OUT";
       }
     }
@@ -96,36 +83,13 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
-
-  const addNotification = useCallback((message: string, type: "error" | "success" | "warning" = "success") => {
-    const id = Date.now().toString();
-    setNotifications((prev) => [...prev, { id, message, type }]);
-
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, 3000);
-  }, []);
-
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
   useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
+    if (cart.data.length > 0) {
+      localStorage.setItem("cart", JSON.stringify(cart.data));
     } else {
       localStorage.removeItem("cart");
     }
-  }, [cart]);
+  }, [cart.data]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -134,44 +98,11 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
-      if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
-        return;
-      }
-
-      setCart((prevCart) => {
-        const existingItem = prevCart.find((item) => item.product.id === product.id);
-
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(`재고는 ${product.stock}개까지만 있습니다.`, "error");
-            return prevCart;
-          }
-
-          return prevCart.map((item) => (item.product.id === product.id ? { ...item, quantity: newQuantity } : item));
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
-
-      addNotification("장바구니에 담았습니다", "success");
-    },
-    [cart, addNotification, getRemainingStock]
-  );
-
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  }, []);
-
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
+      console.log(productId, newQuantity);
       if (newQuantity <= 0) {
-        removeFromCart(productId);
+        cart.removeFromCart(productId);
         return;
       }
 
@@ -184,19 +115,17 @@ const App = () => {
         return;
       }
 
-      setCart((prevCart) =>
-        prevCart.map((item) => (item.product.id === productId ? { ...item, quantity: newQuantity } : item))
-      );
+      cart.updateQuantity(productId, newQuantity);
     },
-    [products.data, removeFromCart, addNotification, getRemainingStock]
+    [products.data, cart.removeFromCart, addNotification, cart.updateQuantity]
   );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
-    setCart([]);
+    cart.clearCart();
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [addNotification, cart.clearCart]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -209,8 +138,8 @@ const App = () => {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         setIsAdmin={setIsAdmin}
-        cart={cart as CartItem[]}
-        totalItemCount={totalItemCount}
+        cart={cart.data as CartItem[]}
+        totalItemCount={cart.totalItemCount}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -219,35 +148,36 @@ const App = () => {
           <AdminPage
             // products
             products={products.data}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            deleteProduct={deleteProduct}
+            addProduct={products.addProduct}
+            updateProduct={products.updateProduct}
+            deleteProduct={products.deleteProduct}
             //coupons
             coupons={coupons}
             setCoupons={setCoupons}
-            formatPrice={formatPrice}
-            addNotification={addNotification}
             setSelectedCoupon={setSelectedCoupon}
             selectedCoupon={selectedCoupon}
+            // ETC
+            formatPrice={formatPrice}
+            addNotification={addNotification}
           />
         ) : (
           <CartPage
-            // 공통
+            // PRODUCTS
             products={products.data}
-            debouncedSearchTerm={debouncedSearchTerm}
-            coupons={coupons}
-            formatPrice={formatPrice}
-            addNotification={addNotification}
             // COUPON
+            coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
-            // cart에 대해서만
-            getRemainingStock={getRemainingStock}
-            cart={cart}
-            addToCart={addToCart}
-            removeFromCart={removeFromCart}
+            // CART
+            cart={cart.data}
+            addToCart={cart.addToCart}
+            removeFromCart={cart.removeFromCart}
             updateQuantity={updateQuantity}
+            // ETC
             completeOrder={completeOrder}
+            debouncedSearchTerm={debouncedSearchTerm}
+            formatPrice={formatPrice}
+            addNotification={addNotification}
           />
         )}
       </main>

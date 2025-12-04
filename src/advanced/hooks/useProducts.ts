@@ -38,7 +38,7 @@ const initialProducts: ProductWithUI[] = [
     description: "대용량과 고성능을 자랑하는 상품입니다.",
   },
 ];
-const useProducts = () => {
+const useProducts = (addNotification: (message: string, type: "error" | "success" | "warning") => void) => {
   const [_products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem("products");
     if (saved) {
@@ -55,20 +55,20 @@ const useProducts = () => {
     localStorage.setItem("products", JSON.stringify(_products));
   }, [_products]);
 
-  const addProduct = useCallback((newProduct: Omit<ProductWithUI, "id">, callback?: () => void) => {
+  const addProduct = useCallback((newProduct: Omit<ProductWithUI, "id">) => {
     const product: ProductWithUI = { ...newProduct, id: `p${Date.now()}` };
     setProducts((prev) => [...prev, product]);
-    callback?.();
+    addNotification("상품이 추가되었습니다.", "success");
   }, []);
 
-  const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>, callback?: () => void) => {
+  const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
     setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
-    callback?.();
+    addNotification("상품이 수정되었습니다.", "success");
   }, []);
 
-  const deleteProduct = useCallback((productId: string, callback?: () => void) => {
+  const deleteProduct = useCallback((productId: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
-    callback?.();
+    addNotification("상품이 삭제되었습니다.", "success");
   }, []);
 
   return { data: _products, addProduct, updateProduct, deleteProduct };
