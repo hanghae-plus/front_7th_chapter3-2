@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ProductWithUI, useProducts } from '../../../entities/product';
+import { useProducts } from '../../../entities/product';
 import { useToast } from '../../../shared/ui/toast/toast-context';
 
 interface PropsType {

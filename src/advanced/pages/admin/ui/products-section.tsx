@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ProductWithUI, useProducts } from '../../../entities/product';
+import { ProductWithUI } from '../../../entities/product';
 import { ProductsTable } from './products-table';
 import { CreateProductForm } from '../../../features/product/create-product';
 import { EditProductForm } from '../../../features/product/edit-product';
@@ -9,7 +9,6 @@ import { Button } from '../../../shared/ui/button';
 interface ProductsSectionProps {}
 
 export function ProductsSection({}: ProductsSectionProps) {
-  const { products } = useProducts();
   const [openProductFormType, setOpenProductFormType] = useState<
     'create' | 'edit' | null
   >(null);

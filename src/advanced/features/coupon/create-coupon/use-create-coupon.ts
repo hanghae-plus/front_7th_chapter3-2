@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Coupon } from '../../../../types';
 import { useToast } from '../../../shared/ui/toast/toast-context';
 import { useCoupons } from '../../../entities/coupon';
 

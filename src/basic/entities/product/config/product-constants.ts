@@ -1,4 +1,4 @@
-import { ProductWithUI } from './product-interface.model';
+import { ProductWithUI } from '../model/product-interface';
 
 export const INITIAL_PRODUCTS: ProductWithUI[] = [
   {

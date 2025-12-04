@@ -2,7 +2,10 @@ import { InputHTMLAttributes } from 'react';
 
 export type InputSize = 'full' | 'sm' | 'xs';
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'size'
+> {
   size?: InputSize;
 }
 
