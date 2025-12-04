@@ -12,13 +12,16 @@ import App from '../App';
 import '../../setupTests';
 import { notificationAtom } from '../features/notification/atoms';
 import { cartAtom } from '../features/cart/atoms/cart.atom';
+import { isAdminAtom } from '../shared/atoms';
 
 // Jotai atom 초기화 헬퍼 컴포넌트
 const AtomReset = () => {
   const setNotifications = useSetAtom(notificationAtom);
   const setCart = useSetAtom(cartAtom);
+  const setIsAdmin = useSetAtom(isAdminAtom);
   setNotifications([]);
   setCart([]);
+  setIsAdmin(false);
   return null;
 };
 

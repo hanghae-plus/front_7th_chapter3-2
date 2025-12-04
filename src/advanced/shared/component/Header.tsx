@@ -1,20 +1,16 @@
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { totalCartItemCountAtom } from '../../features/cart/atoms/cart.atom';
+import { isAdminAtom } from '../atoms';
 
 export const Header = ({
-  admin,
   search,
 }: {
-  admin: {
-    isAdmin: boolean;
-    setIsAdmin: (isAdmin: boolean) => void;
-  };
-
   search?: {
     searchInput?: ReactNode;
   };
 }) => {
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
   const totalCartItemCount = useAtomValue(totalCartItemCountAtom);
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
@@ -27,16 +23,16 @@ export const Header = ({
           </div>
           <nav className="flex items-center space-x-4">
             <button
-              onClick={() => admin.setIsAdmin(!admin.isAdmin)}
+              onClick={() => setIsAdmin(!isAdmin)}
               className={`px-3 py-1.5 text-sm rounded transition-colors ${
-                admin.isAdmin
+                isAdmin
                   ? 'bg-gray-800 text-white'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              {admin.isAdmin ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
+              {isAdmin ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
             </button>
-            {!admin.isAdmin && (
+            {!isAdmin && (
               <div className="relative">
                 <svg
                   className="w-6 h-6 text-gray-700"

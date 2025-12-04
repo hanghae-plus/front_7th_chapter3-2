@@ -6,12 +6,7 @@ import { useSearchProduct } from '../../features/product/hooks/useSearchProduct'
 import { useCart } from '../../features/cart/hooks/useCart';
 import { useManageCoupon } from '../../features/coupon/hooks/useManageCoupon';
 
-interface ShopPageProps {
-  isAdmin: boolean;
-  setIsAdmin: (isAdmin: boolean) => void;
-}
-
-export const ShopPage = ({ isAdmin, setIsAdmin }: ShopPageProps) => {
+export const ShopPage = () => {
   const { products } = useProduct();
   const { debouncedSearchTerm, searchTerm, setSearchTerm } = useSearchProduct();
 
@@ -36,10 +31,6 @@ export const ShopPage = ({ isAdmin, setIsAdmin }: ShopPageProps) => {
   return (
     <>
       <Header
-        admin={{
-          isAdmin,
-          setIsAdmin,
-        }}
         search={{
           searchInput: (
             <div className="ml-8 flex-1 max-w-md">
