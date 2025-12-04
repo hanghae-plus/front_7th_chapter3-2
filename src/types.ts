@@ -6,19 +6,30 @@ export interface Product {
   discounts: Discount[];
 }
 
+export interface ProductWithUI extends Product {
+  description?: string;
+  isRecommended?: boolean;
+}
+
 export interface Discount {
   quantity: number;
   rate: number;
 }
 
 export interface CartItem {
-  product: Product;
+  product: ProductWithUI;
   quantity: number;
 }
 
 export interface Coupon {
   name: string;
   code: string;
-  discountType: 'amount' | 'percentage';
+  discountType: "amount" | "percentage";
   discountValue: number;
 }
+
+export type Notification = {
+  id: string;
+  message: string;
+  type: "error" | "success" | "warning";
+};

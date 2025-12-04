@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+# 환경 변수 정의
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "10.22.0"
+  BUILD_TYPE: "basic"
+  DIST_PATH: "dist"
+
+on:
+  push: # push trigger
+    branches:
+      - main
+      - release-* # release 브랜치도 배포
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build App
+        run: pnpm run build:${{ env.BUILD_TYPE }}
+
+      - name: Create SPA fallback
+        run: |
+          # index.basic.html을 index.html로 복사 (GitHub Pages용)
+          cp ${{ env.DIST_PATH }}/index.${{ env.BUILD_TYPE }}.html ${{ env.DIST_PATH }}/index.html
+          # 404 fallback 생성
+          cp ${{ env.DIST_PATH }}/index.html ${{ env.DIST_PATH }}/404.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.DIST_PATH }}
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

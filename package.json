@@ -13,9 +13,12 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
+    "build:basic": "vite build --config vite.config.basic.ts",
+    "build:advanced": "vite build --config vite.config.advanced.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "jotai": "^2.15.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
