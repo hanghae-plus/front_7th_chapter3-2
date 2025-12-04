@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { ProductWithUI } from '../hooks/useProducts';
 import { Coupon } from '../../types';
 import {
@@ -11,12 +11,9 @@ import { calculateCartTotal } from '../models/cart';
 import {
   useProductsContext,
   useCartContext,
-  useCouponsContext,
   useNotificationsContext,
 } from '../contexts';
-import { formatCurrency } from '../utils/formatters';
 import { getRemainingStock } from '../models/cart';
-import { isOutOfStock } from '../models/product';
 
 interface CartPageProps {
   searchTerm: string;
@@ -26,37 +23,9 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
   const { products } = useProductsContext();
   const { cart, addToCart, updateQuantity, removeFromCart, clearCart } =
     useCartContext();
-  const { coupons } = useCouponsContext();
   const { addNotification } = useNotificationsContext();
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
-  // 선택된 쿠폰이 삭제되면 선택 해제
-  useEffect(() => {
-    if (
-      selectedCoupon &&
-      !coupons.find((c) => c.code === selectedCoupon.code)
-    ) {
-      setSelectedCoupon(null);
-    }
-  }, [coupons, selectedCoupon]);
-
-  const formatPrice = useCallback(
-    (price: number, productId?: string): string => {
-      if (productId) {
-        const product = products.find((p) => p.id === productId);
-        if (product) {
-          const remainingStock = getRemainingStock({ product, cart });
-          if (isOutOfStock(remainingStock)) {
-            return 'SOLD OUT';
-          }
-        }
-      }
-
-      return formatCurrency(price);
-    },
-    [products, cart]
-  );
 
   const filteredProducts = useMemo(() => {
     if (!searchTerm) {
@@ -122,8 +91,6 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
       <div className="lg:col-span-3">
         <ProductList
           products={filteredProducts}
-          cart={cart}
-          formatPrice={formatPrice}
           onAddToCart={handleAddToCart}
           searchTerm={searchTerm}
         />
@@ -140,7 +107,6 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
           {cart.length > 0 && (
             <>
               <CouponSelectorContainer
-                coupons={coupons}
                 selectedCoupon={selectedCoupon}
                 onSelectCoupon={setSelectedCoupon}
               />

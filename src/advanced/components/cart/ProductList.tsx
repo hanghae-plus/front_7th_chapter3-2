@@ -1,24 +1,21 @@
 import React from 'react';
 import { ProductCardContainer } from './ProductCardContainer';
 import { ProductWithUI } from '../../hooks/useProducts';
-import { CartItem } from '../../../types';
 import { getRemainingStock } from '../../models/cart';
+import { useCartContext } from '../../contexts';
 
 interface ProductListProps {
   products: ProductWithUI[];
-  cart: CartItem[];
-  formatPrice: (price: number, productId?: string) => string;
   onAddToCart: (product: ProductWithUI) => void;
   searchTerm?: string;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
-  cart,
-  formatPrice,
   onAddToCart,
   searchTerm = '',
 }) => {
+  const { cart } = useCartContext();
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
@@ -44,7 +41,6 @@ export const ProductList: React.FC<ProductListProps> = ({
               key={product.id}
               product={product}
               remainingStock={remainingStock}
-              formatPrice={formatPrice}
               onAddToCart={onAddToCart}
             />
           );

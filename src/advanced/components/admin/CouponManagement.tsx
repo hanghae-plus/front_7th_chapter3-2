@@ -1,10 +1,9 @@
 import React from 'react';
-import { Coupon } from '../../../types';
 import { CouponList } from './CouponList';
 import { CouponForm } from './CouponForm';
+import { useCouponsContext } from '../../contexts';
 
 interface CouponManagementProps {
-  coupons: Coupon[];
   showCouponForm: boolean;
   couponForm: {
     name: string;
@@ -12,28 +11,22 @@ interface CouponManagementProps {
     discountType: 'amount' | 'percentage';
     discountValue: number;
   };
-  onDeleteCoupon: (couponCode: string) => void;
   onToggleCouponForm: () => void;
   onCouponFormChange: (form: any) => void;
   onCouponSubmit: (e: React.FormEvent) => void;
   onCouponFormCancel: () => void;
-  onAddNotification: (
-    message: string,
-    type: 'error' | 'success' | 'warning'
-  ) => void;
 }
 
 export const CouponManagement: React.FC<CouponManagementProps> = ({
-  coupons,
   showCouponForm,
   couponForm,
-  onDeleteCoupon,
   onToggleCouponForm,
   onCouponFormChange,
   onCouponSubmit,
   onCouponFormCancel,
-  onAddNotification,
 }) => {
+  const { deleteCoupon } = useCouponsContext();
+
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -41,8 +34,7 @@ export const CouponManagement: React.FC<CouponManagementProps> = ({
       </div>
       <div className="p-6">
         <CouponList
-          coupons={coupons}
-          onDeleteCoupon={onDeleteCoupon}
+          onDeleteCoupon={deleteCoupon}
           onToggleCouponForm={onToggleCouponForm}
         />
 
@@ -52,7 +44,6 @@ export const CouponManagement: React.FC<CouponManagementProps> = ({
             onFormChange={onCouponFormChange}
             onSubmit={onCouponSubmit}
             onCancel={onCouponFormCancel}
-            onAddNotification={onAddNotification}
           />
         )}
       </div>

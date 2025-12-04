@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNotificationsContext } from '../../contexts';
 
 interface ProductFormProps {
   isVisible: boolean;
@@ -13,10 +14,6 @@ interface ProductFormProps {
   onFormChange: (form: any) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onAddNotification: (
-    message: string,
-    type: 'error' | 'success' | 'warning'
-  ) => void;
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
@@ -26,8 +23,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   onFormChange,
   onSubmit,
   onCancel,
-  onAddNotification,
 }) => {
+  const { addNotification } = useNotificationsContext();
+
   if (!isVisible) return null;
 
   return (
@@ -91,7 +89,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 if (value === '') {
                   onFormChange({ ...productForm, price: 0 });
                 } else if (parseInt(value) < 0) {
-                  onAddNotification('가격은 0보다 커야 합니다', 'error');
+                  addNotification('가격은 0보다 커야 합니다', 'error');
                   onFormChange({ ...productForm, price: 0 });
                 }
               }}
@@ -121,10 +119,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 if (value === '') {
                   onFormChange({ ...productForm, stock: 0 });
                 } else if (parseInt(value) < 0) {
-                  onAddNotification('재고는 0보다 커야 합니다', 'error');
+                  addNotification('재고는 0보다 커야 합니다', 'error');
                   onFormChange({ ...productForm, stock: 0 });
                 } else if (parseInt(value) > 9999) {
-                  onAddNotification(
+                  addNotification(
                     '재고는 9999개를 초과할 수 없습니다',
                     'error'
                   );

@@ -2,18 +2,18 @@ import React from 'react';
 import { Coupon } from '../../../types';
 import { SelectOption } from '../primitives';
 import { CouponSelectorView } from './CouponSelectorView';
+import { useCouponsContext } from '../../contexts';
 
 interface CouponSelectorProps {
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   onSelectCoupon: (coupon: Coupon | null) => void;
 }
 
 export const CouponSelectorContainer: React.FC<CouponSelectorProps> = ({
-  coupons,
   selectedCoupon,
   onSelectCoupon,
 }) => {
+  const { coupons } = useCouponsContext();
   const couponOptions: SelectOption[] = coupons.map((coupon) => ({
     value: coupon.code,
     label: `${coupon.name} (${

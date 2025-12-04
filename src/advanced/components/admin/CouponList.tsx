@@ -1,18 +1,18 @@
 import React from 'react';
-import { Coupon } from '../../../types';
 import { CouponCard } from './CouponCard';
+import { useCouponsContext } from '../../contexts';
 
 interface CouponListProps {
-  coupons: Coupon[];
   onDeleteCoupon: (couponCode: string) => void;
   onToggleCouponForm: () => void;
 }
 
 export const CouponList: React.FC<CouponListProps> = ({
-  coupons,
   onDeleteCoupon,
   onToggleCouponForm,
 }) => {
+  const { coupons } = useCouponsContext();
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {coupons.map((coupon) => {

@@ -1,22 +1,25 @@
 import React from 'react';
 import { ProductWithUI } from '../../hooks/useProducts';
 import { Table, Button } from '../primitives';
+import { useProductsContext } from '../../contexts';
+import { formatCurrencyKRW } from '../../utils/formatters';
 
 interface ProductTableProps {
-  products: ProductWithUI[];
-  formatPrice: (price: number, productId?: string) => string;
   onEditProduct: (product: ProductWithUI) => void;
   onDeleteProduct: (productId: string) => void;
   onAddProduct: () => void;
 }
 
 export const ProductTable: React.FC<ProductTableProps> = ({
-  products,
-  formatPrice,
   onEditProduct,
   onDeleteProduct,
   onAddProduct,
 }) => {
+  const { products } = useProductsContext();
+
+  const formatPrice = (price: number) => {
+    return formatCurrencyKRW(price);
+  };
   const columns = [
     {
       key: 'name',
@@ -29,9 +32,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
       key: 'price',
       header: '가격',
       render: (_: any, product: ProductWithUI) => (
-        <span className="text-gray-500">
-          {formatPrice(product.price, product.id)}
-        </span>
+        <span className="text-gray-500">{formatPrice(product.price)}</span>
       ),
     },
     {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input, Select, Button } from '../primitives';
 import { SelectOption } from '../primitives/Select';
+import { useNotificationsContext } from '../../contexts';
 
 interface CouponFormProps {
   couponForm: {
@@ -12,10 +13,6 @@ interface CouponFormProps {
   onFormChange: (form: any) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onAddNotification: (
-    message: string,
-    type: 'error' | 'success' | 'warning'
-  ) => void;
 }
 
 export const CouponForm: React.FC<CouponFormProps> = ({
@@ -23,8 +20,8 @@ export const CouponForm: React.FC<CouponFormProps> = ({
   onFormChange,
   onSubmit,
   onCancel,
-  onAddNotification,
 }) => {
+  const { addNotification } = useNotificationsContext();
   const discountTypeOptions: SelectOption[] = [
     { value: 'amount', label: '정액 할인' },
     { value: 'percentage', label: '정률 할인' },
@@ -43,17 +40,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({
     const numValue = parseInt(value) || 0;
     if (couponForm.discountType === 'percentage') {
       if (numValue > 100) {
-        onAddNotification('할인율은 100%를 초과할 수 없습니다', 'error');
+        addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
         onFormChange({ ...couponForm, discountValue: 100 });
       } else if (numValue < 0) {
         onFormChange({ ...couponForm, discountValue: 0 });
       }
     } else {
       if (numValue > 100000) {
-        onAddNotification(
-          '할인 금액은 100,000원을 초과할 수 없습니다',
-          'error'
-        );
+        addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
         onFormChange({ ...couponForm, discountValue: 100000 });
       } else if (numValue < 0) {
         onFormChange({ ...couponForm, discountValue: 0 });
