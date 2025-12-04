@@ -5,7 +5,6 @@ import { type CartItem } from '../../entities/cart';
 import { type Coupon } from '../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
 interface ProductPageProps {
-  products: ProductWithUI[];
   cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
@@ -16,7 +15,6 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({
-  products,
   cart,
   coupons,
   selectedCoupon,
@@ -28,7 +26,6 @@ export default function ProductPage({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <ProductSection
-        products={products}
         debouncedSearchTerm={debouncedSearchTerm}
         cart={cart}
         setCart={setCart}
@@ -39,7 +36,6 @@ export default function ProductPage({
         coupons={coupons}
         selectedCoupon={selectedCoupon}
         setSelectedCoupon={setSelectedCoupon}
-        products={products}
         setCart={setCart}
         addNotification={addNotification}
       />

@@ -14,7 +14,7 @@ const SEARCH_DEBOUNCE_DELAY = 500;
 
 const App = () => {
   // Storage State
-  const [products, setProducts] = useProductsStorage(initialProducts);
+  // const [products, setProducts] = useProductsStorage(initialProducts);
   const [cart, setCart] = useCartStorage([]);
   const [coupons, setCoupons] = useCouponsStorage(initialCoupons);
 
@@ -40,17 +40,14 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminDashboardPage
-            products={products}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
-            setProducts={setProducts}
             setCoupons={setCoupons}
             addNotification={addNotification}
           />
         ) : (
           <ProductPage
-            products={products}
             cart={cart}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}

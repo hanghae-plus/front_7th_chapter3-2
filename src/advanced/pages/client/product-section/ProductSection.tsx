@@ -2,8 +2,8 @@ import { type CartItem, canAddToCart, getAddToCart } from '../../../entities/car
 import { type ProductWithUI, filterProducts, getRemainingStock } from '../../../entities/product';
 import ProductCard from './ProductCard';
 import { Dispatch, SetStateAction } from 'react';
+import { useProductContext } from '../../../entities/product/contexts/productContext';
 interface ProductSectionProps {
-  products: ProductWithUI[];
   debouncedSearchTerm: string;
   cart: CartItem[];
   setCart: Dispatch<SetStateAction<CartItem[]>>;
@@ -11,12 +11,12 @@ interface ProductSectionProps {
 }
 
 export default function ProductSection({
-  products,
   debouncedSearchTerm,
   cart,
   setCart,
   addNotification,
 }: ProductSectionProps) {
+  const { products } = useProductContext();
   const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   // Events

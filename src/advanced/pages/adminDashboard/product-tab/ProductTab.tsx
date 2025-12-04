@@ -6,15 +6,15 @@ import {
 import { useState } from 'react';
 import ProductForm from './ProductForm';
 import ProductListRowItem from './ProductListRowItem';
-import { Dispatch, SetStateAction } from 'react';
+import { useProductContext } from '../../../entities/product/contexts/productContext';
 
 interface ProductTabProps {
-  products: ProductWithUI[];
-  setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
-export default function ProductTab({ products, setProducts, addNotification }: ProductTabProps) {
+export default function ProductTab({ addNotification }: ProductTabProps) {
+  const { products, setProducts } = useProductContext();
+
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
 
