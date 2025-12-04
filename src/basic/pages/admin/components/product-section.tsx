@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Button from '../../../components/button';
 import { AddNotification } from '../../../hooks/notifications';
 import useToggle from '../../../hooks/toggle';
@@ -18,19 +18,17 @@ const ProductSection = ({ products, addProduct, updateProduct, deleteProduct, ad
   const { isOpen, open, close } = useToggle(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
 
+  const handleAddProduct = useCallback(() => {
+    setEditingProduct('new');
+    open();
+  }, [open]);
+
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
       <div className='p-6 border-b border-gray-200'>
         <div className='flex justify-between items-center'>
           <h2 className='text-lg font-semibold'>상품 목록</h2>
-          <Button
-            size='sm'
-            variant='dark'
-            onClick={() => {
-              setEditingProduct('new');
-              open();
-            }}
-          >
+          <Button size='sm' variant='dark' onClick={handleAddProduct}>
             새 상품 추가
           </Button>
         </div>

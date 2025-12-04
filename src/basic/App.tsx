@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Button from './components/button';
 import Header from './components/header';
 import { CartIcon } from './components/icons';
@@ -26,15 +26,21 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm);
 
+  const handleSwitchToAdmin = useCallback(() => switchPage(admin), [switchPage, admin]);
+  const handleSwitchToStore = useCallback(() => switchPage(store), [switchPage, store]);
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value), []);
+
+  const hasCartItems = useMemo(() => cart.length > 0, [cart.length]);
+
   const nav = {
     [store]: (
       <>
-        <Button size='xs' variant='text' onClick={() => switchPage(admin)}>
+        <Button size='xs' variant='text' onClick={handleSwitchToAdmin}>
           관리자 페이지로
         </Button>
         <div className='relative'>
           <CartIcon className='text-gray-700' />
-          {cart.length > 0 && (
+          {hasCartItems && (
             <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
               {totalItemCount}
             </span>
@@ -43,7 +49,7 @@ const App = () => {
       </>
     ),
     [admin]: (
-      <Button size='xs' variant='dark' onClick={() => switchPage(store)}>
+      <Button size='xs' variant='dark' onClick={handleSwitchToStore}>
         쇼핑몰로 돌아가기
       </Button>
     )
@@ -82,7 +88,7 @@ const App = () => {
     <div className='min-h-screen bg-gray-50'>
       <Toast notifications={notifications} onClose={removeNotification} />
       <Header nav={nav[currentPage]}>
-        {isCurrentPage(store) && <Input type='search' value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder='상품 검색...' />}
+        {isCurrentPage(store) && <Input type='search' value={searchTerm} onChange={handleSearchChange} placeholder='상품 검색...' />}
       </Header>
 
       <main className='max-w-7xl mx-auto px-4 py-8'>{page[currentPage]}</main>

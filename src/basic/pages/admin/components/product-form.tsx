@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, useEffect } from 'react';
+import { ChangeEvent, FocusEvent, useEffect, useCallback } from 'react';
 import Button from '../../../components/button';
 import { XIcon } from '../../../components/icons';
 import Input from '../../../components/input';
@@ -8,6 +8,7 @@ import { AddNotification } from '../../../hooks/notifications';
 import { ProductFormData, ProductWithUI } from '../../../types/products';
 import { validateRange } from '../../../utils/validator';
 import { removeDiscount, addDefaultDiscount } from '../../../utils/discount';
+import { getProductFormTitle, getProductFormSubmitText, isEditingProduct } from '../../../utils/product-form';
 import { initialForm, PRODUCT_VALIDATION_RULES } from '../constants/products';
 
 interface ProductFormProps {
@@ -21,16 +22,18 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ products, editingProduct, setEditingProduct, addProduct, updateProduct, close, addNotification }: ProductFormProps) => {
-  const onSubmit = (data: ProductFormData) => {
-    if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, data);
+  const onSubmit = useCallback(
+    (data: ProductFormData) => {
+      if (isEditingProduct(editingProduct)) {
+        updateProduct(editingProduct!, data);
+      } else {
+        addProduct(data);
+      }
       setEditingProduct(null);
-    } else {
-      addProduct(data);
-    }
-    setEditingProduct(null);
-    close();
-  };
+      close();
+    },
+    [editingProduct, addProduct, updateProduct, setEditingProduct, close]
+  );
 
   const { form, setForm, resetForm, handleSubmit } = useForm({ initialForm, onSubmit });
 
@@ -101,10 +104,16 @@ const ProductForm = ({ products, editingProduct, setEditingProduct, addProduct, 
     });
   }, [editingProduct]);
 
+  const handleCancel = useCallback(() => {
+    setEditingProduct(null);
+    resetForm();
+    close();
+  }, [setEditingProduct, resetForm, close]);
+
   return (
     <div className='p-6 border-t border-gray-200 bg-gray-50'>
       <form onSubmit={handleSubmit} className='space-y-4'>
-        <h3 className='text-lg font-medium text-gray-900'>{editingProduct === 'new' ? '새 상품 추가' : '상품 수정'}</h3>
+        <h3 className='text-lg font-medium text-gray-900'>{getProductFormTitle(editingProduct)}</h3>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <div>
             <Label>상품명</Label>
@@ -186,20 +195,11 @@ const ProductForm = ({ products, editingProduct, setEditingProduct, addProduct, 
         </div>
 
         <div className='flex justify-end gap-3'>
-          <Button
-            size='md'
-            variant='outline'
-            type='button'
-            onClick={() => {
-              setEditingProduct(null);
-              resetForm();
-              close();
-            }}
-          >
+          <Button size='md' variant='outline' type='button' onClick={handleCancel}>
             취소
           </Button>
           <Button size='md' variant='primary' type='submit'>
-            {editingProduct === 'new' ? '추가' : '수정'}
+            {getProductFormSubmitText(editingProduct)}
           </Button>
         </div>
       </form>

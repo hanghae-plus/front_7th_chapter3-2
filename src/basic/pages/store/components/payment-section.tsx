@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useCallback } from 'react';
 import Button from '../../../components/button';
 import { AddNotification } from '../../../hooks/notifications';
 import { Coupon } from '../../../types/coupons';
+import { hasDiscount, calculateDiscountAmount } from '../../../models/cart';
 import { formatCurrency } from '../../../utils/format';
 import { generateOrderNumber } from '../../../utils/order';
 
@@ -31,10 +32,10 @@ const PaymentSection = ({ totals, addNotification, clearCart, setSelectedCoupon 
           <span className='text-gray-600'>상품 금액</span>
           <span className='font-medium'>{formatCurrency(totals.totalBeforeDiscount, { suffix: '원' })}</span>
         </div>
-        {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
+        {hasDiscount(totals.totalBeforeDiscount, totals.totalAfterDiscount) && (
           <div className='flex justify-between text-red-500'>
             <span>할인 금액</span>
-            <span>-{formatCurrency(totals.totalBeforeDiscount - totals.totalAfterDiscount, { suffix: '원' })}</span>
+            <span>-{formatCurrency(calculateDiscountAmount(totals.totalBeforeDiscount, totals.totalAfterDiscount), { suffix: '원' })}</span>
           </div>
         )}
         <div className='flex justify-between py-2 border-t border-gray-200'>

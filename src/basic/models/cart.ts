@@ -116,3 +116,17 @@ export const calculateDiscountRate = (item: CartItem, cart: CartItem[]): number 
   const hasDiscount = itemTotal < originalPrice;
   return hasDiscount ? Math.round((1 - itemTotal / originalPrice) * 100) : 0;
 };
+
+/**
+ * 할인 금액을 계산합니다.
+ */
+export const calculateDiscountAmount = (totalBeforeDiscount: number, totalAfterDiscount: number): number => {
+  return totalBeforeDiscount - totalAfterDiscount;
+};
+
+/**
+ * 할인이 있는지 확인합니다.
+ */
+export const hasDiscount = (totalBeforeDiscount: number, totalAfterDiscount: number): boolean => {
+  return calculateDiscountAmount(totalBeforeDiscount, totalAfterDiscount) > 0;
+};
