@@ -1,5 +1,5 @@
 import { formatPriceKRW } from '../../../utils/formatters';
-import { ProductWithUI } from '../../../entities/product/types';
+import { type ProductWithUI } from '../../../entities/product';
 
 interface ProductListRowItemProps {
   product: ProductWithUI;

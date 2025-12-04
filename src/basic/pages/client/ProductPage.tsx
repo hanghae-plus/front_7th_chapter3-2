@@ -3,14 +3,15 @@ import CartView from './cart-view/CartView';
 import ProductSection from './product-section/ProductSection';
 import { type CartItem } from '../../entities/cart';
 import { type Coupon } from '../../entities/coupon';
+import { Dispatch, SetStateAction } from 'react';
 interface ProductPageProps {
   products: ProductWithUI[];
   cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  setCart: (cart: CartItem[]) => void;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
+  setCart: Dispatch<SetStateAction<CartItem[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 

@@ -2,12 +2,13 @@ import { useState } from 'react';
 import CouponItem from './CouponItem';
 import CouponForm from './CouponForm';
 import { type Coupon, canAddCoupon } from '../../../entities/coupon';
+import { Dispatch, SetStateAction } from 'react';
 
 interface CouponTabProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  setCoupons: (coupons: Coupon[]) => void;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
+  setCoupons: Dispatch<SetStateAction<Coupon[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 

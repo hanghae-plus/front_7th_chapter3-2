@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 export const useLocalStorageState = <T>(key: string, initialValue: T) => {
   const [state, setState] = useState<T>(() => {
     const saved = localStorage.getItem(key);
@@ -12,5 +12,5 @@ export const useLocalStorageState = <T>(key: string, initialValue: T) => {
     localStorage.setItem(key, JSON.stringify(state));
   }, [state]);
 
-  return [state, setState] as [T, (value: T | ((val: T) => T)) => void];
+  return [state, setState] as [T, Dispatch<SetStateAction<T>>];
 };

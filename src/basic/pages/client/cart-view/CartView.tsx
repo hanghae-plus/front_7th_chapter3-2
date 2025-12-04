@@ -5,13 +5,14 @@ import CouponSection from './CouponSection';
 import CartSection from './CartSection';
 import { type CartItem, calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart';
 import { type Coupon, canApplyCoupon } from '../../../entities/coupon';
+import { Dispatch, SetStateAction } from 'react';
 interface CartViewProps {
   cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   products: ProductWithUI[];
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  setCart: (cart: CartItem[]) => void;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
+  setCart: Dispatch<SetStateAction<CartItem[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 

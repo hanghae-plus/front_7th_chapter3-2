@@ -1,11 +1,15 @@
-import { Discount, ProductFormState } from '../../../entities/product/types';
-import { getDeletedDiscounts } from '../../../entities/product/utils';
+import {
+  type Discount,
+  type ProductFormState,
+  getDeletedDiscounts,
+} from '../../../entities/product';
+import { Dispatch, SetStateAction } from 'react';
 
 interface DiscountFormProps {
   index: number;
   productForm: ProductFormState;
   discount: Discount;
-  setProductForm: (productForm: ProductFormState) => void;
+  setProductForm: Dispatch<SetStateAction<ProductFormState>>;
 }
 
 export default function DiscountForm({

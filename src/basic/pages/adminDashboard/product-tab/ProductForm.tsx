@@ -1,15 +1,20 @@
-import { ProductFormState, ProductWithUI } from '../../../entities/product/types';
-import { getNewProducts, getUpdatedProducts } from '../../../entities/product/utils';
+import {
+  type ProductFormState,
+  type ProductWithUI,
+  getNewProducts,
+  getUpdatedProducts,
+} from '../../../entities/product';
 import DiscountForm from './DiscountForm';
+import { Dispatch, SetStateAction } from 'react';
 
 interface ProductFormProps {
   editingProduct: string | null;
   productForm: ProductFormState;
   products: ProductWithUI[];
-  setProducts: (products: ProductWithUI[]) => void;
-  setProductForm: (productForm: ProductFormState) => void;
-  setEditingProduct: (editingProduct: string | null) => void;
-  setShowProductForm: (showProductForm: boolean) => void;
+  setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
+  setProductForm: Dispatch<SetStateAction<ProductFormState>>;
+  setEditingProduct: Dispatch<SetStateAction<string | null>>;
+  setShowProductForm: Dispatch<SetStateAction<boolean>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 

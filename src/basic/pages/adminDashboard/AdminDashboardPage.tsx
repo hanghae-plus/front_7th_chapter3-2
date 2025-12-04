@@ -3,14 +3,15 @@ import { type ProductWithUI } from '../../entities/product';
 import { type Coupon } from '../../entities/coupon';
 import ProductTab from './product-tab/ProductTab';
 import CouponTab from './coupon-tab/CouponTab';
+import { Dispatch, SetStateAction } from 'react';
 
 interface AdminDashboardPageProps {
   products: ProductWithUI[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  setProducts: (products: ProductWithUI[]) => void;
-  setCoupons: (coupons: Coupon[]) => void;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
+  setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
+  setCoupons: Dispatch<SetStateAction<Coupon[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 

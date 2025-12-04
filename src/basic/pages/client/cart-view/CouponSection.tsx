@@ -1,9 +1,10 @@
 import { formatPriceKRW } from '../../../utils/formatters';
-import { Coupon } from '../../../entities/coupon/types';
+import { type Coupon } from '../../../entities/coupon';
+import { Dispatch, SetStateAction } from 'react';
 interface CouponSectionProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   applyCoupon: (coupon: Coupon) => void;
 }
 

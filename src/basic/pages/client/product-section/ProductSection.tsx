@@ -1,11 +1,12 @@
 import { type CartItem, canAddToCart, getAddToCart } from '../../../entities/cart';
 import { type ProductWithUI, filterProducts, getRemainingStock } from '../../../entities/product';
 import ProductCard from './ProductCard';
+import { Dispatch, SetStateAction } from 'react';
 interface ProductSectionProps {
   products: ProductWithUI[];
   debouncedSearchTerm: string;
   cart: CartItem[];
-  setCart: (cart: CartItem[]) => void;
+  setCart: Dispatch<SetStateAction<CartItem[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 

@@ -6,10 +6,11 @@ import {
 import { useState } from 'react';
 import ProductForm from './ProductForm';
 import ProductListRowItem from './ProductListRowItem';
+import { Dispatch, SetStateAction } from 'react';
 
 interface ProductTabProps {
   products: ProductWithUI[];
-  setProducts: (products: ProductWithUI[]) => void;
+  setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 

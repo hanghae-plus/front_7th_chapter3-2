@@ -1,8 +1,9 @@
-import { Notification } from '../types';
+import { type Notification } from '../types';
+import { Dispatch, SetStateAction } from 'react';
 
 interface NotificationToastProps {
   notification: Notification;
-  setNotifications: (notifications: Notification[]) => void;
+  setNotifications: Dispatch<SetStateAction<Notification[]>>;
 }
 
 export default function NotificationToast({
