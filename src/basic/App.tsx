@@ -7,17 +7,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Header } from "./components/layout/Header";
-import {
-  CartItem,
-  Coupon,
-  Notification,
-  Product,
-  ProductWithUI,
-} from "../types";
 import Notifications from "./components/Notifications";
 import { AdminPage } from "./pages/Admin/AdminPage";
 import { useProducts } from "./hooks/useProducts";
-import { initialCoupons } from "./constant";
 import { useCart } from "./hooks/useCart";
 import {
   calculateCartTotal,
@@ -25,24 +17,15 @@ import {
   getRemainingStock,
 } from "./models/cart";
 import { useCoupons } from "./hooks/useCoupons";
+import { useNotifications } from "./hooks/useNotifications";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
+  const { notifications, addNotification, setNotifications } =
+    useNotifications();
 
   const products = useProducts({
     searchTerm: "",
