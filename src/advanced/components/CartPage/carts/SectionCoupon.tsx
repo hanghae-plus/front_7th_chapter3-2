@@ -3,7 +3,7 @@ import { Coupon } from "../../../types/types";
 interface SectionCouponProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
   applyCoupon: (coupon: Coupon) => void;
 }
 

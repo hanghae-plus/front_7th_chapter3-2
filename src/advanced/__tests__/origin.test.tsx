@@ -14,7 +14,8 @@ import { useNotificationStore } from "../stores/useNotificationStore";
 import { useSearchStore } from "../stores/useSearchStore";
 import { useProductStore } from "../stores/useProductStore";
 import { useCartStore } from "../stores/useCartStore";
-import { INITIAL_PRODUCTS } from "../constants";
+import { useCouponStore } from "../stores/useCouponStore";
+import { INITIAL_PRODUCTS, INITIAL_COUPONS } from "../constants";
 
 describe("쇼핑몰 앱 통합 테스트", () => {
   beforeEach(() => {
@@ -26,6 +27,7 @@ describe("쇼핑몰 앱 통합 테스트", () => {
     useNotificationStore.setState({ notifications: [] });
     useProductStore.setState({ products: INITIAL_PRODUCTS });
     useCartStore.setState({ cart: [] });
+    useCouponStore.setState({ coupons: INITIAL_COUPONS, selectedCoupon: null });
     // console 경고 무시
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.spyOn(console, "log").mockImplementation(() => {});

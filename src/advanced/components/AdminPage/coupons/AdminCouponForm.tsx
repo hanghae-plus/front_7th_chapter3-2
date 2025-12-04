@@ -1,16 +1,13 @@
-import { Coupon } from "../../../types/types";
 import { useCouponForm } from "../../../hooks/useCouponForm";
 import { useNotificationStore } from "../../../stores/useNotificationStore";
+import { useCouponStore } from "../../../stores/useCouponStore";
 
 interface AdminCouponFormProps {
-  addCoupon: (newCoupon: Coupon) => void;
   setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AdminCouponForm = ({
-  addCoupon,
-  setShowCouponForm,
-}: AdminCouponFormProps) => {
+const AdminCouponForm = ({ setShowCouponForm }: AdminCouponFormProps) => {
+  const addCoupon = useCouponStore((state) => state.addCoupon);
   const addNotification = useNotificationStore(
     (state) => state.addNotification
   );

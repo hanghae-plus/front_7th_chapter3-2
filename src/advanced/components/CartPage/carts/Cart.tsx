@@ -2,28 +2,20 @@ import { useCallback } from "react";
 import { Coupon } from "../../../types/types";
 import SectionCoupon from "./SectionCoupon";
 import SectionPayment from "./SectionPayment";
-import { getRemainingStock } from "../../../utils/product";
 import { calculateCartTotal } from "../../../utils/cart";
 import { IconShoppingBag } from "../../icons/IconShoppingBag";
 import { IconShoppingBagEmpty } from "../../icons/IconShoppingBagEmpty";
 import CartItemRow from "./CartItem";
 import { useNotificationStore } from "../../../stores/useNotificationStore";
-import { useProductStore } from "../../../stores/useProductStore";
 import { useCartStore } from "../../../stores/useCartStore";
+import { useCouponStore } from "../../../stores/useCouponStore";
 
-interface CartProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-}
-
-export const Cart = ({
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-}: CartProps) => {
+export const Cart = () => {
   const cart = useCartStore((state) => state.cart);
   const clearCart = useCartStore((state) => state.clearCart);
+  const coupons = useCouponStore((state) => state.coupons);
+  const selectedCoupon = useCouponStore((state) => state.selectedCoupon);
+  const setSelectedCoupon = useCouponStore((state) => state.setSelectedCoupon);
   const addNotification = useNotificationStore(
     (state) => state.addNotification
   );
@@ -89,7 +81,7 @@ export const Cart = ({
             <SectionCoupon
               coupons={coupons}
               selectedCoupon={selectedCoupon}
-              setSelectedCoupon={setSelectedCoupon}
+              setSelectedCoupon={(coupon) => setSelectedCoupon(coupon)}
               applyCoupon={applyCoupon}
             />
 

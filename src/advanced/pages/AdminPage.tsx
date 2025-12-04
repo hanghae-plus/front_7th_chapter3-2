@@ -1,19 +1,8 @@
 import { useState } from "react";
-import { Coupon } from "../types/types";
 import { AdminProducts } from "../components/AdminPage/products/AdminProduct";
 import { AdminCoupons } from "../components/AdminPage/coupons/AdminCoupons";
 
-interface AdminPageProps {
-  coupons: Coupon[];
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-}
-
-const AdminPage = ({
-  coupons,
-  addCoupon,
-  deleteCoupon,
-}: AdminPageProps) => {
+const AdminPage = () => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -49,15 +38,7 @@ const AdminPage = ({
         </nav>
       </div>
 
-      {activeTab === "products" ? (
-        <AdminProducts />
-      ) : (
-        <AdminCoupons
-          coupons={coupons}
-          addCoupon={addCoupon}
-          deleteCoupon={deleteCoupon}
-        />
-      )}
+      {activeTab === "products" ? <AdminProducts /> : <AdminCoupons />}
     </div>
   );
 };

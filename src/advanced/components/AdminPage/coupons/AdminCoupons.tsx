@@ -1,19 +1,11 @@
 import { useState } from "react";
-import { Coupon } from "../../../types/types";
 import AdminCouponForm from "./AdminCouponForm";
 import AdminCouponView from "./AdminCouponView";
+import { useCouponStore } from "../../../stores/useCouponStore";
 
-interface AdminCouponsProps {
-  coupons: Coupon[];
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-}
-
-export const AdminCoupons = ({
-  coupons,
-  addCoupon,
-  deleteCoupon,
-}: AdminCouponsProps) => {
+export const AdminCoupons = () => {
+  const coupons = useCouponStore((state) => state.coupons);
+  const deleteCoupon = useCouponStore((state) => state.deleteCoupon);
   const [showCouponForm, setShowCouponForm] = useState(false);
 
   return (
@@ -51,10 +43,7 @@ export const AdminCoupons = ({
         </div>
 
         {showCouponForm && (
-          <AdminCouponForm
-            addCoupon={addCoupon}
-            setShowCouponForm={setShowCouponForm}
-          />
+          <AdminCouponForm setShowCouponForm={setShowCouponForm} />
         )}
       </div>
     </section>
