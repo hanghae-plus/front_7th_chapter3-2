@@ -3,11 +3,22 @@ import { render, screen, fireEvent, within, waitFor } from '@testing-library/rea
 import { vi } from 'vitest';
 import App from '../App';
 import '../../setupTests';
+import { resetProductStore } from '../entities/product/model/useProductStore';
+import { resetCouponStore } from '../entities/coupon/model/useCouponStore';
+import { resetCartStore } from '../entities/cart/model/useCartStore';
+import { resetNotificationStore } from '../shared/store/useNotificationStore';
+import { resetSearchStore } from '../shared/store/useSearchStore';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
     // localStorage 초기화
     localStorage.clear();
+    // Zustand store 초기화
+    resetProductStore();
+    resetCouponStore();
+    resetCartStore();
+    resetNotificationStore();
+    resetSearchStore();
     // console 경고 무시
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -409,9 +420,10 @@ describe('쇼핑몰 앱 통합 테스트', () => {
       // 상품을 장바구니에 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
       
-      // localStorage 확인
+      // localStorage 확인 (Zustand persist 형식: {state: {...}, version: 0})
       expect(localStorage.getItem('cart')).toBeTruthy();
-      expect(JSON.parse(localStorage.getItem('cart'))).toHaveLength(1);
+      const cartStorage = JSON.parse(localStorage.getItem('cart'));
+      expect(cartStorage.state.cart).toHaveLength(1);
       
       // 관리자 모드로 전환하여 새 상품 추가
       fireEvent.click(screen.getByText('관리자 페이지로'));
@@ -430,10 +442,10 @@ describe('쇼핑몰 앱 통합 테스트', () => {
       
       fireEvent.click(screen.getByText('추가'));
       
-      // localStorage에 products가 저장되었는지 확인
+      // localStorage에 products가 저장되었는지 확인 (Zustand persist 형식)
       expect(localStorage.getItem('products')).toBeTruthy();
-      const products = JSON.parse(localStorage.getItem('products'));
-      expect(products.some(p => p.name === '저장 테스트')).toBe(true);
+      const productsStorage = JSON.parse(localStorage.getItem('products'));
+      expect(productsStorage.state.products.some(p => p.name === '저장 테스트')).toBe(true);
     });
 
     test('페이지 새로고침 후에도 데이터가 유지된다', () => {
