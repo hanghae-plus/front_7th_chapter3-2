@@ -1,19 +1,29 @@
-import { Coupon } from '../../../../types';
+import { useCartStore } from '../../../entities/cart/model/useCartStore';
+import { useCouponStore } from '../../../entities/coupon/model/useCouponStore';
+import { useNotificationStore } from '../../../shared/store/useNotificationStore';
 import { formatPrice } from '../../../shared/lib/formatters';
 
-type CouponSelectorProps = {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  onApplyCoupon: (coupon: Coupon) => void;
-  onClearCoupon: () => void;
-};
+const CouponSelector = () => {
+  const coupons = useCouponStore((state) => state.coupons);
+  const selectedCoupon = useCartStore((state) => state.selectedCoupon);
+  const setSelectedCoupon = useCartStore((state) => state.setSelectedCoupon);
+  const applyCoupon = useCartStore((state) => state.applyCoupon);
+  const addNotification = useNotificationStore((state) => state.addNotification);
 
-const CouponSelector = ({
-  coupons,
-  selectedCoupon,
-  onApplyCoupon,
-  onClearCoupon,
-}: CouponSelectorProps) => {
+  const handleApplyCoupon = (couponCode: string) => {
+    const coupon = coupons.find((c) => c.code === couponCode);
+    if (coupon) {
+      const result = applyCoupon(coupon);
+      if (result.success) {
+        addNotification(result.message || '쿠폰이 적용되었습니다.', 'success');
+      } else {
+        addNotification(result.message || '쿠폰 적용 실패', 'error');
+      }
+    } else {
+      setSelectedCoupon(null);
+    }
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -26,11 +36,7 @@ const CouponSelector = ({
         <select
           className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
           value={selectedCoupon?.code || ''}
-          onChange={(e) => {
-            const coupon = coupons.find((c) => c.code === e.target.value);
-            if (coupon) onApplyCoupon(coupon);
-            else onClearCoupon();
-          }}
+          onChange={(e) => handleApplyCoupon(e.target.value)}
         >
           <option value="">쿠폰 선택</option>
           {coupons.map((coupon) => (

@@ -1,19 +1,23 @@
-import { CartItemWithUI } from '../../../entities/cart/model/cart';
+import { useCartStore } from '../../../entities/cart/model/useCartStore';
+import { useProductStore } from '../../../entities/product/model/useProductStore';
+import { useNotificationStore } from '../../../shared/store/useNotificationStore';
 import CartItem from './CartItem';
 
-type CartListProps = {
-  cart: CartItemWithUI[];
-  calculateItemTotal: (item: CartItemWithUI) => number;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onRemove: (productId: string) => void;
-};
+const CartList = () => {
+  const cart = useCartStore((state) => state.cart);
+  const calculateItemTotal = useCartStore((state) => state.calculateItemTotal);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const products = useProductStore((state) => state.products);
+  const addNotification = useNotificationStore((state) => state.addNotification);
 
-const CartList = ({
-  cart,
-  calculateItemTotal,
-  onUpdateQuantity,
-  onRemove,
-}: CartListProps) => {
+  const handleUpdateQuantity = (productId: string, quantity: number) => {
+    const result = updateQuantity(productId, quantity, products);
+    if (!result.success && result.message) {
+      addNotification(result.message, 'error');
+    }
+  };
+
   if (cart.length === 0) {
     return (
       <div className="text-center py-8">
@@ -51,8 +55,8 @@ const CartList = ({
             item={item}
             itemTotal={itemTotal}
             discountRate={discountRate}
-            onUpdateQuantity={onUpdateQuantity}
-            onRemove={onRemove}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemove={removeFromCart}
           />
         );
       })}

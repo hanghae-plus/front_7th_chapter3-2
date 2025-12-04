@@ -1,18 +1,29 @@
-import { CartItem } from '../../../../types';
 import { ProductWithUI } from '../../../shared/config';
+import { useCartStore } from '../../cart/model/useCartStore';
+import { useNotificationStore } from '../../../shared/store/useNotificationStore';
 import { getRemainingStock } from '../../cart/model/cart';
 
 type ProductCardProps = {
   product: ProductWithUI;
-  cart: CartItem[];
-  onAddToCart: (product: ProductWithUI) => void;
 };
 
-const ProductCard = ({ product, cart, onAddToCart }: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
+  const cart = useCartStore((state) => state.cart);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const addNotification = useNotificationStore((state) => state.addNotification);
+
   const remainingStock = getRemainingStock(product, cart);
-  // 질문: 프로젝트를 보니, ₩ 형식의 포맷을 사용하는 곳이 여기밖에 없어서 인라인으로 처리했는데 함수로 빼는게 좋을지
   const formattedPrice =
     remainingStock <= 0 ? 'SOLD OUT' : `₩${product.price.toLocaleString()}`;
+
+  const handleAddToCart = () => {
+    const result = addToCart(product);
+    if (result.success) {
+      addNotification(result.message || '장바구니에 담았습니다', 'success');
+    } else {
+      addNotification(result.message || '오류가 발생했습니다', 'error');
+    }
+  };
 
   return (
     <div
@@ -82,7 +93,7 @@ const ProductCard = ({ product, cart, onAddToCart }: ProductCardProps) => {
 
         {/* 장바구니 버튼 */}
         <button
-          onClick={() => onAddToCart(product)}
+          onClick={handleAddToCart}
           disabled={remainingStock <= 0}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
             remainingStock <= 0
