@@ -58,7 +58,7 @@ export function useProducts() {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   }, []);
 
-  const filterBySearchTerm = useCallback(
+  const filterProductsBySearchTerm = useCallback(
     (searchTerm: string): ProductWithUI[] => {
       if (!searchTerm.trim()) {
         return products;
@@ -81,6 +81,6 @@ export function useProducts() {
     addProduct,
     updateProduct,
     deleteProduct,
-    filterBySearchTerm,
+    filterProductsBySearchTerm,
   };
 }
