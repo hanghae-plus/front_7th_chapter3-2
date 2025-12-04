@@ -1,5 +1,6 @@
 import { ProductWithUI } from "../../types";
 import { initialProducts } from "../constants";
+import { Notification } from "../models/notificiation";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useProducts = (
