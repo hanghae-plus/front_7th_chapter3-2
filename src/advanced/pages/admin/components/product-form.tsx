@@ -6,7 +6,8 @@ import Label from '../../../components/label';
 import useForm from '../../../hooks/form';
 import { addDefaultDiscount, getProductFormSubmitText, getProductFormTitle, isEditingProduct, removeDiscount } from '../../../models/product';
 import { notificationsActions } from '../../../stores/notifications';
-import { ProductFormData, ProductWithUI } from '../../../types/products';
+import { productsActions, productsContext } from '../../../stores/products';
+import { ProductFormData } from '../../../types/products';
 import { convertDecimalToPercentage, convertPercentageToDecimal, isNumericInput, parseNumericInput } from '../../../utils/form';
 import { validateRange } from '../../../utils/validator';
 import { initialForm, PRODUCT_VALIDATION_RULES } from '../constants/products';
@@ -76,15 +77,14 @@ const AddDiscountButton = ({ setForm }: AddDiscountButtonProps) => {
 };
 
 interface ProductFormProps {
-  products: ProductWithUI[];
   editingProduct: string | null;
   setEditingProduct: (productId: string | null) => void;
-  addProduct: (product: Omit<ProductWithUI, 'id'>) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   close: () => void;
 }
 
-const ProductForm = ({ products, editingProduct, setEditingProduct, addProduct, updateProduct, close }: ProductFormProps) => {
+const ProductForm = ({ editingProduct, setEditingProduct, close }: ProductFormProps) => {
+  const { products } = productsContext();
+  const { addProduct, updateProduct } = productsActions();
   const { addNotification } = notificationsActions();
 
   const onSubmit = useCallback(

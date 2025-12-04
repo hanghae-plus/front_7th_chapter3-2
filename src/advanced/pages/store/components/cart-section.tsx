@@ -2,17 +2,12 @@ import Button from '../../../components/button';
 import { ShoppingBagIcon, XIcon } from '../../../components/icons';
 import { calculateDiscountRate, calculateItemTotal } from '../../../models/cart';
 import { cartActions, cartContext } from '../../../stores/cart';
+import { productsContext } from '../../../stores/products';
 import { CartItem as CartItemType } from '../../../types/carts';
-import { ProductWithUI } from '../../../types/products';
 import { formatCurrency } from '../../../utils/format';
 
 interface CartItemProps {
   item: CartItemType;
-  products: ProductWithUI[];
-}
-
-interface CartSectionProps {
-  products: ProductWithUI[];
 }
 
 const NoResults = () => {
@@ -24,8 +19,9 @@ const NoResults = () => {
   );
 };
 
-const CartItem = ({ item, products }: CartItemProps) => {
+const CartItem = ({ item }: CartItemProps) => {
   const { cart } = cartContext();
+  const { products } = productsContext();
   const { removeFromCart, updateQuantity } = cartActions();
   const itemTotal = calculateItemTotal(item, cart);
   const discountRate = calculateDiscountRate(item, cart);
@@ -63,7 +59,7 @@ const CartItem = ({ item, products }: CartItemProps) => {
   );
 };
 
-const CartSection = ({ products }: CartSectionProps) => {
+const CartSection = () => {
   const { cart, totalItemCount } = cartContext();
 
   return (
@@ -77,7 +73,7 @@ const CartSection = ({ products }: CartSectionProps) => {
       ) : (
         <div className='space-y-3'>
           {cart.map(item => (
-            <CartItem key={item.product.id} item={item} products={products} />
+            <CartItem key={item.product.id} item={item} />
           ))}
         </div>
       )}

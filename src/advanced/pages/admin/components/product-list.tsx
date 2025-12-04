@@ -1,17 +1,18 @@
 import Button from '../../../components/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/table';
+import { getStockStatusStyle } from '../../../models/product';
+import { productsActions, productsContext } from '../../../stores/products';
 import { ProductWithUI } from '../../../types/products';
 import { formatPrice } from '../../../utils/format';
-import { getStockStatusStyle } from '../../../models/product';
 
 interface ProductListProps {
-  products: ProductWithUI[];
   setEditingProduct: (productId: string | null) => void;
-  deleteProduct: (productId: string) => void;
   open: () => void;
 }
 
-const ProductList = ({ products, setEditingProduct, deleteProduct, open }: ProductListProps) => {
+const ProductList = ({ setEditingProduct, open }: ProductListProps) => {
+  const { products } = productsContext();
+
   return (
     <Table>
       <TableHeader>
@@ -25,13 +26,7 @@ const ProductList = ({ products, setEditingProduct, deleteProduct, open }: Produ
       </TableHeader>
       <TableBody>
         {products.map(product => (
-          <ProductRow
-            key={product.id}
-            product={product}
-            setEditingProduct={setEditingProduct}
-            deleteProduct={deleteProduct}
-            open={open}
-          />
+          <ProductRow key={product.id} product={product} setEditingProduct={setEditingProduct} open={open} />
         ))}
       </TableBody>
     </Table>
@@ -41,11 +36,12 @@ const ProductList = ({ products, setEditingProduct, deleteProduct, open }: Produ
 interface ProductRowProps {
   product: ProductWithUI;
   setEditingProduct: (productId: string | null) => void;
-  deleteProduct: (productId: string) => void;
   open: () => void;
 }
 
-const ProductRow = ({ product, setEditingProduct, deleteProduct, open }: ProductRowProps) => {
+const ProductRow = ({ product, setEditingProduct, open }: ProductRowProps) => {
+  const { deleteProduct } = productsActions();
+
   return (
     <TableRow>
       <TableCell className='font-medium text-gray-900'>{product.name}</TableCell>

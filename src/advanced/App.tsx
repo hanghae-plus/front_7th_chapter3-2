@@ -8,7 +8,6 @@ import { PAGES } from './constants/pages';
 import useCoupons from './hooks/coupons';
 import useDebounce from './hooks/debounce';
 import usePage from './hooks/pages';
-import useProducts from './hooks/products';
 import useSelectedCoupon from './hooks/selected-coupon';
 import AdminPage from './pages/admin';
 import StorePage from './pages/store';
@@ -17,7 +16,6 @@ import { cartContext } from './stores/cart';
 const App = () => {
   const { store, admin } = PAGES;
   const { currentPage, switchPage, isCurrentPage } = usePage(store);
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const { coupons, addCoupon, deleteCoupon } = useCoupons();
   const { totalItemCount } = cartContext();
   const [selectedCoupon, setSelectedCoupon] = useSelectedCoupon(coupons);
@@ -58,39 +56,15 @@ const App = () => {
     () => ({
       [store]: (
         <StorePage
-          products={products}
           debouncedSearchTerm={debouncedSearchTerm}
           coupons={coupons}
           selectedCoupon={selectedCoupon}
           setSelectedCoupon={setSelectedCoupon}
         />
       ),
-      [admin]: (
-        <AdminPage
-          products={products}
-          coupons={coupons}
-          addProduct={addProduct}
-          updateProduct={updateProduct}
-          deleteProduct={deleteProduct}
-          addCoupon={addCoupon}
-          deleteCoupon={deleteCoupon}
-        />
-      )
+      [admin]: <AdminPage coupons={coupons} addCoupon={addCoupon} deleteCoupon={deleteCoupon} />
     }),
-    [
-      store,
-      admin,
-      products,
-      debouncedSearchTerm,
-      coupons,
-      selectedCoupon,
-      setSelectedCoupon,
-      addProduct,
-      updateProduct,
-      deleteProduct,
-      addCoupon,
-      deleteCoupon
-    ]
+    [store, admin, debouncedSearchTerm, coupons, selectedCoupon, setSelectedCoupon, addCoupon, deleteCoupon]
   );
 
   return (

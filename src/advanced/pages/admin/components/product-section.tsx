@@ -1,18 +1,10 @@
 import { useState } from 'react';
 import Button from '../../../components/button';
 import useToggle from '../../../hooks/toggle';
-import { ProductWithUI } from '../../../types/products';
 import ProductForm from './product-form';
 import ProductList from './product-list';
 
-interface ProductSectionProps {
-  products: ProductWithUI[];
-  addProduct: (product: Omit<ProductWithUI, 'id'>) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
-}
-
-const ProductSection = ({ products, addProduct, updateProduct, deleteProduct }: ProductSectionProps) => {
+const ProductSection = () => {
   const { isOpen, open, close } = useToggle(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
 
@@ -33,16 +25,9 @@ const ProductSection = ({ products, addProduct, updateProduct, deleteProduct }: 
           </Button>
         </div>
       </div>
-      <ProductList products={products} setEditingProduct={setEditingProduct} deleteProduct={deleteProduct} open={open} />
+      <ProductList setEditingProduct={setEditingProduct} open={open} />
       {isOpen && (
-        <ProductForm
-          products={products}
-          editingProduct={editingProduct}
-          setEditingProduct={setEditingProduct}
-          addProduct={addProduct}
-          updateProduct={updateProduct}
-          close={close}
-        />
+        <ProductForm editingProduct={editingProduct} setEditingProduct={setEditingProduct} close={close} />
       )}
     </section>
   );

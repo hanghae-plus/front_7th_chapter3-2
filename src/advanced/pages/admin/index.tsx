@@ -1,16 +1,11 @@
 import { Tab, TabList, TabPanel, Tabs } from '../../components/tabs';
 import useTabs from '../../hooks/tabs';
 import { Coupon } from '../../types/coupons';
-import { ProductWithUI } from '../../types/products';
 import CouponSection from './components/coupon-section';
 import ProductSection from './components/product-section';
 
 interface AdminPageProps {
-  products: ProductWithUI[];
   coupons: Coupon[];
-  addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
   addCoupon: (newCoupon: Coupon) => void;
   deleteCoupon: (couponCode: string) => void;
 }
@@ -20,7 +15,7 @@ const TABS = {
   coupons: 'coupons'
 } as const;
 
-const AdminPage = ({ products, coupons, addProduct, updateProduct, deleteProduct, addCoupon, deleteCoupon }: AdminPageProps) => {
+const AdminPage = ({ coupons, addCoupon, deleteCoupon }: AdminPageProps) => {
   const { activeTab, setActiveTab } = useTabs<keyof typeof TABS>(TABS.products);
 
   return (
@@ -35,7 +30,7 @@ const AdminPage = ({ products, coupons, addProduct, updateProduct, deleteProduct
           <Tab value={TABS.coupons}>쿠폰 관리</Tab>
         </TabList>
         <TabPanel value={TABS.products}>
-          <ProductSection products={products} addProduct={addProduct} updateProduct={updateProduct} deleteProduct={deleteProduct} />
+          <ProductSection />
         </TabPanel>
         <TabPanel value={TABS.coupons}>
           <CouponSection coupons={coupons} addCoupon={addCoupon} deleteCoupon={deleteCoupon} />

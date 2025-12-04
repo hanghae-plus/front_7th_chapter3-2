@@ -3,6 +3,7 @@ import { ImageIcon } from '../../../components/icons';
 import { getRemainingStock } from '../../../models/cart';
 import { filterProductsBySearchTerm, formatFirstDiscount, getCartButtonText, getMaxDiscountRate, getStockStatusText } from '../../../models/product';
 import { cartActions, cartContext } from '../../../stores/cart';
+import { productsContext } from '../../../stores/products';
 import { ProductWithUI } from '../../../types/products';
 import { formatPrice } from '../../../utils/format';
 
@@ -15,7 +16,6 @@ interface ProductItemProps {
 }
 
 interface ProductListProps {
-  products: ProductWithUI[];
   debouncedSearchTerm: string;
 }
 
@@ -78,7 +78,8 @@ const ProductItem = ({ product }: ProductItemProps) => {
   );
 };
 
-const ProductList = ({ products, debouncedSearchTerm }: ProductListProps) => {
+const ProductList = ({ debouncedSearchTerm }: ProductListProps) => {
+  const { products } = productsContext();
   const filteredProducts = filterProductsBySearchTerm(products, debouncedSearchTerm);
 
   return filteredProducts.length === 0 ? (
