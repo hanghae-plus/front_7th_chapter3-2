@@ -1,8 +1,15 @@
 import { Product } from "../../../../types";
-import { formatPrice } from "../../../utils/formatter";
 import ProductListItem from "./ProductListItem";
 
-const ProductList = ({ products, addToCart }: { products: Product[]; addToCart: (product: Product) => void }) => {
+const ProductList = ({
+  products,
+  addToCart,
+  getRemainingStock,
+}: {
+  products: Product[];
+  addToCart: (product: Product) => void;
+  getRemainingStock: (product: Product) => number;
+}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products.map((product) => {
@@ -10,8 +17,8 @@ const ProductList = ({ products, addToCart }: { products: Product[]; addToCart: 
           <ProductListItem
             key={product.id}
             product={product}
-            formatPrice={formatPrice}
             handleAddToCart={() => addToCart(product)}
+            getRemainingStock={getRemainingStock}
           />
         );
       })}

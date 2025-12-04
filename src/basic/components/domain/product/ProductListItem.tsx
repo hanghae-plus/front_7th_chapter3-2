@@ -1,14 +1,16 @@
 import { Product } from "../../../../types";
+import formatter from "../../../utils/formatter";
 
 const ProductListItem = ({
   product,
-  formatPrice,
   handleAddToCart,
+  getRemainingStock,
 }: {
   product: Product & { description?: string; isRecommended?: boolean };
-  formatPrice: (price: number, productId?: string) => string;
   handleAddToCart: () => void;
+  getRemainingStock: (product: Product) => number;
 }) => {
+  const remainingStock = getRemainingStock(product);
   return (
     <div
       key={product.id}
@@ -43,7 +45,7 @@ const ProductListItem = ({
 
         {/* 가격 정보 */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-gray-900">{formatPrice(product.price, product.id)}</p>
+          <p className="text-lg font-bold text-gray-900">{formatter.formatPrice(product.price)}</p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
               {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%
@@ -53,23 +55,23 @@ const ProductListItem = ({
 
         {/* 재고 상태 */}
         <div className="mb-3">
-          {product.stock <= 5 && product.stock > 0 && (
-            <p className="text-xs text-red-600 font-medium">품절임박! {product.stock}개 남음</p>
+          {remainingStock <= 5 && remainingStock > 0 && (
+            <p className="text-xs text-red-600 font-medium">품절임박! {remainingStock}개 남음</p>
           )}
-          {product.stock > 5 && <p className="text-xs text-gray-500">재고 {product.stock}개</p>}
+          {remainingStock > 5 && <p className="text-xs text-gray-500">재고 {remainingStock}개</p>}
         </div>
 
         {/* 장바구니 버튼 */}
         <button
           onClick={handleAddToCart}
-          disabled={product.stock <= 0}
+          disabled={remainingStock <= 0}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-            product.stock <= 0
+            remainingStock <= 0
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : "bg-gray-900 text-white hover:bg-gray-800"
           }`}
         >
-          {product.stock <= 0 ? "품절" : "장바구니 담기"}
+          {remainingStock <= 0 ? "품절" : "장바구니 담기"}
         </button>
       </div>
     </div>

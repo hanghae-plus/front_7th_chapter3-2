@@ -15,7 +15,7 @@
 // - 외부 상태에 의존하지 않음
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
-import { CartItem, Coupon } from "../../types";
+import { CartItem, Coupon, Product } from "../../types";
 
 // TODO: 구현
 
@@ -74,4 +74,29 @@ const calculateCartTotal = (
   };
 };
 
-export { calculateItemTotal, calculateCartTotal, getMaxApplicableDiscount };
+const updateItemQuantity = (cart: CartItem[], productId: string, quantity: number): CartItem[] => {
+  return cart.map((item) => (item.product.id === productId ? { ...item, quantity } : item));
+};
+
+const addItemToCart = (cart: CartItem[], product: Product): CartItem[] => {
+  return [...cart, { product, quantity: 1 }];
+};
+
+const removeItemFromCart = (cart: CartItem[], productId: string): CartItem[] => {
+  return cart.filter((item) => item.product.id !== productId);
+};
+
+const getRemainingStock = (cart: CartItem[], product: Product): number => {
+  const cartItem = cart.find((item) => item.product.id === product.id);
+  return product.stock - (cartItem?.quantity || 0);
+};
+
+export default {
+  calculateItemTotal,
+  calculateCartTotal,
+  getMaxApplicableDiscount,
+  updateItemQuantity,
+  addItemToCart,
+  removeItemFromCart,
+  getRemainingStock,
+};

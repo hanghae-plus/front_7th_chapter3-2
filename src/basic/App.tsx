@@ -1,170 +1,115 @@
-import { useState, useCallback, useEffect } from "react";
-import { CartItem, Coupon, Product } from "../types";
-import Header from "./components/Header";
-import Notification from "./components/Notification";
+import { useState, useCallback } from "react";
+import { Coupon } from "../types";
+import Header from "./components/ui/Header";
+import Notification from "./components/ui/Notification";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
 import useProducts from "./hooks/useProducts";
 import useCart from "./hooks/useCart";
 import useCoupons from "./hooks/useCoupons";
-
-export const getRemainingStock = (cart: CartItem[], product: Product): number => {
-  const cartItem = cart.find((item) => item.product.id === product.id);
-  console.log({ cartItem, product });
-  const remaining = product.stock - (cartItem?.quantity || 0);
-
-  return remaining;
-};
+import { useDebounce } from "./hooks/useDebounce";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { useNotification } from "./hooks/useNotification";
+import cartModel from "./models/cart";
+import formatter from "./utils/formatter";
 
 const App = () => {
-  const addNotification = useCallback((message: string, type: "error" | "success" | "warning" = "success") => {
-    const id = Date.now().toString();
-    setNotifications((prev) => [...prev, { id, message, type }]);
+  // Notification 관리
+  const { notifications, setNotifications, addNotification } = useNotification();
 
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, 3000);
-  }, []);
-
+  // 데이터 관리
   const products = useProducts(addNotification);
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products.data));
-  }, [products.data]);
-
-  const cart = useCart(addNotification);
-
-  useEffect(() => {
-    if (cart.data.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart.data));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart.data]);
-
+  const cart = useCart();
   const coupons = useCoupons(addNotification);
 
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons.data));
-  }, [coupons.data]);
+  // LocalStorage 동기화
+  useLocalStorage("products", products.data);
+  useLocalStorage("cart", cart.data, { removeIfEmpty: true });
+  useLocalStorage("coupons", coupons.data);
 
+  // 상태 관리
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+  // Debounce 적용
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  // 각 도메인 금액 formatter
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.data.find((p) => p.id === productId);
-      if (product && getRemainingStock(cart.data, product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      // 새 수량이 0 이하면 장바구니에서 제거
-      if (newQuantity <= 0) {
-        cart.removeFromCart(productId);
-        return;
+  // 가격 포맷팅 (관리자 모드에 따라 다른 형식 적용)
+  const formatPrice = useCallback(
+    (price: number, productId?: string): string => {
+      // 재고 체크
+      if (productId) {
+        const product = products.data.find((p) => p.id === productId);
+        if (product && cartModel.getRemainingStock(cart.data, product) <= 0) {
+          return "SOLD OUT";
+        }
       }
 
-      // 상품이 없으면 return
-      const product = products.data.find((p) => p.id === productId);
-      if (!product) return;
-
-      // 새수량이 재고보다 크면 오류메세지 노출
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
-        return;
+      // 관리자 모드에서는 원화 표시 방식 변경
+      if (isAdmin) {
+        return `${price.toLocaleString()}원`;
       }
 
-      // 새수량 업데이트
-      cart.updateQuantity(productId, newQuantity);
+      return formatter.formatPrice(price);
     },
-    [products.data, cart.removeFromCart, addNotification, cart.updateQuantity]
+    [products.data, cart.data, isAdmin]
   );
 
+  // 주문 완료 핸들러
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
     cart.clearCart();
     setSelectedCoupon(null);
-  }, [addNotification, cart.clearCart]);
+  }, [addNotification, cart]);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* NOTIFICATIONS */}
+      {/* 알림 영역 */}
       <Notification notifications={notifications} setNotifications={setNotifications} />
 
-      {/* HEADER */}
+      {/* 헤더 */}
       <Header
         isAdmin={isAdmin}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         setIsAdmin={setIsAdmin}
-        cart={cart.data as CartItem[]}
-        totalItemCount={cart.totalItemCount}
+        cart={cart.data}
+        totalItemCount={cart.data.reduce((sum, item) => sum + item.quantity, 0)}
       />
 
+      {/* 메인 컨텐츠 */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage
-            // products
             products={products.data}
             addProduct={products.addProduct}
             updateProduct={products.updateProduct}
             deleteProduct={products.deleteProduct}
-            //coupons
             coupons={coupons.data}
             addCoupon={coupons.addCoupon}
             deleteCoupon={coupons.deleteCoupon}
-            // selectedCoupon
-            setSelectedCoupon={setSelectedCoupon}
             selectedCoupon={selectedCoupon}
-            // ETC
+            setSelectedCoupon={setSelectedCoupon}
             formatPrice={formatPrice}
             addNotification={addNotification}
           />
         ) : (
           <CartPage
-            // PRODUCTS
             products={products.data}
-            // COUPON
-            coupons={coupons.data}
-            //selectedCoupon
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
-            // CART
             cart={cart.data}
-            addToCart={cart.addToCart}
-            removeFromCart={cart.removeFromCart}
-            updateQuantity={updateQuantity}
-            // ETC
-            completeOrder={completeOrder}
+            coupons={coupons.data}
+            selectedCoupon={selectedCoupon}
             debouncedSearchTerm={debouncedSearchTerm}
-            formatPrice={formatPrice}
             addNotification={addNotification}
+            completeOrder={completeOrder}
+            updateQuantity={cart.updateQuantity}
+            removeFromCart={cart.removeFromCart}
+            applyCoupon={cart.applyCoupon}
+            addToCart={cart.addToCart}
+            calculateTotal={cart.calculateTotal}
+            getRemainingStock={cart.getRemainingStock}
           />
         )}
       </main>
