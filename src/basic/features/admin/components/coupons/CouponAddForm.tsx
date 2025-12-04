@@ -1,4 +1,5 @@
 import { CouponForm } from './AdminCouponList';
+import { Label, Input, Select } from '../../../../shared/component/ui';
 
 export const CouponAddForm = ({
   handleCouponSubmit,
@@ -19,10 +20,8 @@ export const CouponAddForm = ({
         <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              쿠폰명
-            </label>
-            <input
+            <Label>쿠폰명</Label>
+            <Input
               type="text"
               value={couponForm.name}
               onChange={(e) =>
@@ -31,16 +30,13 @@ export const CouponAddForm = ({
                   name: e.target.value,
                 })
               }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder="신규 가입 쿠폰"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              쿠폰 코드
-            </label>
-            <input
+            <Label>쿠폰 코드</Label>
+            <Input
               type="text"
               value={couponForm.code}
               onChange={(e) =>
@@ -49,16 +45,14 @@ export const CouponAddForm = ({
                   code: e.target.value.toUpperCase(),
                 })
               }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
+              className="font-mono"
               placeholder="WELCOME2024"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              할인 타입
-            </label>
-            <select
+            <Label>할인 타입</Label>
+            <Select
               value={couponForm.discountType}
               onChange={(e) =>
                 setCouponForm({
@@ -66,17 +60,16 @@ export const CouponAddForm = ({
                   discountType: e.target.value as 'amount' | 'percentage',
                 })
               }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
             >
               <option value="amount">정액 할인</option>
               <option value="percentage">정률 할인</option>
-            </select>
+            </Select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <Label>
               {couponForm.discountType === 'amount' ? '할인 금액' : '할인율(%)'}
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={
                 couponForm.discountValue === 0 ? '' : couponForm.discountValue
@@ -91,7 +84,6 @@ export const CouponAddForm = ({
                 }
               }}
               onBlur={onBlurCouponForm}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}
               required
             />

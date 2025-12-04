@@ -1,5 +1,6 @@
-import { ProductForm } from './products/AdminProductList';
-import { ProductWithUI } from '../../product/hook/useProduct';
+import { ProductForm } from './AdminProductList';
+import { ProductWithUI } from '../../../product/hook/useProduct';
+import { Label, Input } from '../../../../shared/component/ui';
 
 export const ProductAddForm = ({
   editingProduct,
@@ -29,10 +30,8 @@ export const ProductAddForm = ({
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              상품명
-            </label>
-            <input
+            <Label>상품명</Label>
+            <Input
               type="text"
               value={productForm.name}
               name="name"
@@ -42,15 +41,12 @@ export const ProductAddForm = ({
                   name: e.target.value,
                 })
               }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              설명
-            </label>
-            <input
+            <Label>설명</Label>
+            <Input
               type="text"
               value={productForm.description}
               name="description"
@@ -60,14 +56,11 @@ export const ProductAddForm = ({
                   description: e.target.value,
                 })
               }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              가격
-            </label>
-            <input
+            <Label>가격</Label>
+            <Input
               type="text"
               name="price"
               value={productForm.price === 0 ? '' : productForm.price}
@@ -89,16 +82,13 @@ export const ProductAddForm = ({
                   setProductForm({ ...productForm, price: 0 });
                 }
               }}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              재고
-            </label>
-            <input
+            <Label>재고</Label>
+            <Input
               type="text"
               name="stock"
               value={productForm.stock === 0 ? '' : productForm.stock}
@@ -126,25 +116,21 @@ export const ProductAddForm = ({
                   setProductForm({ ...productForm, stock: 9999 });
                 }
               }}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
             />
           </div>
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            할인 정책
-          </label>
+          <Label className="mb-2">할인 정책</Label>
           <div className="space-y-2">
             {productForm.discounts.map((discount, index) => (
               <div
                 key={index}
                 className="flex items-center gap-2 bg-gray-50 p-2 rounded"
               >
-                <input
+                <Input
                   type="number"
-                  // name을 어떻게 해야하지?
                   name="discounts"
                   value={discount.quantity}
                   onChange={(e) => {
@@ -156,12 +142,12 @@ export const ProductAddForm = ({
                       discounts: newDiscounts,
                     });
                   }}
-                  className="w-20 px-2 py-1 border rounded"
+                  className="w-20 px-2 py-1"
                   min="1"
                   placeholder="수량"
                 />
                 <span className="text-sm">개 이상 구매 시</span>
-                <input
+                <Input
                   type="number"
                   value={discount.rate * 100}
                   onChange={(e) => {
@@ -173,7 +159,7 @@ export const ProductAddForm = ({
                       discounts: newDiscounts,
                     });
                   }}
-                  className="w-16 px-2 py-1 border rounded"
+                  className="w-16 px-2 py-1"
                   min="0"
                   max="100"
                   placeholder="%"
