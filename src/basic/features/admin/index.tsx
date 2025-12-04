@@ -3,7 +3,7 @@ import { ProductWithUI } from '../product/hook/useProduct';
 import { AdminTitle } from './components/AdminTitle';
 import { AdminViewTab } from './components/AdminViewTab';
 import { AdminProductList } from '../product/admin/AdminProductList';
-import { AdminCouponList } from './components/coupons/AdminCouponList';
+import { AdminCouponList } from '../coupon/admin/AdminCouponList';
 
 export const Admin = ({
   products,

@@ -4,7 +4,7 @@ import { Header } from '../shared/component/Header';
 import { useProduct } from '../features/product/hook/useProduct';
 import { useSearchProduct } from '../features/product/hook/useSearchProduct';
 import { useCart } from '../features/cart/hook/useCart';
-import { useManageCoupon } from '../features/admin/hooks/useManageCoupon';
+import { useManageCoupon } from '../features/coupon/hooks/useManageCoupon';
 
 interface ShopPageProps {
   isAdmin: boolean;

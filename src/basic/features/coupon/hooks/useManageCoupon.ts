@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Coupon } from '../../../../types';
+import { Coupon } from '../../../types';
 
 const initialCoupons: Coupon[] = [
   {

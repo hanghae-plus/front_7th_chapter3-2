@@ -61,29 +61,3 @@ export const calculateCartTotalPrice = (
   return { totalBeforeDiscount, totalAfterDiscount };
 };
 
-export const applyCouponDiscount = (
-  selectedCoupon: Coupon,
-  {
-    totalBeforeDiscount,
-    totalAfterDiscount,
-  }: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  },
-): {
-  totalBeforeDiscount: number;
-  totalAfterDiscount: number;
-} => {
-  if (selectedCoupon.discountType === 'amount') {
-    totalAfterDiscount = Math.max(
-      0,
-      totalAfterDiscount - selectedCoupon.discountValue,
-    );
-  } else {
-    totalAfterDiscount = Math.round(
-      totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
-    );
-  }
-
-  return { totalBeforeDiscount, totalAfterDiscount };
-};

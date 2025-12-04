@@ -1,4 +1,4 @@
-import { CouponSection } from './components/coupon/CouponSection';
+import { CouponSection } from '../coupon/components/CouponSection';
 import { PaymentSection } from './components/payment/PaymentSection';
 import { CartSection } from './components/cart/CartSection';
 import { CartItem, Coupon } from '../../../types';

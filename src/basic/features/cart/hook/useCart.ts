@@ -6,7 +6,8 @@ import {
   useState,
 } from 'react';
 import { CartItem, Coupon, Product } from '../../../../types';
-import { applyCouponDiscount, calculateCartTotalPrice } from '../cart.service';
+import { calculateCartTotalPrice } from '../cart.service';
+import { applyCouponDiscount } from '../../coupon/services/coupon.service';
 import { ProductWithUI } from '../../product/hook/useProduct';
 
 export const useCart = ({

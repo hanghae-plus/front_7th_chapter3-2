@@ -1,5 +1,5 @@
-import { useManageCoupon } from '../../hooks/useManageCoupon';
-import { Coupon } from '../../../../../types';
+import { useManageCoupon } from '../hooks/useManageCoupon';
+import { Coupon } from '../../../../types';
 import { AddNewCouponCard } from './AddNewCouponCard';
 import { CouponAddForm } from './CouponAddForm';
 import { CouponCard } from './CouponCard';

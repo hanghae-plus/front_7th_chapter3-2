@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { CouponForm } from '../components/coupons/AdminCouponList';
+import { CouponForm } from '../admin/AdminCouponList';
 import {
   validateDiscountValue,
   validateCouponForm,

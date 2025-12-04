@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { Coupon } from '../../../../../types';
-import { checkCouponAvailability } from '../../cart.service';
-import { formatPrice } from '../../../../shared/utils/priceUtils';
-import { useNotification } from '../../../notification/hooks/useNotification';
-import { Select } from '../../../../shared/component/ui';
+import { Coupon } from '../../../../types';
+import { checkCouponAvailability } from '../services/coupon.service';
+import { formatPrice } from '../../../shared/utils/priceUtils';
+import { useNotification } from '../../notification/hooks/useNotification';
+import { Select } from '../../../shared/component/ui';
 
 export const CouponSelector = ({
   selectedCoupon,
