@@ -51,9 +51,14 @@ export const useCouponForm = (
   const onChangeHandler =
     (field: keyof Coupon) =>
     (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      if (field === 'discountValue' && !isNumericString(e.target.value)) return;
-      let value = normalizeValue(field, e.target.value, form);
-      setValue(field, value);
+      if (field === 'discountValue') {
+        if (!isNumericString(e.target.value)) return;
+        const value = parseInt(e.target.value) || 0;
+        setValue(field, value);
+      } else {
+        let value = normalizeValue(field, e.target.value, form);
+        setValue(field, value);
+      }
     };
 
   const onSubmit = (e: FormEvent) => {
