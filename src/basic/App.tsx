@@ -1,49 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
-import { CartItem, Coupon } from '../types';
+import { Coupon } from '../types';
 import AdminDashboardPage from './pages/adminDashboard/AdminDashboardPage';
 import ProductPage from './pages/client/ProductPage';
 import { initialProducts } from './mock/product';
 import { initialCoupons } from './mock/coupon';
-import { ProductWithUI } from './entities/product/types';
 import { Notification } from './entities/notification/types';
+import { useCartStorage } from './entities/cart/hooks/useCartStorage';
+import { useProductsStorage } from './entities/product/hooks/useProductsStorage';
+import { useCouponsStorage } from './entities/coupon/hooks/useCouponsStorage';
 
 const App = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  // Storage State
+  const [products, setProducts] = useProductsStorage(initialProducts);
+  const [cart, setCart] = useCartStorage([]);
+  const [coupons, setCoupons] = useCouponsStorage(initialCoupons);
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
+  // State
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
