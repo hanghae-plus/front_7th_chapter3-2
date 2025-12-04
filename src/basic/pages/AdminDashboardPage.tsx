@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { ProductWithUI } from '../types';
 import { Coupon } from '../../types';
-import { Notification } from '../types';
 import { formatPriceKRW } from '../utils';
 
 interface AdminDashboardPageProps {
@@ -10,7 +9,7 @@ interface AdminDashboardPageProps {
 
   setProducts: (products: ProductWithUI[]) => void;
   setCoupons: (coupons: Coupon[]) => void;
-  setNotifications: (notifications: Notification[]) => void;
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function AdminDashboardPage({
@@ -18,7 +17,7 @@ export default function AdminDashboardPage({
   coupons,
   setProducts,
   setCoupons,
-  setNotifications,
+  addNotification,
 }: AdminDashboardPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -51,18 +50,6 @@ export default function AdminDashboardPage({
     });
     setShowProductForm(true);
   };
-
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications(prev => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications(prev => prev.filter(n => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {

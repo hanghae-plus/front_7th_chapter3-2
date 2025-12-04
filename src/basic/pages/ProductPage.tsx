@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { CartItem, Coupon, Product } from '../../types';
-import { ProductWithUI, Notification } from '../types';
+import { ProductWithUI } from '../types';
 import { formatPriceKRW } from '../utils';
 import ProductCard from '../features/product/ProductCard';
 import CartListItem from '../features/cart/CartListItem';
@@ -11,7 +11,7 @@ interface ProductPageProps {
   debouncedSearchTerm: string;
 
   setCart: (cart: CartItem[]) => void;
-  setNotifications: (notifications: Notification[]) => void;
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function ProductPage({
@@ -19,7 +19,7 @@ export default function ProductPage({
   cart,
   coupons,
   debouncedSearchTerm,
-  setNotifications,
+  addNotification,
   setCart,
 }: ProductPageProps) {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -30,18 +30,6 @@ export default function ProductPage({
 
     return remaining;
   };
-
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications(prev => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications(prev => prev.filter(n => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {

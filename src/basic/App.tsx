@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ProductPage from './pages/ProductPage';
@@ -107,6 +107,18 @@ const App = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const [totalItemCount, setTotalItemCount] = useState(0);
+
+  const addNotification = useCallback(
+    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+      const id = Date.now().toString();
+      setNotifications(prev => [...prev, { id, message, type }]);
+
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== id));
+      }, 3000);
+    },
+    []
+  );
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -230,7 +242,7 @@ const App = () => {
             coupons={coupons}
             setProducts={setProducts}
             setCoupons={setCoupons}
-            setNotifications={setNotifications}
+            addNotification={addNotification}
           />
         ) : (
           <ProductPage
@@ -239,7 +251,7 @@ const App = () => {
             setCart={setCart}
             coupons={coupons}
             debouncedSearchTerm={debouncedSearchTerm}
-            setNotifications={setNotifications}
+            addNotification={addNotification}
           />
         )}
       </main>
