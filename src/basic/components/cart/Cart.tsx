@@ -1,6 +1,6 @@
 import React from 'react';
-import { CartItem, Coupon } from '../../types';
-import Button from './ui/Button';
+import { CartItem, Coupon } from '../../../types.ts';
+import Button from '../ui/Button.tsx';
 
 interface CartProps {
   cart: CartItem[];

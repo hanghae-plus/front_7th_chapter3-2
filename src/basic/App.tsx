@@ -1,10 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-import AdminContainer from './components/admin/AdminContainer.tsx';
-import Cart from './components/Cart';
-import Products from './components/Products';
+import AdminContainer from './components/admin/AdminContainer';
 import NotificationContainer from './components/ui/Notification';
 import Header from './components/Header';
+import CartContainer from './components/cart/CartContainer';
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -387,27 +386,23 @@ const App = () => {
             addNotification={addNotification}
           />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <Products
-              products={filteredProducts}
-              getRemainingStock={getRemainingStock}
-              formatPrice={formatPrice}
-              addToCart={addToCart}
-              debouncedSearchTerm={debouncedSearchTerm}
-            />
-            <Cart
-              cart={cart}
-              coupons={coupons}
-              selectedCoupon={selectedCoupon}
-              totals={totals}
-              removeFromCart={removeFromCart}
-              updateQuantity={updateQuantity}
-              applyCoupon={applyCoupon}
-              setSelectedCoupon={setSelectedCoupon}
-              completeOrder={completeOrder}
-              calculateItemTotal={calculateItemTotal}
-            />
-          </div>
+          <CartContainer
+            products={filteredProducts}
+            cart={cart}
+            coupons={coupons}
+            selectedCoupon={selectedCoupon}
+            totals={totals}
+            getRemainingStock={getRemainingStock}
+            formatPrice={formatPrice}
+            addToCart={addToCart}
+            removeFromCart={removeFromCart}
+            updateQuantity={updateQuantity}
+            applyCoupon={applyCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+            completeOrder={completeOrder}
+            calculateItemTotal={calculateItemTotal}
+            debouncedSearchTerm={debouncedSearchTerm}
+          />
         )}
       </main>
     </div>
