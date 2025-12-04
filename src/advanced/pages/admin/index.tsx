@@ -1,0 +1,56 @@
+import { Tab, TabList, TabPanel, Tabs } from '../../components/tabs';
+import { AddNotification } from '../../hooks/notifications';
+import useTabs from '../../hooks/tabs';
+import { Coupon } from '../../types/coupons';
+import { ProductWithUI } from '../../types/products';
+import CouponSection from './components/coupon-section';
+import ProductSection from './components/product-section';
+
+interface AdminPageProps {
+  products: ProductWithUI[];
+  coupons: Coupon[];
+  addNotification: AddNotification;
+  addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
+  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
+  deleteProduct: (productId: string) => void;
+  addCoupon: (newCoupon: Coupon) => void;
+  deleteCoupon: (couponCode: string) => void;
+}
+
+const TABS = {
+  products: 'products',
+  coupons: 'coupons'
+} as const;
+
+const AdminPage = ({ products, coupons, addNotification, addProduct, updateProduct, deleteProduct, addCoupon, deleteCoupon }: AdminPageProps) => {
+  const { activeTab, setActiveTab } = useTabs<keyof typeof TABS>(TABS.products);
+
+  return (
+    <div className='max-w-6xl mx-auto'>
+      <div className='mb-8'>
+        <h1 className='text-2xl font-bold text-gray-900'>관리자 대시보드</h1>
+        <p className='text-gray-600 mt-1'>상품과 쿠폰을 관리할 수 있습니다</p>
+      </div>
+      <Tabs value={activeTab} onChange={setActiveTab}>
+        <TabList>
+          <Tab value={TABS.products}>상품 관리</Tab>
+          <Tab value={TABS.coupons}>쿠폰 관리</Tab>
+        </TabList>
+        <TabPanel value={TABS.products}>
+          <ProductSection
+            products={products}
+            addProduct={addProduct}
+            updateProduct={updateProduct}
+            deleteProduct={deleteProduct}
+            addNotification={addNotification}
+          />
+        </TabPanel>
+        <TabPanel value={TABS.coupons}>
+          <CouponSection coupons={coupons} addCoupon={addCoupon} deleteCoupon={deleteCoupon} addNotification={addNotification} />
+        </TabPanel>
+      </Tabs>
+    </div>
+  );
+};
+
+export default AdminPage;
