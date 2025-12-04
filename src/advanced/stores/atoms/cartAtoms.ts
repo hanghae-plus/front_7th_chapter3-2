@@ -10,6 +10,7 @@ import {
   getRemainingStock,
 } from "../../models/cart";
 import { toast } from "../../utils/toast";
+import { canApplyPercentageCoupon } from "../../models/coupon";
 import type { CartItem, Coupon } from "../../../types";
 import type { ProductWithUI } from "./productAtoms";
 
@@ -60,7 +61,7 @@ export const applyCouponAtom = atom(null, (get, set, coupon: Coupon) => {
   const cart = get(cartAtom);
   const currentTotal = calculateCartTotal(cart, coupon).totalAfterDiscount;
 
-  if (currentTotal < 10000 && coupon.discountType === "percentage") {
+  if (coupon.discountType === "percentage" && !canApplyPercentageCoupon(currentTotal)) {
     toast.error("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.");
     return;
   }
