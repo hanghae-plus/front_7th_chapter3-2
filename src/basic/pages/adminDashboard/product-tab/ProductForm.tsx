@@ -1,24 +1,108 @@
-import { ProductFormState } from '../../../entities/product/types';
+import { ProductFormState, ProductWithUI } from '../../../entities/product/types';
+import { getNewProducts, getUpdatedProducts } from '../../../entities/product/utils';
+import DiscountForm from './DiscountForm';
 
 interface ProductFormProps {
   editingProduct: string | null;
   productForm: ProductFormState;
+  products: ProductWithUI[];
+  setProducts: (products: ProductWithUI[]) => void;
   setProductForm: (productForm: ProductFormState) => void;
   setEditingProduct: (editingProduct: string | null) => void;
   setShowProductForm: (showProductForm: boolean) => void;
-  handleProductSubmit: (e: React.FormEvent) => void;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function ProductForm({
   editingProduct,
   productForm,
+  products,
+  setProducts,
   setProductForm,
   setEditingProduct,
   setShowProductForm,
-  handleProductSubmit,
   addNotification,
 }: ProductFormProps) {
+  // Form event handlers
+  const handleChangeFormInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const id = e.target.id;
+    const value = e.target.value;
+    if (id === 'price' || id === 'stock') {
+      if (value === '' || /^\d+$/.test(value)) {
+        setProductForm({ ...productForm, [id]: value === '' ? 0 : parseInt(value) });
+      }
+    } else {
+      setProductForm({ ...productForm, [id]: value });
+    }
+  };
+  const handleBlurFormPrice = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setProductForm({ ...productForm, price: 0 });
+    } else if (parseInt(value) < 0) {
+      addNotification('가격은 0보다 커야 합니다', 'error');
+      setProductForm({ ...productForm, price: 0 });
+    }
+  };
+  const handleBlurFormStock = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setProductForm({ ...productForm, stock: 0 });
+    } else if (parseInt(value) < 0) {
+      addNotification('재고는 0보다 커야 합니다', 'error');
+      setProductForm({ ...productForm, stock: 0 });
+    } else if (parseInt(value) > 9999) {
+      addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+      setProductForm({ ...productForm, stock: 9999 });
+    }
+  };
+
+  // Product event handlers
+  const addProduct = (newProduct: Omit<ProductWithUI, 'id'>) => {
+    setProducts(getNewProducts(products, newProduct));
+    addNotification('상품이 추가되었습니다.', 'success');
+  };
+
+  const updateProduct = (productId: string, updates: Partial<ProductWithUI>) => {
+    setProducts(getUpdatedProducts(products, productId, updates));
+    addNotification('상품이 수정되었습니다.', 'success');
+  };
+
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== 'new') {
+      updateProduct(editingProduct, productForm);
+      setEditingProduct(null);
+    } else {
+      addProduct({
+        ...productForm,
+        discounts: productForm.discounts,
+      });
+    }
+    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+    setEditingProduct(null);
+    setShowProductForm(false);
+  };
+
+  const handleAddDiscount = () => {
+    setProductForm({
+      ...productForm,
+      discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
+    });
+  };
+
+  const handleCancelProduct = () => {
+    setEditingProduct(null);
+    setProductForm({
+      name: '',
+      price: 0,
+      stock: 0,
+      description: '',
+      discounts: [],
+    });
+    setShowProductForm(false);
+  };
+
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
       <form onSubmit={handleProductSubmit} className="space-y-4">
@@ -27,78 +111,55 @@ export default function ProductForm({
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">상품명</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              상품명
+            </label>
             <input
+              id="name"
               type="text"
               value={productForm.name}
-              onChange={e => setProductForm({ ...productForm, name: e.target.value })}
+              onChange={handleChangeFormInputValue}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">설명</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              설명
+            </label>
             <input
+              id="description"
               type="text"
               value={productForm.description}
-              onChange={e => setProductForm({ ...productForm, description: e.target.value })}
+              onChange={handleChangeFormInputValue}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">가격</label>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+              가격
+            </label>
             <input
+              id="price"
               type="text"
               value={productForm.price === 0 ? '' : productForm.price}
-              onChange={e => {
-                const value = e.target.value;
-                if (value === '' || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    price: value === '' ? 0 : parseInt(value),
-                  });
-                }
-              }}
-              onBlur={e => {
-                const value = e.target.value;
-                if (value === '') {
-                  setProductForm({ ...productForm, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification('가격은 0보다 커야 합니다', 'error');
-                  setProductForm({ ...productForm, price: 0 });
-                }
-              }}
+              onChange={handleChangeFormInputValue}
+              onBlur={handleBlurFormPrice}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">재고</label>
+            <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">
+              재고
+            </label>
             <input
+              id="stock"
               type="text"
               value={productForm.stock === 0 ? '' : productForm.stock}
-              onChange={e => {
-                const value = e.target.value;
-                if (value === '' || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    stock: value === '' ? 0 : parseInt(value),
-                  });
-                }
-              }}
-              onBlur={e => {
-                const value = e.target.value;
-                if (value === '') {
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification('재고는 0보다 커야 합니다', 'error');
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
-                  setProductForm({ ...productForm, stock: 9999 });
-                }
-              }}
+              onChange={handleChangeFormInputValue}
+              onBlur={handleBlurFormStock}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
@@ -109,61 +170,17 @@ export default function ProductForm({
           <label className="block text-sm font-medium text-gray-700 mb-2">할인 정책</label>
           <div className="space-y-2">
             {productForm.discounts.map((discount, index) => (
-              <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
-                <input
-                  type="number"
-                  value={discount.quantity}
-                  onChange={e => {
-                    const newDiscounts = [...productForm.discounts];
-                    newDiscounts[index].quantity = parseInt(e.target.value) || 0;
-                    setProductForm({ ...productForm, discounts: newDiscounts });
-                  }}
-                  className="w-20 px-2 py-1 border rounded"
-                  min="1"
-                  placeholder="수량"
-                />
-                <span className="text-sm">개 이상 구매 시</span>
-                <input
-                  type="number"
-                  value={discount.rate * 100}
-                  onChange={e => {
-                    const newDiscounts = [...productForm.discounts];
-                    newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
-                    setProductForm({ ...productForm, discounts: newDiscounts });
-                  }}
-                  className="w-16 px-2 py-1 border rounded"
-                  min="0"
-                  max="100"
-                  placeholder="%"
-                />
-                <span className="text-sm">% 할인</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
-                    setProductForm({ ...productForm, discounts: newDiscounts });
-                  }}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
+              <DiscountForm
+                key={index}
+                index={index}
+                productForm={productForm}
+                discount={discount}
+                setProductForm={setProductForm}
+              />
             ))}
             <button
               type="button"
-              onClick={() => {
-                setProductForm({
-                  ...productForm,
-                  discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
-                });
-              }}
+              onClick={handleAddDiscount}
               className="text-sm text-indigo-600 hover:text-indigo-800"
             >
               + 할인 추가
@@ -174,17 +191,7 @@ export default function ProductForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => {
-              setEditingProduct(null);
-              setProductForm({
-                name: '',
-                price: 0,
-                stock: 0,
-                description: '',
-                discounts: [],
-              });
-              setShowProductForm(false);
-            }}
+            onClick={handleCancelProduct}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소

@@ -10,5 +10,10 @@ export interface ProductFormState {
   price: number;
   stock: number;
   description: string;
-  discounts: Array<{ quantity: number; rate: number }>;
+  discounts: Array<DiscountFormState>;
+}
+
+export interface DiscountFormState {
+  quantity: number;
+  rate: number;
 }
