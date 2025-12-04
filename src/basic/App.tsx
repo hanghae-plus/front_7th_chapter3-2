@@ -28,7 +28,7 @@ const App = () => {
     useNotifications();
 
   const products = useProducts({
-    searchTerm: "",
+    searchTerm,
     onMessage: addNotification,
   });
 
