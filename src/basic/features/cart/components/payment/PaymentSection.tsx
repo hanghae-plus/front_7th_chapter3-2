@@ -1,6 +1,40 @@
 import { formatPrice } from '../../../../shared/utils/priceUtils';
 import { PaymentCompleteButton } from './PaymentCompleteButton';
 
+const PaymentTotalPrice = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: number;
+}) => {
+  return (
+    <div className="flex justify-between">
+      <span className="text-gray-600">{title}</span>
+      <span className="font-medium">{formatPrice(value)}원</span>
+    </div>
+  );
+};
+
+const PaymentDiscountedAmount = ({ value }: { value: number }) => {
+  return (
+    <div className="flex justify-between text-red-500">
+      <span>할인 금액</span>
+      <span>-{formatPrice(value)}원</span>
+    </div>
+  );
+};
+
+const PaymentFinalAmount = ({ value }: { value: number }) => {
+  return (
+    <div className="flex justify-between py-2 border-t border-gray-200">
+      <span className="font-semibold">결제 예정 금액</span>
+      <span className="font-bold text-lg text-gray-900">
+        {formatPrice(value)}원
+      </span>
+    </div>
+  );
+};
 export const PaymentSection = ({
   cartTotalPrice,
   completeOrder,
@@ -17,24 +51,11 @@ export const PaymentSection = ({
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
       <div className="space-y-2 text-sm">
-        <div className="flex justify-between">
-          <span className="text-gray-600">상품 금액</span>
-          <span className="font-medium">
-            {formatPrice(totalBeforeDiscount)}원
-          </span>
-        </div>
+        <PaymentTotalPrice title="상품 금액" value={totalBeforeDiscount} />
         {discountedAmount > 0 && (
-          <div className="flex justify-between text-red-500">
-            <span>할인 금액</span>
-            <span>-{formatPrice(discountedAmount)}원</span>
-          </div>
+          <PaymentDiscountedAmount value={discountedAmount} />
         )}
-        <div className="flex justify-between py-2 border-t border-gray-200">
-          <span className="font-semibold">결제 예정 금액</span>
-          <span className="font-bold text-lg text-gray-900">
-            {formatPrice(paymentAmount)}원
-          </span>
-        </div>
+        <PaymentFinalAmount value={paymentAmount} />
       </div>
       <PaymentCompleteButton
         paymentAmount={paymentAmount}
