@@ -1,2 +1,2 @@
-export { INITIAL_COUPONS } from './coupon-constants.config';
-export { useCoupons } from './use-coupons.model';
+export { INITIAL_COUPONS } from './config/coupon-constants';
+export { useCoupons } from './model/use-coupons';

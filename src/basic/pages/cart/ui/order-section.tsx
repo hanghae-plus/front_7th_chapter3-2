@@ -1,7 +1,7 @@
-import { CartItem, Coupon } from '../../../types';
-import { calculateTotal } from '../../entities/cart';
-import { useOrderCart } from '../../features/cart/order-cart';
-import { ToastProps } from '../../shared/ui/toast';
+import { CartItem, Coupon } from '../../../../types';
+import { calculateTotal } from '../../../entities/cart';
+import { useOrderCart } from '../../../features/cart/order-cart';
+import { ToastProps } from '../../../shared/ui/toast';
 
 interface PropsType {
   cart: CartItem[];

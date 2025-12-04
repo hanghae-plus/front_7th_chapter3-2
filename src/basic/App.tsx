@@ -4,7 +4,7 @@ import { AdminPage } from './pages/admin/page';
 import { CartPage } from './pages/cart/page';
 import { useProducts } from './entities/product';
 import { useCoupons } from './entities/coupon';
-import { useCart } from './entities/cart/use-cart.model';
+import { useCart } from './entities/cart/model/use-cart';
 
 const App = () => {
   const { notifications, addNotification, removeNotification } = useToast();

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { CartItem, Coupon, Product } from '../../../types';
-import { useLocalStorage } from '../../shared/hooks/use-local-storage';
-import { CART_STORAGE_KEY } from './cart-constants.config';
-import { ProductWithUI } from '../product';
+import { CartItem, Coupon, Product } from '../../../../types';
+import { useLocalStorage } from '../../../shared/hooks/use-local-storage';
+import { CART_STORAGE_KEY } from '../config/cart-constants';
+import { ProductWithUI } from '../../product';
 
 // REFACTOR
 const getMaxApplicableDiscount = (cart: CartItem[], item: CartItem): number => {

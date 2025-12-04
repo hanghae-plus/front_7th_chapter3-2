@@ -1,2 +1,3 @@
-export { type ProductWithUI } from './product-interface.model';
-export { useProducts } from './use-products.model';
+export { type ProductWithUI } from './model/product-interface';
+export { useProducts } from './model/use-products';
+export { ProductCard } from './ui/product-card';

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Coupon } from '../../../types';
-import { ToastProps } from '../../shared/ui/toast';
 import { CouponList } from './coupon-list';
-import { CreateCouponForm } from '../../features/coupon/create-coupon';
+import { CreateCouponForm } from '../../../features/coupon/create-coupon';
+import { Coupon } from '../../../../types';
+import { ToastProps } from '../../../shared/ui/toast';
 
 interface CouponsSectionProps {
   coupons: Coupon[];

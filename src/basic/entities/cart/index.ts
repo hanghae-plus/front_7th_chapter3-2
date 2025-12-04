@@ -1,1 +1,1 @@
-export { useCart, calculateTotal } from './use-cart.model';
+export { useCart, calculateTotal } from './model/use-cart';

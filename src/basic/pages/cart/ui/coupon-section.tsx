@@ -1,6 +1,6 @@
-import { Coupon } from '../../../types';
-import { ConditionalRender } from '../../shared/ui/conditional-render';
-import { ToastProps } from '../../shared/ui/toast';
+import { Coupon } from '../../../../types';
+import { ConditionalRender } from '../../../shared/ui/conditional-render';
+import { ToastProps } from '../../../shared/ui/toast';
 import { CouponList } from './coupon-list';
 
 interface PropsType {

@@ -1,6 +1,9 @@
-import { Coupon } from '../../../types';
-import { useLocalStorage } from '../../shared/hooks/use-local-storage';
-import { COUPON_STORAGE_KEY, INITIAL_COUPONS } from './coupon-constants.config';
+import { Coupon } from '../../../../types';
+import { useLocalStorage } from '../../../shared/hooks/use-local-storage';
+import {
+  COUPON_STORAGE_KEY,
+  INITIAL_COUPONS,
+} from '../config/coupon-constants';
 
 // TODO: model 분리 및 features 분리 > toast는 features에서 처리
 export function useCoupons() {

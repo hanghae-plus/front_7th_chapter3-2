@@ -1,6 +1,6 @@
 import { Tabs } from '../../shared/ui/tabs';
-import { ProductsSection } from './products-section';
-import { CouponsSection } from './coupon-section';
+import { ProductsSection } from './ui/products-section';
+import { CouponsSection } from './ui/coupon-section';
 import { ProductWithUI } from '../../entities/product';
 import { Coupon } from '../../../types';
 import { ToastProps } from '../../shared/ui/toast';

@@ -1,7 +1,7 @@
-import { CartItem } from '../../../types';
-import { useDeleteCart } from '../../features/cart/delete-cart';
-import { useUpdateQuantity } from '../../features/cart/update-quantitiy';
-import { ToastProps } from '../../shared/ui/toast';
+import { CartItem } from '../../../../types';
+import { useDeleteCart } from '../../../features/cart/delete-cart';
+import { useUpdateQuantity } from '../../../features/cart/update-quantitiy';
+import { ToastProps } from '../../../shared/ui/toast';
 
 interface PropsType {
   cart: CartItem[];

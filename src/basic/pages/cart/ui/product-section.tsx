@@ -1,7 +1,7 @@
-import { CartItem } from '../../../types';
-import { ProductWithUI } from '../../entities/product';
-import { ConditionalRender } from '../../shared/ui/conditional-render';
-import { ToastProps } from '../../shared/ui/toast';
+import { CartItem } from '../../../../types';
+import { ProductWithUI } from '../../../entities/product';
+import { ConditionalRender } from '../../../shared/ui/conditional-render';
+import { ToastProps } from '../../../shared/ui/toast';
 import { ProductCardList } from './product-card-list';
 import { ProductEmptyFallback } from './product-empty-fallback';
 

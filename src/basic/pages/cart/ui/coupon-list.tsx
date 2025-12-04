@@ -1,6 +1,6 @@
-import { Coupon } from '../../../types';
-import { useApplyCoupon } from '../../features/cart/apply-coupon';
-import { ToastProps } from '../../shared/ui/toast';
+import { Coupon } from '../../../../types';
+import { useApplyCoupon } from '../../../features/cart/apply-coupon';
+import { ToastProps } from '../../../shared/ui/toast';
 
 interface PropsType {
   coupons: Coupon[];

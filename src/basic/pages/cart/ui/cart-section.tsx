@@ -1,6 +1,6 @@
-import { CartItem } from '../../../types';
-import { ToastProps } from '../../shared/ui/toast';
-import { ConditionalRender } from '../../shared/ui/conditional-render/conditional-render';
+import { CartItem } from '../../../../types';
+import { ToastProps } from '../../../shared/ui/toast';
+import { ConditionalRender } from '../../../shared/ui/conditional-render';
 import { CartEmptyFallback } from './cart-empty-fallback';
 import { CartItemList } from './cart-item-list';
 

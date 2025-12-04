@@ -1,6 +1,6 @@
-import { Coupon } from '../../../types';
-import { useDeleteCoupon } from '../../features/coupon/delete-coupon/use-delete-coupon';
-import { ToastProps } from '../../shared/ui/toast';
+import { Coupon } from '../../../../types';
+import { useDeleteCoupon } from '../../../features/coupon/delete-coupon/use-delete-coupon';
+import { ToastProps } from '../../../shared/ui/toast';
 
 interface CouponListProps {
   coupons: Coupon[];

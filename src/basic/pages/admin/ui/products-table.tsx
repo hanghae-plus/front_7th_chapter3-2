@@ -1,8 +1,8 @@
-import { Product } from '../../../types';
-import { ProductWithUI } from '../../entities/product';
-import { useDeleteProduct } from '../../features/product/delete-product';
-import { formatPrice } from '../../shared/lib/formatters';
-import { ToastProps } from '../../shared/ui/toast';
+import { Product } from '../../../../types';
+import { ProductWithUI } from '../../../entities/product';
+import { useDeleteProduct } from '../../../features/product/delete-product';
+import { formatPrice } from '../../../shared/lib/formatters';
+import { ToastProps } from '../../../shared/ui/toast';
 
 interface ProductsTableProps {
   products: ProductWithUI[];

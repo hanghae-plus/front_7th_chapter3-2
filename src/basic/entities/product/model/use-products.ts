@@ -1,9 +1,9 @@
-import { useLocalStorage } from '../../shared/hooks/use-local-storage';
+import { useLocalStorage } from '../../../shared/hooks/use-local-storage';
 import {
   INITIAL_PRODUCTS,
   PRODUCT_STORAGE_KEY,
-} from './product-constants.config';
-import { ProductWithUI } from './product-interface.model';
+} from '../config/product-constants';
+import { ProductWithUI } from './product-interface';
 
 // TODO: model 분리 및 features 분리
 export function useProducts() {

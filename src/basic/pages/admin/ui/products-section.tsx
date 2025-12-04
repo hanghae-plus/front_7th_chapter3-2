@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { ProductWithUI } from '../../entities/product';
+import { ProductWithUI } from '../../../entities/product';
 
-import { ToastProps } from '../../shared/ui/toast';
+import { ToastProps } from '../../../shared/ui/toast';
 import { ProductsTable } from './products-table';
-import { CreateProductForm } from '../../features/product/create-product';
-import { EditProductForm } from '../../features/product/edit-product';
-import { ConditionalRender } from '../../shared/ui/conditional-render';
+import { CreateProductForm } from '../../../features/product/create-product';
+import { EditProductForm } from '../../../features/product/edit-product';
+import { ConditionalRender } from '../../../shared/ui/conditional-render';
 
 interface ProductsSectionProps {
   products: ProductWithUI[];
