@@ -13,3 +13,8 @@ export const canApplyCoupon = (
   }
   return true;
 };
+
+export const isValidCouponCode = (code: string): boolean => {
+  const regex = /^[A-Z0-9]{4,12}$/;
+  return regex.test(code);
+};
