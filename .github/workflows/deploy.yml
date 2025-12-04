@@ -1,0 +1,96 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test:basic --run
+        continue-on-error: false
+
+      - name: TypeScript compile
+        run: pnpm exec tsc -b
+
+      - name: Build Basic
+        run: |
+          BUILD_TYPE=basic VITE_OUT_DIR=dist-basic pnpm vite build
+          # 빌드된 index.html을 index.basic.html로 이름 변경
+          if [ -f dist-basic/index.html ]; then
+            mv dist-basic/index.html dist-basic/index.basic.html
+          fi
+        env:
+          # GitHub Pages는 리포지토리 이름을 base path로 사용
+          # 리포지토리 이름이 front_7th_chapter3-2인 경우
+          VITE_BASE_PATH: /front_7th_chapter3-2/
+
+      - name: Build Advanced
+        run: |
+          BUILD_TYPE=advanced VITE_OUT_DIR=dist-advanced pnpm vite build
+          # 빌드된 index.html을 index.advanced.html로 이름 변경
+          if [ -f dist-advanced/index.html ]; then
+            mv dist-advanced/index.html dist-advanced/index.advanced.html
+          fi
+        env:
+          VITE_BASE_PATH: /front_7th_chapter3-2/
+
+      - name: Merge build outputs
+        run: |
+          # dist 디렉토리 생성
+          mkdir -p dist
+          # HTML 파일 복사
+          cp dist-basic/index.basic.html dist/
+          cp dist-advanced/index.advanced.html dist/
+          # assets 디렉토리 병합 (중복 제거)
+          if [ -d dist-basic/assets ]; then
+            cp -r dist-basic/assets dist/ || true
+          fi
+          if [ -d dist-advanced/assets ]; then
+            cp -r dist-advanced/assets/* dist/assets/ 2>/dev/null || true
+          fi
+          # 임시 디렉토리 정리
+          rm -rf dist-basic dist-advanced
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./dist"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
