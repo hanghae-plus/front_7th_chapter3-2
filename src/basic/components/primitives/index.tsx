@@ -4,3 +4,7 @@ export { Select } from './Select';
 export type { SelectOption } from './Select';
 export { Card } from './Card';
 export { Badge } from './Badge';
+export { Table } from './Table';
+export { Section } from './Section';
+export { Header } from './Header';
+export { Logo, SearchBar, CartBadge, ToggleButton } from './Navigation';
