@@ -1,5 +1,6 @@
 import React from 'react';
 import { NumericStepper } from '../primitives';
+import { formatCurrencyKRW } from '../../utils/formatters';
 
 interface CartItemViewProps {
   /** 상품명 */
@@ -73,7 +74,7 @@ export const CartItemView: React.FC<CartItemViewProps> = ({
             </span>
           )}
           <p className="text-sm font-medium text-gray-900">
-            {Math.round(totalPrice).toLocaleString()}원
+            {formatCurrencyKRW(Math.round(totalPrice))}
           </p>
         </div>
       </div>
