@@ -1,4 +1,4 @@
-import { ProductForm } from './AdminProductList';
+import { ProductForm } from './products/AdminProductList';
 import { ProductWithUI } from '../../product/hook/useProduct';
 
 export const ProductAddForm = ({
