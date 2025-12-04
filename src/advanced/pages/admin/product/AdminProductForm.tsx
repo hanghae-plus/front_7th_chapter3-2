@@ -1,52 +1,34 @@
-import { Discount, ProductWithUI } from "../../../../types";
+import { ProductWithUI } from "../../../../types";
 import { Button } from "../../../components/common/ui/Button";
 import { InputField } from "../../../components/common/ui/InputField";
 import { AdminProductDiscount } from "./AdminProductDiscount";
-import { isValidPrice, isValidStock, extractNumbers } from "../../../utils/validators";
+import {
+  isValidPrice,
+  isValidStock,
+  extractNumbers,
+} from "../../../utils/validators";
+import { useProducts } from "../../../hooks/useProducts";
+import { useNotification } from "../../../hooks/useNotification";
+import { useAtoms } from "../../../hooks/useAtoms";
 
-interface AdminProductFormProps {
-  editingProduct: string | null;
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Discount[];
-    isRecommended: boolean;
-  };
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
-  setProductForm: (product: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Discount[];
-    isRecommended: boolean;
-  }) => void;
-  setShowProductForm: (show: boolean) => void;
-  setEditingProduct: (productId: string | null) => void;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
+export const AdminProductForm = () => {
+  const { setShowProductForm } = useAtoms();
+  const {
+    setProducts,
+    productForm,
+    setProductForm,
+    editingProduct,
+    setEditingProduct,
+  } = useProducts();
+  const { addNotification } = useNotification();
 
-export const AdminProductForm = ({
-  editingProduct,
-  productForm,
-  setProducts,
-  setProductForm,
-  setShowProductForm,
-  setEditingProduct,
-  handleNotificationAdd,
-}: AdminProductFormProps) => {
   const addProduct = (newProduct: Omit<ProductWithUI, "id">) => {
     const product: ProductWithUI = {
       ...newProduct,
       id: `p${Date.now()}`,
     };
     setProducts((prev) => [...prev, product]);
-    handleNotificationAdd("상품이 추가되었습니다.", "success");
+    addNotification("상품이 추가되었습니다.", "success");
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +73,7 @@ export const AdminProductForm = ({
   const handlePriceBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10) || 0;
     if (!isValidPrice(value)) {
-      handleNotificationAdd("가격은 0보다 커야 합니다", "error");
+      addNotification("가격은 0보다 커야 합니다", "error");
       setProductForm({ ...productForm, price: 0 });
     } else {
       setProductForm({ ...productForm, price: value });
@@ -102,10 +84,10 @@ export const AdminProductForm = ({
   const handleStockBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10) || 0;
     if (!isValidStock(value)) {
-      handleNotificationAdd("재고는 0 이상이어야 합니다", "error");
+      addNotification("재고는 0 이상이어야 합니다", "error");
       setProductForm({ ...productForm, stock: 0 });
     } else if (value > 9999) {
-      handleNotificationAdd("재고는 9999개를 초과할 수 없습니다", "error");
+      addNotification("재고는 9999개를 초과할 수 없습니다", "error");
       setProductForm({ ...productForm, stock: 9999 });
     } else {
       setProductForm({ ...productForm, stock: value });
@@ -128,7 +110,7 @@ export const AdminProductForm = ({
         product.id === productId ? { ...product, ...updates } : product
       )
     );
-    handleNotificationAdd("상품이 수정되었습니다.", "success");
+    addNotification("상품이 수정되었습니다.", "success");
   };
 
   const handleRecommendedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,6 +123,7 @@ export const AdminProductForm = ({
   const handleCancelForm = () => {
     setEditingProduct(null);
     setProductForm({
+      id: "",
       name: "",
       price: 0,
       stock: 0,
@@ -163,6 +146,7 @@ export const AdminProductForm = ({
       });
     }
     setProductForm({
+      id: "",
       name: "",
       price: 0,
       stock: 0,
@@ -230,8 +214,6 @@ export const AdminProductForm = ({
                 key={`${discount.quantity}-${discount.rate}-${index}`}
                 discount={discount}
                 index={index}
-                productForm={productForm}
-                setProductForm={setProductForm}
               />
             ))}
             <Button

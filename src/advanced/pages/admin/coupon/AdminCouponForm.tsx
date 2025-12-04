@@ -4,16 +4,9 @@ import { Button } from "../../../components/common/ui/Button";
 import { InputField } from "../../../components/common/ui/InputField";
 import { addCoupon } from "../../../models/coupon";
 import { extractNumbers } from "../../../utils/validators";
-
-interface AdminCouponFormProps {
-  coupons: Coupon[];
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
-  setShowCouponForm: (show: boolean) => void;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
+import { useCoupons } from "../../../hooks/useCoupons";
+import { useNotification } from "../../../hooks/useNotification";
+import { useAtoms } from "../../../hooks/useAtoms";
 
 interface CouponFormState {
   name: string;
@@ -22,12 +15,10 @@ interface CouponFormState {
   discountValue: number;
 }
 
-export const AdminCouponForm = ({
-  coupons,
-  setCoupons,
-  setShowCouponForm,
-  handleNotificationAdd,
-}: AdminCouponFormProps) => {
+export const AdminCouponForm = () => {
+  const { coupons, setCoupons } = useCoupons();
+  const { addNotification } = useNotification();
+  const { setShowCouponForm } = useAtoms();
   const [couponForm, setCouponForm] = useState<CouponFormState>({
     name: "",
     code: "",
@@ -84,11 +75,11 @@ export const AdminCouponForm = ({
     // 할인 타입별 범위 검증 (다른 필드 검증과 독립적으로 수행)
     if (couponForm.discountType === "percentage") {
       if (value > 100) {
-        handleNotificationAdd("할인율은 100%를 초과할 수 없습니다", "error");
+        addNotification("할인율은 100%를 초과할 수 없습니다", "error");
       }
     } else if (couponForm.discountType === "amount") {
       if (value > 100000) {
-        handleNotificationAdd(
+        addNotification(
           "할인 금액은 100,000원을 초과할 수 없습니다",
           "error"
         );
@@ -126,7 +117,7 @@ export const AdminCouponForm = ({
     const result = addCoupon(coupons, coupon);
 
     if (!result.success) {
-      handleNotificationAdd(
+      addNotification(
         result.errorMessage || "쿠폰 추가에 실패했습니다.",
         "error"
       );
@@ -135,7 +126,7 @@ export const AdminCouponForm = ({
 
     // 성공 시 상태 업데이트
     setCoupons(result.coupons);
-    handleNotificationAdd("쿠폰이 추가되었습니다.", "success");
+    addNotification("쿠폰이 추가되었습니다.", "success");
 
     // 폼 초기화
     setCouponForm({

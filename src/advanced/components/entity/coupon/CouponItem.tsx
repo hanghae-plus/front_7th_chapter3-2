@@ -1,35 +1,27 @@
 import { Coupon } from "../../../../types";
 import { IconDelete } from "../../common/icons/IconDelete";
 import { Button } from "../../common/ui/Button";
+import { useCoupons } from "../../../hooks/useCoupons";
+import { useNotification } from "../../../hooks/useNotification";
 
 interface CouponItemProps {
   coupon: Coupon;
-  selectedCoupon: Coupon | null;
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 }
 
 /**
  * 쿠폰 엔티티 컴포넌트
  * Coupon 엔티티를 표시하고 조작하는 컴포넌트
  */
-export const CouponItem = ({
-  coupon,
-  selectedCoupon,
-  setCoupons,
-  setSelectedCoupon,
-  handleNotificationAdd,
-}: CouponItemProps) => {
+export const CouponItem = ({ coupon }: CouponItemProps) => {
+  const { coupons, setCoupons, selectedCoupon, setSelectedCoupon } = useCoupons();
+  const { addNotification } = useNotification();
+
   const deleteCoupon = (couponCode: string) => {
     setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
     if (selectedCoupon?.code === couponCode) {
       setSelectedCoupon(null);
     }
-    handleNotificationAdd("쿠폰이 삭제되었습니다.", "success");
+    addNotification("쿠폰이 삭제되었습니다.", "success");
   };
 
   return (

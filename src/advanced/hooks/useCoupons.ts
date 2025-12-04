@@ -1,15 +1,15 @@
-import { useState } from "react";
 import { Coupon } from "../../types";
 import { initialCoupons } from "../constants/data";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { atomWithStorage } from "jotai/utils";
+import { atom, useAtom } from "jotai";
+
+const atomCoupons = atomWithStorage<Coupon[]>("coupons", initialCoupons);
+const atomSelectedCoupon = atom<Coupon | null>(null);
 
 export const useCoupons = () => {
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    "coupons",
-    initialCoupons
-  );
+  const [coupons, setCoupons] = useAtom(atomCoupons);
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(atomSelectedCoupon);
 
   return { coupons, setCoupons, selectedCoupon, setSelectedCoupon };
 };

@@ -1,31 +1,20 @@
-import { CartItem, Coupon } from "../../../../types";
 import { Button } from "../../../components/common/ui/Button";
 import { calculatePaymentViewData } from "../../../utils/viewData";
 import { formatPriceWithUnit } from "../../../utils/formatters";
+import { useCart } from "../../../hooks/useCart";
+import { useCoupons } from "../../../hooks/useCoupons";
+import { useNotification } from "../../../hooks/useNotification";
 
-interface ShoppingCouponPaymentProps {
-  cart: CartItem[];
-  selectedCoupon: Coupon | null;
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
+export const ShoppingCouponPayment = () => {
+  const { cart, setCart } = useCart();
+  const { selectedCoupon, setSelectedCoupon } = useCoupons();
+  const { addNotification } = useNotification();
 
-export const ShoppingCouponPayment = ({
-  cart,
-  selectedCoupon,
-  setCart,
-  setSelectedCoupon,
-  handleNotificationAdd,
-}: ShoppingCouponPaymentProps) => {
   const paymentViewData = calculatePaymentViewData(cart, selectedCoupon);
 
   const handleOrderComplete = () => {
     const orderNumber = `ORD-${Date.now()}`;
-    handleNotificationAdd(
+    addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       "success"
     );

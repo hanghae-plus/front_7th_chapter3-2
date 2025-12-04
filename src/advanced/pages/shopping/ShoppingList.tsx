@@ -1,26 +1,13 @@
-import { CartItem, ProductWithUI } from "../../../types";
 import { useDebounce } from "../../utils/hooks/useDebounce";
 import { filterProductsBySearchTerm } from "../../utils/filters";
 import { ProductItem } from "../../components/entity";
+import { useProducts } from "../../hooks/useProducts";
+import { useAtoms } from "../../hooks/useAtoms";
 
-interface ShoppingListProps {
-  cart: CartItem[];
-  searchTerm: string;
-  products: ProductWithUI[];
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
+export const ShoppingList = () => {
+  const { products } = useProducts();
+  const { searchTerm } = useAtoms();
 
-export const ShoppingList = ({
-  cart,
-  setCart,
-  products,
-  searchTerm,
-  handleNotificationAdd,
-}: ShoppingListProps) => {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const filteredProducts = filterProductsBySearchTerm(
@@ -43,14 +30,7 @@ export const ShoppingList = ({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
-            <ProductItem
-              key={product.id}
-              product={product}
-              products={products}
-              cart={cart}
-              setCart={setCart}
-              handleNotificationAdd={handleNotificationAdd}
-            />
+            <ProductItem key={product.id} product={product} />
           ))}
         </div>
       )}

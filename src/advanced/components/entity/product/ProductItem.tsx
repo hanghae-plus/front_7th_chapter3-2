@@ -1,52 +1,42 @@
-import { CartItem, ProductWithUI } from "../../../../types";
+import { ProductWithUI } from "../../../../types";
 import { formatPriceText } from "../../../utils/formatters";
 import { IconImagePlaceholder } from "../../common/icons/IconImagePlaceholder";
 import { getRemainingStock } from "../../../models/product";
 import { addProductToCart } from "../../../models/cart";
 import { Button } from "../../common/ui/Button";
+import { useCart } from "../../../hooks/useCart";
+import { useNotification } from "../../../hooks/useNotification";
+import { useProducts } from "../../../hooks/useProducts";
 
 interface ProductItemProps {
   product: ProductWithUI;
-  products: ProductWithUI[];
-  cart: CartItem[];
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 }
 
 /**
  * 상품 엔티티 컴포넌트
  * Product 엔티티를 표시하고 조작하는 컴포넌트
  */
-export const ProductItem = ({
-  product,
-  products,
-  cart,
-  setCart,
-  handleNotificationAdd,
-}: ProductItemProps) => {
+export const ProductItem = ({ product }: ProductItemProps) => {
+  const { cart, setCart } = useCart();
+  const { products } = useProducts();
+  const { addNotification } = useNotification();
   const remainingStock = getRemainingStock(product, cart);
 
   const addToCart = (product: ProductWithUI) => {
     const { cart: nextCart, error } = addProductToCart(cart, product);
 
     if (error === "OUT_OF_STOCK") {
-      handleNotificationAdd("재고가 부족합니다!", "error");
+      addNotification("재고가 부족합니다!", "error");
       return;
     }
 
     if (error === "EXCEEDS_STOCK") {
-      handleNotificationAdd(
-        `재고는 ${product.stock}개까지만 있습니다.`,
-        "error"
-      );
+      addNotification(`재고는 ${product.stock}개까지만 있습니다.`, "error");
       return;
     }
 
     setCart(nextCart);
-    handleNotificationAdd("장바구니에 담았습니다", "success");
+    addNotification("장바구니에 담았습니다", "success");
   };
 
   return (
@@ -118,4 +108,3 @@ export const ProductItem = ({
     </div>
   );
 };
-

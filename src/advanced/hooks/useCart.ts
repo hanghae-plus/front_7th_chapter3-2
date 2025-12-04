@@ -1,8 +1,11 @@
+import { atomWithStorage } from "jotai/utils";
 import { CartItem } from "../../types";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { useAtom } from "jotai";
+
+const atomCart = atomWithStorage<CartItem[]>("cart", []);
 
 export const useCart = () => {
-  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
+  const [cart, setCart] = useAtom(atomCart);
 
   return { cart, setCart };
 };

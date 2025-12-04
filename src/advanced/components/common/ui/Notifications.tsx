@@ -1,6 +1,5 @@
-import { Dispatch, SetStateAction } from "react";
+import { useNotification } from "../../../hooks/useNotification";
 import { IconClose } from "../icons/IconClose";
-import { Notification } from "../../../../types";
 import { Button } from "./Button";
 
 const TYPE = {
@@ -9,15 +8,9 @@ const TYPE = {
   success: "bg-green-600",
 };
 
-interface NotificationsProps {
-  notifications: Notification[];
-  setNotifications: Dispatch<SetStateAction<Notification[]>>;
-}
+export const Notifications = () => {
+  const { notifications, setNotifications } = useNotification();
 
-export const Notifications = ({
-  notifications,
-  setNotifications,
-}: NotificationsProps) => {
   const handleCloseNotifications = (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };

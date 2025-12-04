@@ -1,4 +1,4 @@
-import { CartItem as CartItemType, ProductWithUI } from "../../../../types";
+import { CartItem as CartItemType } from "../../../../types";
 import { IconClose } from "../../common/icons/IconClose";
 import { Button } from "../../common/ui/Button";
 import {
@@ -7,35 +7,29 @@ import {
 } from "../../../models/cart";
 import { exceedsStock } from "../../../models/product";
 import { calculateCartItemViewData } from "../../../utils/viewData";
+import { useCart } from "../../../hooks/useCart";
+import { useProducts } from "../../../hooks/useProducts";
+import { useNotification } from "../../../hooks/useNotification";
 
 interface CartItemProps {
   item: CartItemType;
-  cart: CartItemType[];
-  products: ProductWithUI[];
-  setCart: React.Dispatch<React.SetStateAction<CartItemType[]>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 }
 
 /**
  * 장바구니 아이템 엔티티 컴포넌트
  * CartItem 엔티티를 표시하고 조작하는 컴포넌트
  */
-export const CartItem = ({
-  item,
-  cart,
-  products,
-  setCart,
-  handleNotificationAdd,
-}: CartItemProps) => {
+export const CartItem = ({ item }: CartItemProps) => {
+  const { cart, setCart } = useCart();
+  const { products } = useProducts();
+  const { addNotification } = useNotification();
+
   const updateQuantity = (productId: string, newQuantity: number) => {
     const product = products.find((p) => p.id === productId);
     if (!product) return;
 
     if (exceedsStock(product, newQuantity)) {
-      handleNotificationAdd(
+      addNotification(
         `재고는 ${product.stock}개까지만 있습니다.`,
         "error"
       );

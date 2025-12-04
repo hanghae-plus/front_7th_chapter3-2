@@ -1,36 +1,23 @@
-import { Discount } from "../../../../types";
 import { IconClose } from "../../../components/common/icons/IconClose";
 import { Button } from "../../../components/common/ui/Button";
 import { InputField } from "../../../components/common/ui/InputField";
-import { isValidDiscountRate, isValidDiscountQuantity } from "../../../utils/validators";
+import { useProducts } from "../../../hooks/useProducts";
+import {
+  isValidDiscountRate,
+  isValidDiscountQuantity,
+} from "../../../utils/validators";
 
 interface AdminProductDiscount {
   index: number;
   discount: { quantity: number; rate: number };
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Discount[];
-    isRecommended: boolean;
-  };
-  setProductForm: (product: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Discount[];
-    isRecommended: boolean;
-  }) => void;
 }
 
 export const AdminProductDiscount = ({
   index,
   discount,
-  productForm,
-  setProductForm,
 }: AdminProductDiscount) => {
+  const { productForm, setProductForm } = useProducts();
+
   const handleChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10) || 0;
     if (isValidDiscountQuantity(value)) {

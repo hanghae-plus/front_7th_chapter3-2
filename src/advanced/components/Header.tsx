@@ -1,24 +1,14 @@
-import { CartItem } from "../../types";
+import { useAtoms } from "../hooks/useAtoms";
+import { useCart } from "../hooks/useCart";
 import { getTotalItemCount } from "../models/cart";
 import { IconCartButton } from "./common/icons/IconCartButton";
 import { Button } from "./common/ui/Button";
 import { InputField } from "./common/ui/InputField";
 
-interface HeaderProps {
-  isAdmin: boolean;
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
-  cart: CartItem[];
-}
+export const Header = () => {
+  const { isAdmin, setIsAdmin, searchTerm, setSearchTerm } = useAtoms();
+  const { cart } = useCart();
 
-export const Header = ({
-  isAdmin,
-  searchTerm,
-  setSearchTerm,
-  setIsAdmin,
-  cart,
-}: HeaderProps) => {
   const totalItemCount = getTotalItemCount(cart);
 
   return (

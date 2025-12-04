@@ -1,41 +1,17 @@
-import { Coupon } from "../../../../types";
 import { IconAdd } from "../../../components/common/icons/IconAdd";
 import { CouponItem } from "../../../components/entity";
 import { Button } from "../../../components/common/ui/Button";
+import { useCoupons } from "../../../hooks/useCoupons";
+import { useAtoms } from "../../../hooks/useAtoms";
 
-interface AdminCouponListProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  showCouponForm: boolean;
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-  setShowCouponForm: (show: boolean) => void;
-}
+export const AdminCouponList = () => {
+  const { coupons } = useCoupons();
+  const { showCouponForm, setShowCouponForm } = useAtoms();
 
-export const AdminCouponList = ({
-  coupons,
-  selectedCoupon,
-  showCouponForm,
-  setCoupons,
-  setSelectedCoupon,
-  handleNotificationAdd,
-  setShowCouponForm,
-}: AdminCouponListProps) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {coupons.map((coupon) => (
-        <CouponItem
-          key={coupon.code}
-          coupon={coupon}
-          setCoupons={setCoupons}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-          handleNotificationAdd={handleNotificationAdd}
-        />
+        <CouponItem key={coupon.code} coupon={coupon} />
       ))}
 
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">

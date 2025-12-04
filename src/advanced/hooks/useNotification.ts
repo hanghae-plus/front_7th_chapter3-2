@@ -1,8 +1,11 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Notification } from "../../types";
+import { atom, useAtom } from "jotai";
+
+const atomNotifications = atom<Notification[]>([]);
 
 export const useNotification = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useAtom(atomNotifications);
   const timeoutRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
   const addNotification = useCallback(

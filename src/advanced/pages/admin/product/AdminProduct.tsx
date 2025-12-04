@@ -1,39 +1,17 @@
-import { useState } from "react";
 import { AdminProductForm } from "./AdminProductForm";
 import { AdminProductTable } from "./AdminProductTable";
-import { CartItem, ProductWithUI } from "../../../../types";
 import { Button } from "../../../components/common/ui/Button";
+import { useProducts } from "../../../hooks/useProducts";
+import { useAtoms } from "../../../hooks/useAtoms";
 
-interface AdminProductsProps {
-  cart: CartItem[];
-  products: ProductWithUI[];
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
-
-export const AdminProducts = ({
-  cart,
-  products,
-  setProducts,
-  handleNotificationAdd,
-}: AdminProductsProps) => {
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-    isRecommended: false,
-  });
+export const AdminProducts = () => {
+  const { products, setProductForm, setEditingProduct } = useProducts();
+  const { showProductForm, setShowProductForm } = useAtoms();
 
   const handleAddProduct = () => {
     setEditingProduct("new");
     setProductForm({
+      id: "new",
       name: "",
       price: 0,
       stock: 0,
@@ -53,28 +31,8 @@ export const AdminProducts = ({
         </div>
       </div>
 
-      {products.length > 0 && (
-        <AdminProductTable
-          cart={cart}
-          products={products}
-          setProducts={setProducts}
-          setProductForm={setProductForm}
-          setEditingProduct={setEditingProduct}
-          setShowProductForm={setShowProductForm}
-          handleNotificationAdd={handleNotificationAdd}
-        />
-      )}
-      {showProductForm && (
-        <AdminProductForm
-          editingProduct={editingProduct}
-          productForm={productForm}
-          setProducts={setProducts}
-          setEditingProduct={setEditingProduct}
-          handleNotificationAdd={handleNotificationAdd}
-          setProductForm={setProductForm}
-          setShowProductForm={setShowProductForm}
-        />
-      )}
+      {products.length > 0 && <AdminProductTable />}
+      {showProductForm && <AdminProductForm />}
     </section>
   );
 };

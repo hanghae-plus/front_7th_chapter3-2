@@ -1,39 +1,29 @@
-import { CartItem, Coupon } from "../../../../types";
+import { Coupon } from "../../../../types";
 import { Button } from "../../../components/common/ui/Button";
 import {
   validateCoupon,
   calculateTotalBeforeCoupon,
 } from "../../../models/coupon";
+import { useCart } from "../../../hooks/useCart";
+import { useCoupons } from "../../../hooks/useCoupons";
+import { useNotification } from "../../../hooks/useNotification";
 
-interface ShoppingCouponSelectProps {
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
+export const ShoppingCouponSelect = () => {
+  const { cart } = useCart();
+  const { coupons, selectedCoupon, setSelectedCoupon } = useCoupons();
+  const { addNotification } = useNotification();
 
-export const ShoppingCouponSelect = ({
-  cart,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  handleNotificationAdd,
-}: ShoppingCouponSelectProps) => {
   const applyCoupon = (coupon: Coupon) => {
     const currentTotal = calculateTotalBeforeCoupon(cart);
     const validation = validateCoupon(coupon, currentTotal);
 
     if (!validation.isValid) {
-      handleNotificationAdd(validation.errorMessage || "", "error");
+      addNotification(validation.errorMessage || "", "error");
       return;
     }
 
     setSelectedCoupon(coupon);
-    handleNotificationAdd("쿠폰이 적용되었습니다.", "success");
+    addNotification("쿠폰이 적용되었습니다.", "success");
   };
 
   return (

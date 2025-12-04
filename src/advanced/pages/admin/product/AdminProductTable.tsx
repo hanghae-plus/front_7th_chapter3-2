@@ -1,39 +1,22 @@
-import { CartItem, Discount, ProductWithUI } from "../../../../types";
+import { ProductWithUI } from "../../../../types";
 import { Button } from "../../../components/common/ui/Button";
+import { useAtoms } from "../../../hooks/useAtoms";
+import { useNotification } from "../../../hooks/useNotification";
+import { useProducts } from "../../../hooks/useProducts";
+import { useCart } from "../../../hooks/useCart";
 import { formatPriceText } from "../../../utils/formatters";
 
-interface AdminProductTableProps {
-  cart: CartItem[];
-  products: ProductWithUI[];
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
-  setEditingProduct: (productId: string) => void;
-  setProductForm: (product: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Discount[];
-    isRecommended: boolean;
-  }) => void;
-  setShowProductForm: (show: boolean) => void;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
+export const AdminProductTable = () => {
+  const { products, setProducts, setEditingProduct, setProductForm } =
+    useProducts();
+  const { addNotification } = useNotification();
+  const { setShowProductForm } = useAtoms();
+  const { cart } = useCart();
 
-export const AdminProductTable = ({
-  cart,
-  products,
-  setProducts,
-  setEditingProduct,
-  setProductForm,
-  setShowProductForm,
-  handleNotificationAdd,
-}: AdminProductTableProps) => {
   const handleEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
     setProductForm({
+      id: product.id,
       name: product.name,
       price: product.price,
       stock: product.stock,
@@ -47,7 +30,7 @@ export const AdminProductTable = ({
   const handleDeleteProduct = (product: ProductWithUI) => {
     setProducts((prev) => prev.filter((p) => p.id !== product.id));
 
-    handleNotificationAdd("상품이 삭제되었습니다.", "success");
+    addNotification("상품이 삭제되었습니다.", "success");
   };
 
   return (
