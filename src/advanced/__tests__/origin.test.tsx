@@ -2,14 +2,23 @@
 import { render, screen, fireEvent, within, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import App from "../App";
+import { CartProvider } from "../contexts/CartContext";
 import { NotificationProvider } from "../contexts/NotificationContext";
+import { CouponProvider } from "../contexts/CouponContext";
+import { ProductProvider } from "../contexts/ProductContext";
 import "../../setupTests";
 
 // 테스트용 렌더링 헬퍼 함수
 const renderApp = () => {
   return render(
     <NotificationProvider>
-      <App />
+      <CouponProvider>
+        <CartProvider>
+          <ProductProvider>
+            <App />
+          </ProductProvider>
+        </CartProvider>
+      </CouponProvider>
     </NotificationProvider>
   );
 };

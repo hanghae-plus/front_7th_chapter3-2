@@ -1,23 +1,22 @@
 import { useState, useEffect } from "react";
-import { initialCoupons, initialProducts } from "./constants";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
-import { useCoupons } from "./hooks/useCoupons";
 import { Notification } from "./components/Notification";
-import { useProducts } from "./hooks/useProducts";
-import { useCart } from "./hooks/useCart";
 import { CartIcon } from "./components/icons";
 import SearchBar from "./components/SearchBar";
 import { useNotificationContext } from "./contexts/NotificationContext";
+import { useCartContext } from "./contexts/CartContext";
+import { useCouponContext } from "./contexts/CouponContext";
+import { useProductContext } from "./contexts/ProductContext";
 
 const App = () => {
-  const { products, ...productActions } = useProducts(initialProducts);
-  const { cart, ...cartActions } = useCart((type, message) => addNotification(message, type));
-  const { coupons, addCoupon, removeCoupon } = useCoupons(initialCoupons);
+  const { products } = useProductContext();
+  const { coupons } = useCouponContext();
   const [totalItemCount, setTotalItemCount] = useState(0);
+  const { cart } = useCartContext();
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const { notifications, addNotification } = useNotificationContext();
+  const { notifications } = useNotificationContext();
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -76,21 +75,9 @@ const App = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
-          <AdminPage
-            products={products}
-            productActions={productActions}
-            coupons={coupons}
-            addCoupon={addCoupon}
-            deleteCoupon={removeCoupon}
-          />
+          <AdminPage products={products} coupons={coupons} />
         ) : (
-          <CartPage
-            products={products}
-            coupons={coupons}
-            debouncedSearchTerm={searchTerm}
-            cart={cart}
-            cartActions={cartActions}
-          />
+          <CartPage products={products} coupons={coupons} debouncedSearchTerm={searchTerm} cart={cart} />
         )}
       </main>
     </div>

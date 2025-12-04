@@ -5,23 +5,32 @@ import { CartItem } from "../models/cart";
 import { formatMaxPercentage, formatPercentage, formatPriceSymbol } from "../utils/formatters";
 import { BagIcon, ImageIcon, TimesIcon } from "../components/icons";
 import * as cartModel from "../models/cart";
-import { useCart } from "../hooks/useCart";
 import { useNotificationContext } from "../contexts/NotificationContext";
+import { useCartContext } from "../contexts/CartContext";
 
 type Props = {
   products: ProductWithUI[];
   coupons: Coupon[];
   debouncedSearchTerm: string;
   cart: CartItem[];
-  cartActions: Omit<ReturnType<typeof useCart>, "cart">;
 };
 
-export const CartPage = ({ products, coupons, debouncedSearchTerm, cart, cartActions }: Props) => {
+export const CartPage = ({ products, coupons, debouncedSearchTerm, cart }: Props) => {
+  const {
+    getRemainingStock,
+    clearCart,
+    calculateCartTotal,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    selectedCoupon,
+    applyCoupon,
+  } = useCartContext();
   const { addNotification } = useNotificationContext();
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
-      if (product && cartActions.getRemainingStock(product) <= 0) {
+      if (product && getRemainingStock(product) <= 0) {
         return "SOLD OUT";
       }
     }
@@ -32,10 +41,10 @@ export const CartPage = ({ products, coupons, debouncedSearchTerm, cart, cartAct
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
-    cartActions.clearCart();
+    clearCart();
   }, [addNotification]);
 
-  const totals = cartActions.calculateCartTotal();
+  const totals = calculateCartTotal();
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -61,7 +70,7 @@ export const CartPage = ({ products, coupons, debouncedSearchTerm, cart, cartAct
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => {
-                const remainingStock = cartActions.getRemainingStock(product);
+                const remainingStock = getRemainingStock(product);
 
                 return (
                   <div
@@ -112,7 +121,7 @@ export const CartPage = ({ products, coupons, debouncedSearchTerm, cart, cartAct
 
                       {/* 장바구니 버튼 */}
                       <button
-                        onClick={() => cartActions.addToCart(product)}
+                        onClick={() => addToCart(product)}
                         disabled={remainingStock <= 0}
                         className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
                           remainingStock <= 0
@@ -157,7 +166,7 @@ export const CartPage = ({ products, coupons, debouncedSearchTerm, cart, cartAct
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="text-sm font-medium text-gray-900 flex-1">{item.product.name}</h4>
                         <button
-                          onClick={() => cartActions.removeFromCart(item.product.id)}
+                          onClick={() => removeFromCart(item.product.id)}
                           className="text-gray-400 hover:text-red-500 ml-2"
                         >
                           <TimesIcon size={4} />
@@ -166,14 +175,14 @@ export const CartPage = ({ products, coupons, debouncedSearchTerm, cart, cartAct
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <button
-                            onClick={() => cartActions.updateQuantity(item.product, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.product, item.quantity - 1)}
                             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             <span className="text-xs">−</span>
                           </button>
                           <span className="mx-3 text-sm font-medium w-8 text-center">{item.quantity}</span>
                           <button
-                            onClick={() => cartActions.updateQuantity(item.product, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.product, item.quantity + 1)}
                             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             <span className="text-xs">+</span>
@@ -205,10 +214,10 @@ export const CartPage = ({ products, coupons, debouncedSearchTerm, cart, cartAct
                 {coupons.length > 0 && (
                   <select
                     className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                    value={cartActions.selectedCoupon?.code || ""}
+                    value={selectedCoupon?.code || ""}
                     onChange={(e) => {
                       const coupon = coupons.find((c) => c.code === e.target.value);
-                      if (coupon) cartActions.applyCoupon(coupon);
+                      if (coupon) applyCoupon(coupon);
                     }}
                   >
                     <option value="">쿠폰 선택</option>

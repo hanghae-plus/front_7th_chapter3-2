@@ -5,7 +5,7 @@ import { Product, ProductWithUI } from "../models/product";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import * as cartModel from "../models/cart";
 
-export function useCart(callback?: (type: "error" | "success" | "warning", message: string) => void) {
+export function useCart(callback?: (message: string, type: "error" | "success" | "warning") => void) {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
@@ -14,12 +14,12 @@ export function useCart(callback?: (type: "error" | "success" | "warning", messa
       const currentTotal = cartModel.calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        callback?.("error", "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.");
+        callback?.("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.", "error");
         return;
       }
 
       setSelectedCoupon(coupon);
-      callback?.("success", "쿠폰이 적용되었습니다.");
+      callback?.("쿠폰이 적용되었습니다.", "success");
     },
     [cartModel.calculateCartTotal]
   );
@@ -36,7 +36,7 @@ export function useCart(callback?: (type: "error" | "success" | "warning", messa
     (product: ProductWithUI) => {
       const remainingStock = cartModel.getRemainingStock(product, cart);
       if (remainingStock <= 0) {
-        callback?.("error", "재고가 부족합니다!");
+        callback?.("재고가 부족합니다!", "error");
         return;
       }
 
@@ -47,7 +47,7 @@ export function useCart(callback?: (type: "error" | "success" | "warning", messa
           const newQuantity = existingItem.quantity + 1;
 
           if (newQuantity > product.stock) {
-            callback?.("error", `재고는 ${product.stock}개까지만 있습니다.`);
+            callback?.(`재고는 ${product.stock}개까지만 있습니다.`, "error");
             return prevCart;
           }
 
@@ -57,7 +57,7 @@ export function useCart(callback?: (type: "error" | "success" | "warning", messa
         return cartModel.addItemToCart(prevCart, product);
       });
 
-      callback?.("success", "장바구니에 담았습니다");
+      callback?.("장바구니에 담았습니다", "success");
     },
     [cart, cartModel.getRemainingStock]
   );
@@ -75,7 +75,7 @@ export function useCart(callback?: (type: "error" | "success" | "warning", messa
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        callback?.("error", `재고는 ${maxStock}개까지만 있습니다.`);
+        callback?.(`재고는 ${maxStock}개까지만 있습니다.`, "error");
         return;
       }
 

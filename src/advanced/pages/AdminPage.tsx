@@ -7,19 +7,19 @@ import { isValidCouponCode } from "../utils/validators";
 import { PlusIcon, TrashIcon } from "../components/icons";
 import ProductForm, { ProductFormData } from "../components/ProductForm";
 import CouponForm from "../components/CouponForm";
-import { useProducts } from "../hooks/useProducts";
 import { useNotificationContext } from "../contexts/NotificationContext";
+import { useCouponContext } from "../contexts/CouponContext";
+import { useProductContext } from "../contexts/ProductContext";
 
 type Props = {
   products: ProductWithUI[];
-  productActions: Omit<ReturnType<typeof useProducts>, "products">;
   coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => void;
-  deleteCoupon: (couponId: string) => void;
 };
 
-export const AdminPage = ({ products, productActions, coupons, addCoupon, deleteCoupon }: Props) => {
+export const AdminPage = ({ products, coupons }: Props) => {
   const { cart } = useCart();
+  const { products: _, ...productActions } = useProductContext();
+  const { addCoupon, removeCoupon: deleteCoupon } = useCouponContext();
   const { addNotification } = useNotificationContext();
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [showCouponForm, setShowCouponForm] = useState(false);
