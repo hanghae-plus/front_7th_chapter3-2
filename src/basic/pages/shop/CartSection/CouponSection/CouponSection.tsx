@@ -2,6 +2,7 @@ import { Coupon } from "../../../../../types";
 import { CartService } from "../../../../domains/cart/hooks/useCart";
 import { CouponsService } from "../../../../domains/coupon/hooks/useCoupon";
 import { addNotification } from "../../../../domains/notifications/utils/addNotification";
+import { formatKRW } from "../../../../shared/utils/formatKRW";
 
 type CouponSectionProps = {
   cart: CartService;
@@ -58,7 +59,7 @@ export function CouponSection({
             <option key={coupon.code} value={coupon.code}>
               {coupon.name} (
               {coupon.discountType === "amount"
-                ? `${coupon.discountValue.toLocaleString()}원`
+                ? formatKRW(coupon.discountValue)
                 : `${coupon.discountValue}%`}
               )
             </option>
