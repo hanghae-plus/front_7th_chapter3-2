@@ -31,6 +31,7 @@ import {
   getRemainingStock,
   removeItemFromCart,
 } from "../models/cart";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export function useCart({
   products,
@@ -40,17 +41,7 @@ export function useCart({
   onMessage: (message: string, type?: "error" | "success" | "warning") => void;
 }) {
   // TODO: 구현
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const addToCart = useCallback(

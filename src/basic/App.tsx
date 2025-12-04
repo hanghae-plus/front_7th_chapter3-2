@@ -60,22 +60,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products.value));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons.value));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.value.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart.value));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
-
-  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
     }, 500);
@@ -369,12 +353,12 @@ const App = () => {
                           쿠폰 등록
                         </button>
                       </div>
-                      {coupons.length > 0 && (
+                      {coupons.value.length > 0 && (
                         <select
                           className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                           value={cart.selectedCoupon?.code || ""}
                           onChange={(e) => {
-                            const coupon = coupons.find(
+                            const coupon = coupons.value.find(
                               (c) => c.code === e.target.value
                             );
                             if (coupon) cart.apply(coupon);
@@ -382,7 +366,7 @@ const App = () => {
                           }}
                         >
                           <option value="">쿠폰 선택</option>
-                          {coupons.map((coupon) => (
+                          {coupons.value.map((coupon) => (
                             <option key={coupon.code} value={coupon.code}>
                               {coupon.name} (
                               {coupon.discountType === "amount"

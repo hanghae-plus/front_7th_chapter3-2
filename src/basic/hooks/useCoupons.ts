@@ -8,9 +8,10 @@
 // - addCoupon: 새 쿠폰 추가
 // - removeCoupon: 쿠폰 삭제
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Coupon } from "../../types";
 import { initialCoupons } from "../constant";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export function useCoupons({
   onMessage,
@@ -19,17 +20,10 @@ export function useCoupons({
   onMessage: (message: string, type: "error" | "success" | "warning") => void;
   onDeleteSelectedCoupon: (code: string) => void;
 }) {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
