@@ -1,15 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
-import { ProductProvider } from './entities/product';
-import { CouponProvider } from './entities/coupon';
+import { AppProvider } from './providers/AppProvider.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ProductProvider>
-      <CouponProvider>
-        <App />
-      </CouponProvider>
-    </ProductProvider>
+    <AppProvider>
+      <App />
+    </AppProvider>
   </React.StrictMode>
 );
