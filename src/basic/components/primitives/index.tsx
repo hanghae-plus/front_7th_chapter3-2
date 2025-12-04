@@ -9,3 +9,4 @@ export { Section } from './Section';
 export { Header } from './Header';
 export { Logo, SearchBar, CartBadge, ToggleButton } from './Navigation';
 export { Toast } from './Toast';
+export { Tabs } from './Tabs';
