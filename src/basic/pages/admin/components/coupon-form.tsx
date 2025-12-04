@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, useCallback } from 'react';
+import { ChangeEvent, FocusEvent, useCallback, useMemo } from 'react';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import Label from '../../../components/label';
@@ -26,6 +26,11 @@ const CouponForm = ({ addCoupon, close, addNotification }: CouponFormProps) => {
   );
 
   const { form, setForm, handleSubmit } = useForm({ initialForm, onSubmit });
+
+  const discountTypeOptions = useMemo(
+    () => Object.values(DISCOUNT_TYPES).map(type => ({ label: DISCOUNT_TYPE_LABELS[type], value: type })),
+    []
+  );
 
   const handleChange = {
     name: (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, name: e.target.value }),
@@ -68,12 +73,7 @@ const CouponForm = ({ addCoupon, close, addNotification }: CouponFormProps) => {
           </div>
           <div>
             <Label>할인 타입</Label>
-            <Select
-              variant='shadow'
-              value={form.discountType}
-              onChange={handleChange.discountType}
-              options={Object.values(DISCOUNT_TYPES).map(type => ({ label: DISCOUNT_TYPE_LABELS[type], value: type }))}
-            />
+            <Select variant='shadow' value={form.discountType} onChange={handleChange.discountType} options={discountTypeOptions} />
           </div>
           <div>
             <Label>{DISCOUNT_TYPE_LABELS[form.discountType]}</Label>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Button from './components/button';
 import Header from './components/header';
 import { CartIcon } from './components/icons';
@@ -30,58 +30,85 @@ const App = () => {
   const handleSwitchToStore = useCallback(() => switchPage(store), [switchPage]);
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value), []);
 
-  const nav = {
-    [store]: (
-      <>
-        <Button size='xs' variant='text' onClick={handleSwitchToAdmin}>
-          관리자 페이지로
+  const nav = useMemo(
+    () => ({
+      [store]: (
+        <>
+          <Button size='xs' variant='text' onClick={handleSwitchToAdmin}>
+            관리자 페이지로
+          </Button>
+          <div className='relative'>
+            <CartIcon className='text-gray-700' />
+            {totalItemCount > 0 && (
+              <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+                {totalItemCount}
+              </span>
+            )}
+          </div>
+        </>
+      ),
+      [admin]: (
+        <Button size='xs' variant='dark' onClick={handleSwitchToStore}>
+          쇼핑몰로 돌아가기
         </Button>
-        <div className='relative'>
-          <CartIcon className='text-gray-700' />
-          {totalItemCount > 0 && (
-            <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
-              {totalItemCount}
-            </span>
-          )}
-        </div>
-      </>
-    ),
-    [admin]: (
-      <Button size='xs' variant='dark' onClick={handleSwitchToStore}>
-        쇼핑몰로 돌아가기
-      </Button>
-    )
-  };
-  const page = {
-    [store]: (
-      <StorePage
-        products={products}
-        debouncedSearchTerm={debouncedSearchTerm}
-        cart={cart}
-        totalItemCount={totalItemCount}
-        addToCart={addToCart}
-        removeFromCart={removeFromCart}
-        updateQuantity={updateQuantity}
-        clearCart={clearCart}
-        coupons={coupons}
-        selectedCoupon={selectedCoupon}
-        setSelectedCoupon={setSelectedCoupon}
-        addNotification={addNotification}
-      />
-    ),
-    [admin]: (
-      <AdminPage
-        products={products}
-        coupons={coupons}
-        addNotification={addNotification}
-        addProduct={addProduct}
-        updateProduct={updateProduct}
-        deleteProduct={deleteProduct}
-        addCoupon={addCoupon}
-        deleteCoupon={deleteCoupon}
-      />
-    )
-  };
+      )
+    }),
+    [store, admin, handleSwitchToAdmin, handleSwitchToStore, totalItemCount]
+  );
+
+  const page = useMemo(
+    () => ({
+      [store]: (
+        <StorePage
+          products={products}
+          debouncedSearchTerm={debouncedSearchTerm}
+          cart={cart}
+          totalItemCount={totalItemCount}
+          addToCart={addToCart}
+          removeFromCart={removeFromCart}
+          updateQuantity={updateQuantity}
+          clearCart={clearCart}
+          coupons={coupons}
+          selectedCoupon={selectedCoupon}
+          setSelectedCoupon={setSelectedCoupon}
+          addNotification={addNotification}
+        />
+      ),
+      [admin]: (
+        <AdminPage
+          products={products}
+          coupons={coupons}
+          addNotification={addNotification}
+          addProduct={addProduct}
+          updateProduct={updateProduct}
+          deleteProduct={deleteProduct}
+          addCoupon={addCoupon}
+          deleteCoupon={deleteCoupon}
+        />
+      )
+    }),
+    [
+      store,
+      admin,
+      products,
+      debouncedSearchTerm,
+      cart,
+      totalItemCount,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      coupons,
+      selectedCoupon,
+      setSelectedCoupon,
+      addNotification,
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      addCoupon,
+      deleteCoupon
+    ]
+  );
 
   return (
     <div className='min-h-screen bg-gray-50'>
