@@ -1,8 +1,8 @@
 import React from 'react';
-import { ProductCard } from './ui/ProductCard';
-import { ProductWithUI } from '../hooks/useProducts';
-import { CartItem } from '../../types';
-import { getRemainingStock } from '../models/cart';
+import { ProductCard } from './ProductCard';
+import { ProductWithUI } from '../../hooks/useProducts';
+import { CartItem } from '../../../types';
+import { getRemainingStock } from '../../models/cart';
 
 interface ProductListProps {
   products: ProductWithUI[];

@@ -1,9 +1,11 @@
 import React from 'react';
-import { AdminProductTable } from '../components/AdminProductTable';
-import { ProductFormModal } from '../components/admin/ProductFormModal';
-import { CouponManagement } from '../components/admin/CouponManagement';
 import { ProductWithUI } from '../hooks/useProducts';
 import { Coupon } from '../../types';
+import {
+  CouponManagement,
+  ProductFormModal,
+  ProductTable,
+} from '../components/admin';
 
 interface AdminPageProps {
   products: ProductWithUI[];
@@ -102,7 +104,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
       {activeTab === 'products' ? (
         <>
-          <AdminProductTable
+          <ProductTable
             products={products}
             formatPrice={formatPrice}
             onEditProduct={onEditProduct}

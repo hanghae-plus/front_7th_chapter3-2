@@ -1,11 +1,13 @@
 import React from 'react';
-import { ProductList } from '../components/ProductList';
-import { CartItemComponent } from '../components/ui/CartItemComponent';
-import { CouponSelector } from '../components/ui/CouponSelector';
-import { OrderSummary } from '../components/ui/OrderSummary';
 import { ProductWithUI } from '../hooks/useProducts';
 import { CartItem, Coupon } from '../../types';
 import { calculateItemTotal } from '../models/cart';
+import {
+  CartItemContainer,
+  CouponSelector,
+  ProductList,
+  OrderSummary,
+} from '../components/shoppingMall';
 
 interface ShoppingMallPageProps {
   products: ProductWithUI[];
@@ -95,7 +97,7 @@ export const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({
                   const originalPrice = item.product.price * item.quantity;
 
                   return (
-                    <CartItemComponent
+                    <CartItemContainer
                       key={item.product.id}
                       item={item}
                       itemTotal={itemTotal}

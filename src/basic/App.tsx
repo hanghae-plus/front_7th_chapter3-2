@@ -7,7 +7,7 @@ import {
   CartBadge,
   ToggleButton,
 } from './components/primitives';
-import { NotificationContainer } from './components/ui/Notification';
+import { NotificationContainer } from './components/common/Notification';
 import { ShoppingMallPage } from './pages/ShoppingMallPage';
 import { AdminPage } from './pages/AdminPage';
 import { useProducts, ProductWithUI } from './hooks/useProducts';
