@@ -1,4 +1,4 @@
-import { CartItem, Product } from '../../types';
+import { CartItem, Product } from '../../../types';
 
 // ADD TO CART
 export const getAddToCart = (cart: CartItem[], product: Product) => {

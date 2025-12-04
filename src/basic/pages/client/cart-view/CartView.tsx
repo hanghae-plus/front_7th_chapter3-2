@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { CartItem, Coupon } from '../../../../types';
-import { calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart';
-import { ProductWithUI } from '../../../types';
-import { canApplyCoupon } from '../../../entities/coupon';
+import { calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart/utils';
+import { ProductWithUI } from '../../../entities/product/types';
+import { canApplyCoupon } from '../../../entities/coupon/utils';
 import PaymentInfoSection from './PaymentInfoSection';
 import CouponSection from './CouponSection';
 import CartSection from './CartSection';

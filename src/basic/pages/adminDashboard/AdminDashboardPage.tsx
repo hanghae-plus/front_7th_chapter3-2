@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { ProductWithUI } from '../../types';
+import { ProductWithUI } from '../../entities/product/types';
 import { Coupon } from '../../../types';
 import { formatPriceKRW } from '../../utils';
 

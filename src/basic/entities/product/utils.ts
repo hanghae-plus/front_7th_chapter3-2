@@ -1,5 +1,5 @@
-import { CartItem, Product } from '../../types';
-import { ProductWithUI } from '../types';
+import { CartItem, Product } from '../../../types';
+import { ProductWithUI } from './types';
 
 // GET REMAINING STOCK
 export const getRemainingStock = (product: Product, cartItems: CartItem[]): number => {

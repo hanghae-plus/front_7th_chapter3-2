@@ -1,4 +1,4 @@
-import { ProductWithUI } from '../../../types';
+import { ProductWithUI } from '../../../entities/product/types';
 import { formatPriceKRW } from '../../../utils';
 
 interface ProductCardProps {

@@ -1,7 +1,7 @@
-import { canAddToCart, getAddToCart } from '../../../entities/cart';
-import { filterProducts, getRemainingStock } from '../../../entities/product';
+import { canAddToCart, getAddToCart } from '../../../entities/cart/utils';
+import { filterProducts, getRemainingStock } from '../../../entities/product/utils';
 import { CartItem } from '../../../../types';
-import { ProductWithUI } from '../../../types';
+import { ProductWithUI } from '../../../entities/product/types';
 import ProductCard from './ProductCard';
 
 interface ProductSectionProps {
