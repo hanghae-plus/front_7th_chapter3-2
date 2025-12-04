@@ -9,16 +9,16 @@
  * - 타입별 메시지 (success, error, warning)
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { toastsAtom } from '../store/atoms';
+import type { Toast } from '../store/atoms';
 
-export interface Toast {
-  id: string;
-  message: string;
-  type: 'success' | 'error' | 'warning';
-}
+export type { Toast };
 
 export const useToast = () => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const toasts = useAtomValue(toastsAtom);
+  const setToasts = useSetAtom(toastsAtom);
 
   const addToast = useCallback((
     message: string, 

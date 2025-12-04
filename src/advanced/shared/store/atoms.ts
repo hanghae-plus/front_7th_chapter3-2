@@ -46,3 +46,9 @@ export const cartAtom = atomWithStorage<CartItem[]>('cart', []);
  * - 현재 선택된 쿠폰
  */
 export const selectedCouponAtom = atom<Coupon | null>(null);
+
+/**
+ * UI State Atoms
+ */
+export const isAdminAtom = atom<boolean>(false);
+export const searchTermAtom = atom<string>('');

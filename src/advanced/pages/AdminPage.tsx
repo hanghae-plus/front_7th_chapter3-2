@@ -12,7 +12,11 @@
  */
 
 import { useState } from 'react';
-import { Product, Coupon } from '../../types';
+import { Product } from '../../types';
+import { useProduct } from '../hooks/useProduct';
+import { useCoupon } from '../hooks/useCoupon';
+import { usePriceFormatter } from '../shared/hooks/usePriceFormatter';
+import { useToast } from '../shared/hooks/useToast';
 import {
   validatePrice,
   validateStock,
@@ -29,29 +33,7 @@ export interface ProductWithUI extends Product {
   isRecommended?: boolean;
 }
 
-interface AdminPageProps {
-  products: ProductWithUI[];
-  coupons: Coupon[];
-  onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;
-  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  onDeleteProduct: (productId: string) => void;
-  onAddCoupon: (coupon: Coupon) => void;
-  onDeleteCoupon: (couponCode: string) => void;
-  formatPrice: (price: number, productId?: string) => string;
-  onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
-}
-
-const AdminPage = ({
-  products,
-  coupons,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
-  onAddCoupon,
-  onDeleteCoupon,
-  formatPrice,
-  onNotify,
-}: AdminPageProps) => {
+const AdminPage = () => {
   // 탭 상태
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   
@@ -75,13 +57,18 @@ const AdminPage = ({
     discountValue: 0,
   });
 
+  const { products, addProduct, updateProduct, deleteProduct } = useProduct();
+  const { coupons, addCoupon, deleteCoupon } = useCoupon();
+  const formatPrice = usePriceFormatter();
+  const { addToast } = useToast();
+
   // 상품 폼 제출
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
-      onUpdateProduct(editingProduct, productForm);
+      updateProduct(editingProduct, productForm);
     } else {
-      onAddProduct(productForm);
+      addProduct(productForm);
     }
     setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
     setEditingProduct(null);
@@ -91,7 +78,7 @@ const AdminPage = ({
   // 쿠폰 폼 제출
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddCoupon(couponForm);
+    addCoupon(couponForm);
     setCouponForm({ name: '', code: '', discountType: 'amount', discountValue: 0 });
     setShowCouponForm(false);
   };
@@ -196,7 +183,7 @@ const AdminPage = ({
                         수정
                       </button>
                       <button
-                        onClick={() => onDeleteProduct(product.id)}
+                        onClick={() => deleteProduct(product.id)}
                         className="text-red-600 hover:text-red-900"
                       >
                         삭제
@@ -249,7 +236,7 @@ const AdminPage = ({
                         const price = parseNumberInput(e.target.value, 0);
                         const validation = validatePrice(price);
                         if (!validation.isValid) {
-                          onNotify(validation.errorMessage!, 'error');
+                          addToast(validation.errorMessage!, 'error');
                           setProductForm({ ...productForm, price: 0 });
                         }
                       }}
@@ -273,7 +260,7 @@ const AdminPage = ({
                         const stock = parseNumberInput(e.target.value, 0);
                         const validation = validateStock(stock);
                         if (!validation.isValid) {
-                          onNotify(validation.errorMessage!, 'error');
+                          addToast(validation.errorMessage!, 'error');
                           setProductForm({ ...productForm, stock: 0 });
                         }
                       }}
@@ -391,7 +378,7 @@ const AdminPage = ({
                       </div>
                     </div>
                     <button
-                      onClick={() => onDeleteCoupon(coupon.code)}
+                      onClick={() => deleteCoupon(coupon.code)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <TrashIcon />
@@ -471,13 +458,13 @@ const AdminPage = ({
                           if (couponForm.discountType === 'percentage') {
                             const validation = validateDiscountRate(value);
                             if (!validation.isValid) {
-                              onNotify(validation.errorMessage!, 'error');
+                              addToast(validation.errorMessage!, 'error');
                               setCouponForm({ ...couponForm, discountValue: 0 });
                             }
                           } else {
                             const validation = validateDiscountAmount(value);
                             if (!validation.isValid) {
-                              onNotify(validation.errorMessage!, 'error');
+                              addToast(validation.errorMessage!, 'error');
                               setCouponForm({ ...couponForm, discountValue: 0 });
                             }
                           }

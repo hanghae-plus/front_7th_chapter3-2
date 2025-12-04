@@ -1,16 +1,22 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
+import { Provider, createStore, useAtomValue } from 'jotai';
 import Header from './widgets/Header/Header';
 import AdminPage, { ProductWithUI } from './pages/AdminPage';
 import CartPage from './pages/CartPage';
 import { Coupon } from './entities/coupon/model';
-import { filterProducts } from './entities/product/utils';
-import { formatPrice as formatPriceUtil } from './shared/utils/format';
-import { useDebounce } from './shared/hooks/useDebounce';
 import { useToast } from './shared/hooks/useToast';
-import { useCart } from './hooks/useCart';
-import { useProduct } from './hooks/useProduct';
-import { useCoupon } from './hooks/useCoupon';
 import { ToastContainer } from './shared/ui/Toast/ToastContainer';
+import type { CartItem } from './entities/cart/model';
+import {
+  cartAtom,
+  couponsAtom,
+  isAdminAtom,
+  productsAtom,
+  searchTermAtom,
+  selectedCouponAtom,
+  toastsAtom
+} from './shared/store/atoms';
+import type { Toast } from './shared/store/atoms';
 
 // 초기 데이터
 const initialProducts: ProductWithUI[] = [
@@ -30,9 +36,7 @@ const initialProducts: ProductWithUI[] = [
     name: '상품2',
     price: 20000,
     stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.15 }
-    ],
+    discounts: [{ quantity: 10, rate: 0.15 }],
     description: '다양한 기능을 갖춘 실용적인 상품입니다.',
     isRecommended: true
   },
@@ -64,99 +68,79 @@ const initialCoupons: Coupon[] = [
   }
 ];
 
-const App = () => {
-  // UI 상태
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+const STORAGE_KEYS = {
+  products: 'products',
+  coupons: 'coupons',
+  cart: 'cart'
+} as const;
 
-  // Toast Hook
-  const { toasts, addToast, removeToast } = useToast();
+const loadPersistedOrDefault = <T,>(key: string, fallback: T): T => {
+  if (typeof window === 'undefined') {
+    return fallback;
+  }
 
-  // Product Hook
-  const productHook = useProduct({
-    initialProducts,
-    onNotify: addToast
-  });
+  try {
+    const rawValue = window.localStorage.getItem(key);
+    if (!rawValue) {
+      return fallback;
+    }
 
-  // Coupon Hook
-  const couponHook = useCoupon({
-    initialCoupons,
-    onNotify: addToast
-  });
+    return JSON.parse(rawValue) as T;
+  } catch (error) {
+    console.warn(`[storage] Failed to parse key "${key}"`, error);
+    return fallback;
+  }
+};
 
-  // Cart Hook
-  const cartHook = useCart({
-    products: productHook.products,
-    onNotify: addToast
-  });
-
-  // 검색된 상품 필터링
-  const filteredProducts = useMemo(() => 
-    filterProducts(productHook.products, debouncedSearchTerm),
-    [productHook.products, debouncedSearchTerm]
-  );
-
-  // 가격 포맷팅 (관리자 모드에 따라)
-  const formatPrice = (price: number, productId?: string): string => {
-    return formatPriceUtil(
-      price,
-      isAdmin,
-      productId ? productHook.products.find(p => p.id === productId) : undefined,
-      cartHook.cart
-    );
-  };
-
-  // calculateCartTotal 함수 (CartPage props 호환)
-  const calculateCartTotal = () => cartHook.totals;
+const AppContent = () => {
+  const isAdmin = useAtomValue(isAdminAtom);
+  const { toasts, removeToast } = useToast();
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ToastContainer
-        toasts={toasts}
-        onClose={removeToast}
-      />
-      <Header
-        cart={cartHook.cart}
-        isAdmin={isAdmin}
-        onAdminToggle={() => setIsAdmin(prev => !prev)}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-      />
+      <ToastContainer toasts={toasts} onClose={removeToast} />
+      <Header />
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? (
-          <AdminPage
-            products={productHook.products}
-            coupons={couponHook.coupons}
-            onAddProduct={productHook.addProduct}
-            onUpdateProduct={productHook.updateProduct}
-            onDeleteProduct={productHook.deleteProduct}
-            onAddCoupon={couponHook.addCoupon}
-            onDeleteCoupon={couponHook.deleteCoupon}
-            formatPrice={formatPrice}
-            onNotify={addToast}
-          />
-        ) : (
-          <CartPage
-            products={filteredProducts}
-            cart={cartHook.cart}
-            coupons={couponHook.coupons}
-            selectedCoupon={cartHook.selectedCoupon}
-            searchTerm={debouncedSearchTerm}
-            onAddToCart={cartHook.addToCart}
-            onRemoveFromCart={cartHook.removeFromCart}
-            onUpdateQuantity={cartHook.updateQuantity}
-            onApplyCoupon={cartHook.applyCoupon}
-            onRemoveCoupon={cartHook.removeCoupon}
-            onCompleteOrder={cartHook.completeOrder}
-            formatPrice={formatPrice}
-            getRemainingStock={cartHook.getRemainingStock}
-            calculateItemTotal={cartHook.calculateItemTotal}
-            calculateCartTotal={calculateCartTotal}
-          />
-        )}
+        {isAdmin ? <AdminPage /> : <CartPage />}
       </main>
     </div>
+  );
+};
+
+const App = () => {
+  const [store] = useState(() => {
+    const jotaiStore = createStore();
+
+    jotaiStore.set(
+      productsAtom,
+      loadPersistedOrDefault<ProductWithUI[]>(
+        STORAGE_KEYS.products,
+        initialProducts
+      )
+    );
+
+    jotaiStore.set(
+      couponsAtom,
+      loadPersistedOrDefault<Coupon[]>(STORAGE_KEYS.coupons, initialCoupons)
+    );
+
+    jotaiStore.set(
+      cartAtom,
+      loadPersistedOrDefault<CartItem[]>(STORAGE_KEYS.cart, [] as CartItem[])
+    );
+
+    jotaiStore.set(toastsAtom, [] as Toast[]);
+    jotaiStore.set(selectedCouponAtom, null);
+    jotaiStore.set(isAdminAtom, false);
+    jotaiStore.set(searchTermAtom, '');
+
+    return jotaiStore;
+  });
+
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
   );
 };
 
