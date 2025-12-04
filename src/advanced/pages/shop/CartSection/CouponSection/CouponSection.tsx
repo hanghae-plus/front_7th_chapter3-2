@@ -8,7 +8,6 @@ type CouponOption = {
 type CouponSectionProps = {
   couponOptions: CouponOption[];
   selectedCouponCode: string;
-  discountedTotalPrice: number;
   onSelectCoupon: (code: string) => void;
   onRemoveCoupon: () => void;
 };
@@ -16,7 +15,6 @@ type CouponSectionProps = {
 export function CouponSection({
   couponOptions,
   selectedCouponCode,
-  discountedTotalPrice,
   onSelectCoupon,
   onRemoveCoupon,
 }: CouponSectionProps) {

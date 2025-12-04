@@ -1,4 +1,3 @@
-import { ProductWithUI } from "../../../../domains/products/types/ProductWithUI";
 import { addNotification } from "../../../../domains/notifications/utils/addNotification";
 
 type ProductFormProps = {

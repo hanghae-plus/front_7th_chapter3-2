@@ -77,7 +77,6 @@ export function CartSection() {
                 discountValue: coupon.discountValue,
               }))}
               selectedCouponCode={cart.selectedCoupon?.code || ""}
-              discountedTotalPrice={cart.purchaseInfo.discountedTotalPrice}
               onSelectCoupon={handleSelectCoupon}
               onRemoveCoupon={handleRemoveCoupon}
             />
