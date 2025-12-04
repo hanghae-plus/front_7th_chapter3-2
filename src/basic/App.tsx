@@ -8,7 +8,7 @@ import {
   ToggleButton,
 } from './components/primitives';
 import { NotificationContainer } from './components/common/Notification';
-import { ShoppingMallPage } from './pages/ShoppingMallPage';
+import { CartPage } from './pages/CartPage';
 import { AdminPage } from './pages/AdminPage';
 import { useProducts, ProductWithUI } from './hooks/useProducts';
 import { useCart } from './hooks/useCart';
@@ -337,7 +337,7 @@ const App = () => {
             onAddNotification={addNotification}
           />
         ) : (
-          <ShoppingMallPage
+          <CartPage
             products={filteredProducts}
             cart={cart}
             coupons={coupons}

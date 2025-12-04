@@ -7,9 +7,9 @@ import {
   CouponSelector,
   ProductList,
   OrderSummary,
-} from '../components/shoppingMall';
+} from '../components/cart';
 
-interface ShoppingMallPageProps {
+interface CartPageProps {
   products: ProductWithUI[];
   cart: CartItem[];
   coupons: Coupon[];
@@ -27,7 +27,7 @@ interface ShoppingMallPageProps {
   onCompleteOrder: () => void;
 }
 
-export const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({
+export const CartPage: React.FC<CartPageProps> = ({
   products,
   cart,
   coupons,
