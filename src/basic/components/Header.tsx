@@ -1,6 +1,14 @@
+import { CartItem } from "../../types";
 import { CartIcon } from "./icons";
 
-function Header({ isAdmin, toggleAdmin, cart, totalItemCount }) {
+interface HeaderProps {
+  isAdmin: boolean;
+  toggleAdmin: () => void;
+  cart: CartItem[];
+  totalItemCount: number;
+}
+
+function Header({ isAdmin, toggleAdmin, cart, totalItemCount }: HeaderProps) {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
