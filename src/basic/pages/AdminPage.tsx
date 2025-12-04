@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { Coupon, AdminTab } from "../../types";
 import { ProductWithUI } from "../hooks/useProducts";
-import { useCoupons } from "../hooks/useCoupons";
 import { useProductForm } from "../hooks/useProductForm";
 import { Tabs, ProductTable, ProductForm, CouponList } from "../features";
 
@@ -10,6 +9,9 @@ interface AdminPageProps {
   addProduct: (product: Omit<ProductWithUI, "id">) => void;
   updateProduct: (id: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (id: string) => void;
+  coupons: Coupon[];
+  addCoupon: (coupon: Coupon) => { success: boolean; message: string };
+  deleteCoupon: (code: string) => { success: boolean; message: string };
   addNotification: (message: string, type: "success" | "error") => void;
 }
 
@@ -18,14 +20,11 @@ export const AdminPage = ({
   addProduct,
   updateProduct,
   deleteProduct,
+  coupons,
+  addCoupon: addCouponToList,
+  deleteCoupon: deleteCouponFromList,
   addNotification,
 }: AdminPageProps) => {
-  const {
-    coupons,
-    addCoupon: addCouponToList,
-    deleteCoupon: deleteCouponFromList,
-  } = useCoupons();
-
   const [activeTab, setActiveTab] = useState<AdminTab>("products");
 
   const productForm = useProductForm({
@@ -34,8 +33,8 @@ export const AdminPage = ({
     addNotification,
   });
 
-  // useCoupons의 함수를 래핑하여 notification 처리
-  const addCoupon = useCallback(
+  // props로 받은 함수를 래핑하여 notification 처리
+  const handleAddCoupon = useCallback(
     (newCoupon: Coupon) => {
       const result = addCouponToList(newCoupon);
       addNotification(result.message, result.success ? "success" : "error");
@@ -43,7 +42,7 @@ export const AdminPage = ({
     [addCouponToList, addNotification]
   );
 
-  const deleteCoupon = useCallback(
+  const handleDeleteCoupon = useCallback(
     (couponCode: string) => {
       const result = deleteCouponFromList(couponCode);
       addNotification(result.message, "success");
@@ -94,8 +93,8 @@ export const AdminPage = ({
       {activeTab === "coupons" && (
         <CouponList
           coupons={coupons}
-          onAddCoupon={addCoupon}
-          onDeleteCoupon={deleteCoupon}
+          onAddCoupon={handleAddCoupon}
+          onDeleteCoupon={handleDeleteCoupon}
           addNotification={addNotification}
         />
       )}

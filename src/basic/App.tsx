@@ -11,7 +11,7 @@ import { AdminPage } from "./pages/AdminPage";
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { coupons } = useCoupons();
+  const { coupons, addCoupon, deleteCoupon } = useCoupons();
   const { notifications, addNotification, removeNotification } =
     useNotification();
 
@@ -71,6 +71,9 @@ const App = () => {
             addProduct={addProduct}
             updateProduct={updateProduct}
             deleteProduct={deleteProduct}
+            coupons={coupons}
+            addCoupon={addCoupon}
+            deleteCoupon={deleteCoupon}
             addNotification={addNotification}
           />
         ) : (
