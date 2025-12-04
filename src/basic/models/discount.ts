@@ -58,3 +58,4 @@ export function calculateItemDiscountRate(
   if (itemTotal >= originalPrice) return 0;
   return Math.round((1 - itemTotal / originalPrice) * 100);
 }
+

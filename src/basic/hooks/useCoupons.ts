@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { Coupon } from "../../types";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { initialCoupons } from "../constants";
+import * as couponModel from "../models/coupon";
 
 type NotifyFn = (
   message: string,
@@ -21,14 +22,15 @@ export function useCoupons(addNotification?: NotifyFn) {
   // 새 쿠폰 추가
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
+      const result = couponModel.addCoupon(coupons, newCoupon);
+      if (result.success) {
+        setCoupons(result.coupons);
+        addNotification?.("쿠폰이 추가되었습니다.", "success");
+        return true;
+      } else {
         addNotification?.("이미 존재하는 쿠폰 코드입니다.", "error");
         return false;
       }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification?.("쿠폰이 추가되었습니다.", "success");
-      return true;
     },
     [coupons, setCoupons, addNotification]
   );
@@ -36,10 +38,10 @@ export function useCoupons(addNotification?: NotifyFn) {
   // 쿠폰 삭제
   const removeCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      setCoupons(couponModel.removeCoupon(coupons, couponCode));
       addNotification?.("쿠폰이 삭제되었습니다.", "success");
     },
-    [setCoupons, addNotification]
+    [coupons, setCoupons, addNotification]
   );
 
   return {

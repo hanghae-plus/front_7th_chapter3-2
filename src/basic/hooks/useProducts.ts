@@ -4,6 +4,7 @@ import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { useDebounce } from "../utils/hooks/useDebounce";
 import { ProductWithUI, initialProducts } from "../constants";
 import { formatPrice } from "../utils/formatters";
+import * as productModel from "../models/product";
 
 type NotifyFn = (
   message: string,
@@ -31,19 +32,7 @@ export function useProducts(
 
   // 필터링된 상품 목록
   const filteredProducts = useMemo(
-    () =>
-      debouncedSearchTerm
-        ? products.filter(
-            (product) =>
-              product.name
-                .toLowerCase()
-                .includes(debouncedSearchTerm.toLowerCase()) ||
-              (product.description &&
-                product.description
-                  .toLowerCase()
-                  .includes(debouncedSearchTerm.toLowerCase()))
-          )
-        : products,
+    () => productModel.filterProducts(products, debouncedSearchTerm),
     [products, debouncedSearchTerm]
   );
 
@@ -58,36 +47,32 @@ export function useProducts(
     [products, isAdmin]
   );
 
-  const handleAddProduct = useCallback(
+  // 상품 추가
+  const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
+      const result = productModel.addProduct(products, newProduct);
+      setProducts(result.products);
       addNotification?.("상품이 추가되었습니다.", "success");
     },
-    [setProducts, addNotification]
+    [products, setProducts, addNotification]
   );
 
-  const handleUpdateProduct = useCallback(
+  // 상품 수정
+  const updateProduct = useCallback(
     (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
+      setProducts(productModel.updateProduct(products, productId, updates));
       addNotification?.("상품이 수정되었습니다.", "success");
     },
-    [setProducts, addNotification]
+    [products, setProducts, addNotification]
   );
 
-  const handleDeleteProduct = useCallback(
+  // 상품 삭제
+  const removeProduct = useCallback(
     (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
+      setProducts(productModel.removeProduct(products, productId));
       addNotification?.("상품이 삭제되었습니다.", "success");
     },
-    [setProducts, addNotification]
+    [products, setProducts, addNotification]
   );
 
   return {
@@ -95,8 +80,8 @@ export function useProducts(
     filteredProducts,
     debouncedSearchTerm,
     getFormattedPrice,
-    handleAddProduct,
-    handleUpdateProduct,
-    handleDeleteProduct,
+    addProduct,
+    updateProduct,
+    removeProduct,
   };
 }

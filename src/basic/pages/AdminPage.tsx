@@ -8,7 +8,9 @@ import { useCoupons } from "../hooks/useCoupons";
 import { useNotification } from "../hooks/useNotification";
 
 export const AdminPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "coupons">(
+    "products"
+  );
 
   // 알림 훅
   const { notifications, addNotification, removeNotification } =
@@ -18,14 +20,13 @@ export const AdminPage: React.FC = () => {
   const {
     products,
     getFormattedPrice,
-    handleAddProduct,
-    handleUpdateProduct,
-    handleDeleteProduct,
+    addProduct,
+    updateProduct,
+    removeProduct,
   } = useProducts("", addNotification, true);
 
   // 쿠폰 관리 훅
-  const { coupons, addCoupon, removeCoupon } =
-    useCoupons(addNotification);
+  const { coupons, addCoupon, removeCoupon } = useCoupons(addNotification);
 
   // 가격 포맷팅
   const formatPrice = (price: number, productId?: string) =>
@@ -46,9 +47,9 @@ export const AdminPage: React.FC = () => {
         {activeTab === "products" ? (
           <ProductManagement
             products={products}
-            onAdd={handleAddProduct}
-            onUpdate={handleUpdateProduct}
-            onDelete={handleDeleteProduct}
+            onAdd={addProduct}
+            onUpdate={updateProduct}
+            onDelete={removeProduct}
             formatPrice={formatPrice}
             addNotification={addNotification}
           />
@@ -64,4 +65,3 @@ export const AdminPage: React.FC = () => {
     </>
   );
 };
-
