@@ -4,17 +4,17 @@ import { Badge, Button, Card } from '../primitives';
 interface ProductCardViewProps {
   /** 상품명 */
   name: string;
-  /** 설명 (optional) */
+  /** 설명 */
   description?: string;
-  /** 가격 표시 텍스트 (포맷팅 완료) */
+  /** 가격 표시 텍스트 */
   priceText: string;
-  /** 할인 정보 텍스트 (optional) */
+  /** 할인 정보 텍스트 */
   discountText?: string;
-  /** 최대 할인율 (0이면 할인 없음) */
+  /** 최대 할인율 */
   maxDiscountRate: number;
   /** 추천 상품 여부 */
   isRecommended: boolean;
-  /** 재고 상태 텍스트 (품절임박!, 재고 N개, 품절 등) */
+  /** 재고 상태 텍스트 */
   stockStatusText: string;
   /** 재고 상태 타입 */
   stockStatus: 'available' | 'low' | 'out';

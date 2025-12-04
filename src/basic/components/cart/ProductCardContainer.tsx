@@ -15,13 +15,13 @@ export const ProductCardContainer: React.FC<ProductCardProps> = ({
   formatPrice,
   onAddToCart,
 }) => {
-  // 비즈니스 로직: 최대 할인율 계산
+  // 최대 할인율 계산
   const maxDiscountRate =
     product.discounts.length > 0
       ? Math.max(...product.discounts.map((d) => d.rate)) * 100
       : 0;
 
-  // 비즈니스 로직: 할인 정보 텍스트
+  // 할인 정보 텍스트
   const discountText =
     product.discounts.length > 0
       ? `${product.discounts[0].quantity}개 이상 구매시 할인 ${
@@ -29,11 +29,11 @@ export const ProductCardContainer: React.FC<ProductCardProps> = ({
         }%`
       : undefined;
 
-  // 비즈니스 로직: 재고 상태 판단
+  // 재고 상태 판단
   const stockStatus =
     remainingStock === 0 ? 'out' : remainingStock <= 5 ? 'low' : 'available';
 
-  // 비즈니스 로직: 재고 상태 텍스트
+  // 재고 상태 텍스트
   const stockStatusText =
     remainingStock === 0
       ? '품절'

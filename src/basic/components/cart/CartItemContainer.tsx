@@ -10,11 +10,6 @@ interface CartItemContainerProps {
   onRemove: (productId: string) => void;
 }
 
-/**
- * CartItem Container Component
- * - 비즈니스 로직: 할인율 계산 (itemTotal vs originalPrice)
- * - Pure UI는 CartItemView로 위임
- */
 export const CartItemContainer: React.FC<CartItemContainerProps> = ({
   item,
   itemTotal,
@@ -22,7 +17,6 @@ export const CartItemContainer: React.FC<CartItemContainerProps> = ({
   onUpdateQuantity,
   onRemove,
 }) => {
-  // 비즈니스 로직: 할인율 계산
   const hasDiscount = itemTotal < originalPrice;
   const discountRate = hasDiscount
     ? Math.round((1 - itemTotal / originalPrice) * 100)

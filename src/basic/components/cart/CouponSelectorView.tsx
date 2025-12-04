@@ -2,13 +2,13 @@ import React from 'react';
 import { Select, SelectOption } from '../primitives';
 
 interface CouponSelectorViewProps {
-  /** 쿠폰 옵션 리스트 (이미 포맷팅 완료) */
+  /** 쿠폰 옵션 리스트 */
   couponOptions: SelectOption[];
   /** 선택된 쿠폰 코드 */
   selectedValue: string;
   /** 선택 변경 핸들러 */
   onChange: (value: string) => void;
-  /** 쿠폰 등록 버튼 핸들러 (optional) */
+  /** 쿠폰 등록 버튼 핸들러 */
   onRegisterClick?: () => void;
 }
 
