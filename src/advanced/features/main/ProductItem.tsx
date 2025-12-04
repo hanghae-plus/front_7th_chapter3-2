@@ -1,19 +1,34 @@
 import { formatPrice } from "../../utils/formatter";
-import { ProductWithUI } from "../../hooks/useProducts";
+import { ProductWithUI } from "../../store/useProductStore";
 import { Button } from "../../components/Button";
 import { Badge } from "../../components/Badge";
+import { useCartStore } from "../../store/useCartStore";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 interface ProductItemProps {
   product: ProductWithUI;
-  remainingStock: number;
-  onAddToCart: (product: ProductWithUI) => void;
 }
 
-export const ProductItem = ({
-  product,
-  remainingStock,
-  onAddToCart,
-}: ProductItemProps) => {
+/**
+ * ProductItem - 상품 아이템 컴포넌트
+ *
+ * 엔티티 컴포넌트로서 product(엔티티)만 props로 받고,
+ * 콜백 함수와 계산값은 내부에서 store를 직접 호출합니다.
+ */
+export const ProductItem = ({ product }: ProductItemProps) => {
+  // Store에서 액션 가져오기
+  const { getRemainingStock, addToCart: addToCartAction } = useCartStore();
+  const { addNotification } = useNotificationStore();
+
+  // 남은 재고 계산
+  const remainingStock = getRemainingStock(product);
+
+  // 장바구니 추가 액션
+  const handleAddToCart = () => {
+    const result = addToCartAction(product);
+    addNotification(result.message, result.success ? "success" : "error");
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       {/* 상품 이미지 영역 (placeholder) */}
@@ -81,7 +96,7 @@ export const ProductItem = ({
 
         {/* 장바구니 버튼 */}
         <Button
-          onClick={() => onAddToCart(product)}
+          onClick={handleAddToCart}
           disabled={remainingStock <= 0}
           fullWidth
         >

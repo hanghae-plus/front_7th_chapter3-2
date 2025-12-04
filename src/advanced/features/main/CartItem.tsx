@@ -1,18 +1,36 @@
 import { CartItem as CartItemType } from "../../../types";
+import { useCartStore } from "../../store/useCartStore";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 interface CartItemProps {
   item: CartItemType;
-  itemTotal: number; // 계산된 값을 직접 받음
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  itemTotal: number; // 계산된 값을 직접 받음 (cart 전체가 필요하므로 상위에서 계산)
 }
 
-export const CartItem = ({
-  item,
-  itemTotal,
-  removeFromCart,
-  updateQuantity,
-}: CartItemProps) => {
+/**
+ * CartItem - 장바구니 아이템 컴포넌트
+ *
+ * 엔티티 컴포넌트로서 item(엔티티)만 props로 받고,
+ * 콜백 함수는 내부에서 store를 직접 호출합니다.
+ */
+export const CartItem = ({ item, itemTotal }: CartItemProps) => {
+  // Store에서 액션 가져오기
+  const { removeFromCart: removeAction, updateQuantity: updateAction } =
+    useCartStore();
+  const { addNotification } = useNotificationStore();
+
+  // 액션 래퍼 함수들
+  const removeFromCart = () => {
+    removeAction(item.product.id);
+  };
+
+  const updateQuantity = (quantity: number) => {
+    const result = updateAction(item.product.id, quantity);
+    if (result) {
+      addNotification(result.message, result.success ? "success" : "error");
+    }
+  };
+
   const originalPrice = item.product.price * item.quantity;
   const hasDiscount = itemTotal < originalPrice;
   const discountRate = hasDiscount
@@ -26,7 +44,7 @@ export const CartItem = ({
           {item.product.name}
         </h4>
         <button
-          onClick={() => removeFromCart(item.product.id)}
+          onClick={removeFromCart}
           className="text-gray-400 hover:text-red-500 ml-2"
         >
           <svg
@@ -47,7 +65,7 @@ export const CartItem = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <button
-            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+            onClick={() => updateQuantity(item.quantity - 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">−</span>
@@ -56,7 +74,7 @@ export const CartItem = ({
             {item.quantity}
           </span>
           <button
-            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+            onClick={() => updateQuantity(item.quantity + 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">+</span>

@@ -1,25 +1,17 @@
 import { calculateItemTotal } from "../../models/cart";
 import { CartItem } from "./CartItem";
 import { useCartStore } from "../../store/useCartStore";
-import { useNotificationStore } from "../../store/useNotificationStore";
 
+/**
+ * CartList - 장바구니 목록 컴포넌트
+ *
+ * Props drilling 제거: 콜백 함수를 자식에게 전달하지 않음
+ * CartItem이 내부에서 직접 store를 호출합니다.
+ */
 export const CartList = () => {
-  // Store에서 상태 및 액션 가져오기
-  const { cart, removeFromCart: removeFromCartAction, updateQuantity: updateQuantityAction } =
-    useCartStore();
-  const { addNotification } = useNotificationStore();
+  // Store에서 cart 상태만 가져오기
+  const { cart } = useCartStore();
 
-  // Notification 래퍼 함수들
-  const removeFromCart = (productId: string) => {
-    removeFromCartAction(productId);
-  };
-
-  const updateQuantity = (productId: string, quantity: number) => {
-    const result = updateQuantityAction(productId, quantity);
-    if (result) {
-      addNotification(result.message, result.success ? "success" : "error");
-    }
-  };
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
@@ -61,9 +53,7 @@ export const CartList = () => {
             <CartItem
               key={item.product.id}
               item={item}
-              itemTotal={calculateItemTotal(item, cart)} // 여기서 계산해서 전달
-              removeFromCart={removeFromCart}
-              updateQuantity={updateQuantity}
+              itemTotal={calculateItemTotal(item, cart)}
             />
           ))}
         </div>

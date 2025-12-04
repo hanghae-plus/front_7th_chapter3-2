@@ -1,19 +1,23 @@
-import { ProductWithUI } from "../../store/useProductStore";
 import { ProductItem } from "./ProductItem";
 import { useProductStore } from "../../store/useProductStore";
-import { useCartStore } from "../../store/useCartStore";
-import { useNotificationStore } from "../../store/useNotificationStore";
 import { useDebounce } from "../../hooks/useDebounce";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 
-export const ProductList = () => {
+interface ProductListProps {
+  searchTerm: string;
+}
+
+/**
+ * ProductList - 상품 목록 컴포넌트
+ *
+ * Props drilling 제거: 콜백 함수와 계산값을 자식에게 전달하지 않음
+ * ProductItem이 내부에서 직접 store를 호출합니다.
+ */
+export const ProductList = ({ searchTerm }: ProductListProps) => {
   // Store에서 상태 가져오기
   const { products } = useProductStore();
-  const { getRemainingStock, addToCart: addToCartAction } = useCartStore();
-  const { addNotification } = useNotificationStore();
 
-  // 로컬 상태: 검색어
-  const [searchTerm, setSearchTerm] = useState("");
+  // 검색어 디바운스
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // 필터링된 상품 목록 계산
@@ -34,11 +38,6 @@ export const ProductList = () => {
     [products, debouncedSearchTerm]
   );
 
-  // Notification 래퍼 함수
-  const addToCart = (product: ProductWithUI) => {
-    const result = addToCartAction(product);
-    addNotification(result.message, result.success ? "success" : "error");
-  };
   return (
     <section>
       <div className="mb-6 flex justify-between items-center">
@@ -56,12 +55,7 @@ export const ProductList = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
-            <ProductItem
-              key={product.id}
-              product={product}
-              remainingStock={getRemainingStock(product)}
-              onAddToCart={addToCart}
-            />
+            <ProductItem key={product.id} product={product} />
           ))}
         </div>
       )}
