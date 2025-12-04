@@ -12,8 +12,8 @@ import { CartIcon } from "./components/icons";
 import { useDebounce } from "./utils/hooks/useDebounce";
 
 const App = () => {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts(initialProducts);
-  const { cart, ...cartMethods } = useCart((type, message) => addNotification(message, type));
+  const { products, ...productActions } = useProducts(initialProducts);
+  const { cart, ...cartActions } = useCart((type, message) => addNotification(message, type));
   const { coupons, addCoupon, removeCoupon } = useCoupons(initialCoupons);
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -83,9 +83,7 @@ const App = () => {
         {isAdmin ? (
           <AdminPage
             products={products}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            deleteProduct={deleteProduct}
+            productActions={productActions}
             coupons={coupons}
             addCoupon={addCoupon}
             deleteCoupon={removeCoupon}
@@ -101,7 +99,7 @@ const App = () => {
             debouncedSearchTerm={debouncedSearchTerm}
             addNotification={addNotification}
             cart={cart}
-            {...cartMethods}
+            cartActions={cartActions}
           />
         )}
       </main>
