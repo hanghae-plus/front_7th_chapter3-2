@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import AdminDashboardPage from './pages/adminDashboard/AdminDashboardPage';
-import ProductPage from './pages/product/ProductPage';
+import ProductPage from './pages/client/ProductPage';
 
 interface ProductWithUI extends Product {
   description?: string;

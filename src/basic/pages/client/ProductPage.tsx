@@ -1,7 +1,7 @@
 import { CartItem, Coupon } from '../../../types';
 import { ProductWithUI } from '../../types';
-import CartSection from './cartSection/CartSection';
-import ProductSection from './productSection/ProductSection';
+import CartView from './cart-view/CartView';
+import ProductSection from './product-section/ProductSection';
 interface ProductPageProps {
   products: ProductWithUI[];
   cart: CartItem[];
@@ -29,7 +29,7 @@ export default function ProductPage({
         setCart={setCart}
         addNotification={addNotification}
       />
-      <CartSection
+      <CartView
         cart={cart}
         coupons={coupons}
         products={products}
