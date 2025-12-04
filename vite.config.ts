@@ -9,11 +9,9 @@ export default mergeConfig(
   defineConfig({
     base,
     plugins: [react()],
-    root: '.',
     build: {
       rollupOptions: {
         input: {
-          main: resolve(__dirname, "index.basic.html"),
           origin: resolve(__dirname, "index.origin.html"),
           basic: resolve(__dirname, "index.basic.html"),
           advanced: resolve(__dirname, "index.advanced.html"),
