@@ -42,10 +42,12 @@ import {
   CartIcon,
   CloseIcon,
   EmptyCartIcon,
+  EmptyCartIconSmall,
   ImageIcon,
   PlusIcon,
   TrashIcon,
 } from "./components/icons";
+import { UIToast } from "./components/ui/UIToast";
 
 const App = () => {
   const { notifications, addNotification, removeNotification } =
@@ -143,30 +145,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {notifications.length > 0 && (
-        <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === "error"
-                  ? "bg-red-600"
-                  : notif.type === "warning"
-                  ? "bg-yellow-600"
-                  : "bg-green-600"
-              }`}
-            >
-              <span className="mr-2">{notif.message}</span>
-              <button
-                onClick={() => removeNotification(notif.id)}
-                className="text-white hover:text-gray-200"
-              >
-                <CloseIcon />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <UIToast notifications={notifications} onClose={removeNotification} />
       <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
@@ -198,7 +177,7 @@ const App = () => {
               </button>
               {!isAdmin && (
                 <div className="relative">
-                  <CartIcon />
+                  <CartIcon className="w-6 h-6 text-gray-700" />
                   {cart.length > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {totalItemCount}
@@ -514,7 +493,7 @@ const App = () => {
                                 }}
                                 className="text-red-600 hover:text-red-800"
                               >
-                                <CloseIcon />
+                                <CloseIcon className="w-4 h-4" />
                               </button>
                             </div>
                           ))}
@@ -592,7 +571,7 @@ const App = () => {
                             onClick={() => deleteCoupon(coupon.code)}
                             className="text-gray-400 hover:text-red-600 transition-colors"
                           >
-                            <TrashIcon />
+                            <TrashIcon className="w-5 h-5" />
                           </button>
                         </div>
                       </div>
@@ -603,7 +582,7 @@ const App = () => {
                         onClick={() => setShowCouponForm(!showCouponForm)}
                         className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
                       >
-                        <PlusIcon />
+                        <PlusIcon className="w-8 h-8" />
                         <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
                       </button>
                     </div>
@@ -781,7 +760,7 @@ const App = () => {
                           {/* 상품 이미지 영역 (placeholder) */}
                           <div className="relative">
                             <div className="aspect-square bg-gray-100 flex items-center justify-center">
-                              <ImageIcon />
+                              <ImageIcon className="w-24 h-24 text-gray-300" />
                             </div>
                             {product.isRecommended && (
                               <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
@@ -851,12 +830,12 @@ const App = () => {
               <div className="sticky top-24 space-y-4">
                 <section className="bg-white rounded-lg border border-gray-200 p-4">
                   <h2 className="text-lg font-semibold mb-4 flex items-center">
-                    <EmptyCartIcon />
+                    <EmptyCartIconSmall className="w-5 h-5 mr-2" />
                     장바구니
                   </h2>
                   {cart.length === 0 ? (
                     <div className="text-center py-8">
-                      <EmptyCartIcon />
+                      <EmptyCartIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                       <p className="text-gray-500 text-sm">
                         장바구니가 비어있습니다
                       </p>
@@ -889,7 +868,7 @@ const App = () => {
                                 onClick={() => removeFromCart(item.product.id)}
                                 className="text-gray-400 hover:text-red-500 ml-2"
                               >
-                                <CloseIcon />
+                                <CloseIcon className="w-4 h-4" />
                               </button>
                             </div>
                             <div className="flex items-center justify-between">
