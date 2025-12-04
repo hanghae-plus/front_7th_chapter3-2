@@ -1,4 +1,4 @@
-import { Toast } from "../components/common/Toast";
+import { UIToast } from "../components/ui/UIToast";
 import { ProductList } from "../components/cart/ProductList";
 import { CartSidebar } from "../components/cart/CartSidebar";
 import { useProducts } from "../hooks/useProducts";
@@ -46,7 +46,7 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
 
   return (
     <>
-      <Toast notifications={notifications} onClose={removeNotification} />
+      <UIToast notifications={notifications} onClose={removeNotification} />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Toast } from "../components/common/Toast";
+import { UIToast } from "../components/ui/UIToast";
 import { AdminTabs } from "../components/admin/AdminTabs";
 import { ProductManagement } from "../components/admin/ProductManagement";
 import { CouponManagement } from "../components/admin/CouponManagement";
@@ -33,7 +33,7 @@ export const AdminPage: React.FC = () => {
 
   return (
     <>
-      <Toast notifications={notifications} onClose={removeNotification} />
+      <UIToast notifications={notifications} onClose={removeNotification} />
 
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">

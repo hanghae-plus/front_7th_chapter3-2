@@ -6,12 +6,12 @@ interface Notification {
   type: "error" | "success" | "warning";
 }
 
-interface ToastProps {
+interface UIToastProps {
   notifications: Notification[];
   onClose: (id: string) => void;
 }
 
-export const Toast: React.FC<ToastProps> = ({ notifications, onClose }) => {
+export const UIToast: React.FC<UIToastProps> = ({ notifications, onClose }) => {
   if (notifications.length === 0) return null;
 
   return (
