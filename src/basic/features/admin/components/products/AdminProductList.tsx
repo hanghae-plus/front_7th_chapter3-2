@@ -27,11 +27,11 @@ export const AdminProductList = ({
     startEditProduct,
     deleteProduct,
     editingProduct,
-    productForm,
-    setProductForm,
+    getProductFormData,
+    addProduct,
+    updateProduct,
     setShowProductForm,
     setEditingProduct,
-    handleProductSubmit,
     showProductForm,
   } = useManageProducts({ products, setProducts, addNotification });
 
@@ -52,13 +52,23 @@ export const AdminProductList = ({
       {showProductForm && (
         <ProductAddForm
           editingProduct={editingProduct}
-          productForm={productForm}
-          setProductForm={setProductForm}
-          setShowProductForm={setShowProductForm}
-          addNotification={addNotification}
-          setProducts={setProducts}
-          setEditingProduct={setEditingProduct}
-          handleProductSubmit={handleProductSubmit}
+          initialData={
+            editingProduct ? getProductFormData(editingProduct) : undefined
+          }
+          onSubmit={(form) => {
+            if (editingProduct && editingProduct !== 'new') {
+              updateProduct(editingProduct, form);
+            } else {
+              addProduct(form);
+            }
+            setEditingProduct(null);
+            setShowProductForm(false);
+          }}
+          onCancel={() => {
+            setEditingProduct(null);
+            setShowProductForm(false);
+          }}
+          onValidationError={(message) => addNotification(message, 'error')}
         />
       )}
     </section>

@@ -1,30 +1,39 @@
-import { ProductForm } from './AdminProductList';
-import { ProductWithUI } from '../../../product/hook/useProduct';
 import { Label, Input } from '../../../../shared/component/ui';
+import { useProductForm } from '../../hooks/useProductForm';
+import { ProductForm } from './AdminProductList';
+
+interface ProductAddFormProps {
+  editingProduct: string | null;
+  initialData?: ProductForm;
+  onSubmit: (form: ProductForm) => void;
+  onCancel: () => void;
+  onValidationError?: (message: string) => void;
+}
 
 export const ProductAddForm = ({
   editingProduct,
-  productForm,
-  setProductForm,
-  setShowProductForm,
-  addNotification,
-
-  setEditingProduct,
-  handleProductSubmit,
-}: {
-  editingProduct: string | null;
-  productForm: ProductForm;
-  setProductForm: (productForm: ProductForm) => void;
-  setShowProductForm: (showProductForm: boolean) => void;
-  addNotification: (message: string, type: 'success' | 'error') => void;
-  setProducts: (products: ProductWithUI[]) => void;
-  setEditingProduct: (editingProduct: string | null) => void;
-
-  handleProductSubmit: (e: React.FormEvent) => void;
-}) => {
+  initialData,
+  onSubmit,
+  onCancel,
+  onValidationError,
+}: ProductAddFormProps) => {
+  const {
+    form,
+    updateField,
+    handleSubmit,
+    handlePriceBlur,
+    handleStockBlur,
+    updateDiscount,
+    addDiscount,
+    removeDiscount,
+  } = useProductForm({
+    initialData,
+    onSubmit,
+    onValidationError,
+  });
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
-      <form onSubmit={handleProductSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">
           {editingProduct === 'new' ? '새 상품 추가' : '상품 수정'}
         </h3>
@@ -33,14 +42,9 @@ export const ProductAddForm = ({
             <Label>상품명</Label>
             <Input
               type="text"
-              value={productForm.name}
+              value={form.name}
               name="name"
-              onChange={(e) =>
-                setProductForm({
-                  ...productForm,
-                  name: e.target.value,
-                })
-              }
+              onChange={(e) => updateField('name', e.target.value)}
               required
             />
           </div>
@@ -48,14 +52,9 @@ export const ProductAddForm = ({
             <Label>설명</Label>
             <Input
               type="text"
-              value={productForm.description}
+              value={form.description}
               name="description"
-              onChange={(e) =>
-                setProductForm({
-                  ...productForm,
-                  description: e.target.value,
-                })
-              }
+              onChange={(e) => updateField('description', e.target.value)}
             />
           </div>
           <div>
@@ -63,24 +62,16 @@ export const ProductAddForm = ({
             <Input
               type="text"
               name="price"
-              value={productForm.price === 0 ? '' : productForm.price}
+              value={form.price === 0 ? '' : form.price}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === '' || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    price: value === '' ? 0 : parseInt(value),
-                  });
+                  updateField('price', value === '' ? 0 : parseInt(value));
                 }
               }}
               onBlur={(e) => {
-                const value = e.target.value;
-                if (value === '') {
-                  setProductForm({ ...productForm, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification('가격은 0보다 커야 합니다', 'error');
-                  setProductForm({ ...productForm, price: 0 });
-                }
+                const value = parseInt(e.target.value) || 0;
+                handlePriceBlur(value);
               }}
               placeholder="숫자만 입력"
               required
@@ -91,30 +82,16 @@ export const ProductAddForm = ({
             <Input
               type="text"
               name="stock"
-              value={productForm.stock === 0 ? '' : productForm.stock}
+              value={form.stock === 0 ? '' : form.stock}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === '' || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    stock: value === '' ? 0 : parseInt(value),
-                  });
+                  updateField('stock', value === '' ? 0 : parseInt(value));
                 }
               }}
               onBlur={(e) => {
-                const value = e.target.value;
-                if (value === '') {
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification('재고는 0보다 커야 합니다', 'error');
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  addNotification(
-                    '재고는 9999개를 초과할 수 없습니다',
-                    'error',
-                  );
-                  setProductForm({ ...productForm, stock: 9999 });
-                }
+                const value = parseInt(e.target.value) || 0;
+                handleStockBlur(value);
               }}
               placeholder="숫자만 입력"
               required
@@ -124,7 +101,7 @@ export const ProductAddForm = ({
         <div className="mt-4">
           <Label className="mb-2">할인 정책</Label>
           <div className="space-y-2">
-            {productForm.discounts.map((discount, index) => (
+            {form.discounts.map((discount, index) => (
               <div
                 key={index}
                 className="flex items-center gap-2 bg-gray-50 p-2 rounded"
@@ -134,12 +111,8 @@ export const ProductAddForm = ({
                   name="discounts"
                   value={discount.quantity}
                   onChange={(e) => {
-                    const newDiscounts = [...productForm.discounts];
-                    newDiscounts[index].quantity =
-                      parseInt(e.target.value) || 0;
-                    setProductForm({
-                      ...productForm,
-                      discounts: newDiscounts,
+                    updateDiscount(index, {
+                      quantity: parseInt(e.target.value) || 0,
                     });
                   }}
                   className="w-20 px-2 py-1"
@@ -151,12 +124,8 @@ export const ProductAddForm = ({
                   type="number"
                   value={discount.rate * 100}
                   onChange={(e) => {
-                    const newDiscounts = [...productForm.discounts];
-                    newDiscounts[index].rate =
-                      (parseInt(e.target.value) || 0) / 100;
-                    setProductForm({
-                      ...productForm,
-                      discounts: newDiscounts,
+                    updateDiscount(index, {
+                      rate: (parseInt(e.target.value) || 0) / 100,
                     });
                   }}
                   className="w-16 px-2 py-1"
@@ -167,15 +136,7 @@ export const ProductAddForm = ({
                 <span className="text-sm">% 할인</span>
                 <button
                   type="button"
-                  onClick={() => {
-                    const newDiscounts = productForm.discounts.filter(
-                      (_, i) => i !== index,
-                    );
-                    setProductForm({
-                      ...productForm,
-                      discounts: newDiscounts,
-                    });
-                  }}
+                  onClick={() => removeDiscount(index)}
                   className="text-red-600 hover:text-red-800"
                 >
                   <svg
@@ -196,15 +157,7 @@ export const ProductAddForm = ({
             ))}
             <button
               type="button"
-              onClick={() => {
-                setProductForm({
-                  ...productForm,
-                  discounts: [
-                    ...productForm.discounts,
-                    { quantity: 10, rate: 0.1 },
-                  ],
-                });
-              }}
+              onClick={addDiscount}
               className="text-sm text-indigo-600 hover:text-indigo-800"
             >
               + 할인 추가
@@ -215,17 +168,7 @@ export const ProductAddForm = ({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => {
-              setEditingProduct(null);
-              setProductForm({
-                name: '',
-                price: 0,
-                stock: 0,
-                description: '',
-                discounts: [],
-              });
-              setShowProductForm(false);
-            }}
+            onClick={onCancel}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소

@@ -3,6 +3,7 @@ import { ProductWithUI } from '../../product/hook/useProduct';
 import { ProductForm } from '../components/products/AdminProductList';
 
 export const useManageProducts = ({
+  products,
   setProducts,
   addNotification,
 }: {
@@ -12,60 +13,55 @@ export const useManageProducts = ({
 }) => {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState<ProductForm>({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [],
-  });
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || '',
-      discounts: product.discounts || [],
-    });
     setShowProductForm(true);
   };
 
   const handleAddNewProduct = () => {
     setEditingProduct('new');
-    setProductForm({
-      name: '',
-      price: 0,
-      stock: 0,
-      description: '',
-      discounts: [],
-    });
     setShowProductForm(true);
   };
 
+  const getProductFormData = useCallback(
+    (productId: string): ProductForm | undefined => {
+      if (productId === 'new') return undefined;
+      const product = products.find((p) => p.id === productId);
+      if (!product) return undefined;
+      return {
+        name: product.name,
+        price: product.price,
+        stock: product.stock,
+        description: product.description || '',
+        discounts: product.discounts || [],
+      };
+    },
+    [products],
+  );
+
   const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
+    (form: ProductForm) => {
       const product: ProductWithUI = {
-        ...newProduct,
+        ...form,
         id: `p${Date.now()}`,
       };
       setProducts((prev) => [...prev, product]);
       addNotification('상품이 추가되었습니다.', 'success');
     },
-    [addNotification],
+    [setProducts, addNotification],
   );
 
   const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
+    (productId: string, form: ProductForm) => {
       setProducts((prev) =>
         prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product,
+          product.id === productId ? { ...product, ...form } : product,
         ),
       );
       addNotification('상품이 수정되었습니다.', 'success');
     },
-    [addNotification],
+    [setProducts, addNotification],
   );
 
   const deleteProduct = useCallback(
@@ -73,40 +69,19 @@ export const useManageProducts = ({
       setProducts((prev) => prev.filter((p) => p.id !== productId));
       addNotification('상품이 삭제되었습니다.', 'success');
     },
-    [addNotification],
+    [setProducts, addNotification],
   );
 
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm({
-      name: '',
-      price: 0,
-      stock: 0,
-      description: '',
-      discounts: [],
-    });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
   return {
     handleAddNewProduct,
     startEditProduct,
     deleteProduct,
     editingProduct,
-    productForm,
-    setProductForm,
+    getProductFormData,
+    addProduct,
+    updateProduct,
     setShowProductForm,
     setEditingProduct,
-    handleProductSubmit,
     showProductForm,
   };
 };
