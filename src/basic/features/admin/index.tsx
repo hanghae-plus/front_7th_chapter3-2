@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { useManageCoupon } from './hooks/useManageCoupon';
 import { Coupon } from '../../../types';
 import { ProductWithUI } from '../product/hook/useProduct';
+import { formatPrice } from '../../shared/utils/priceUtils';
 
 export const Admin = ({
   products,
@@ -123,10 +124,6 @@ export const Admin = ({
       discounts: product.discounts || [],
     });
     setShowProductForm(true);
-  };
-
-  const formatPrice = (price: number): string => {
-    return `${price.toLocaleString()}원`;
   };
 
   return (
