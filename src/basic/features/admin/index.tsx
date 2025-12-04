@@ -14,7 +14,7 @@ export const Admin = ({
   setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
   addNotification: (
     message: string,
-    type?: 'error' | 'success' | 'warning',
+    type: 'error' | 'success' | 'warning',
   ) => void;
 }) => {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(

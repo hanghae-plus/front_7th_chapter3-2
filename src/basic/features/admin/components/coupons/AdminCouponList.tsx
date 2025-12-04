@@ -13,7 +13,10 @@ export interface CouponForm {
 export const AdminCouponList = ({
   addNotification,
 }: {
-  addNotification: (message: string, type: 'success' | 'error') => void;
+  addNotification: (
+    message: string,
+    type: 'success' | 'error' | 'warning',
+  ) => void;
 }) => {
   const {
     coupons,
@@ -21,7 +24,7 @@ export const AdminCouponList = ({
     toggleShowCouponForm,
     handleDeleteCoupon,
     showCouponForm,
-  } = useManageCoupon();
+  } = useManageCoupon({ addNotification });
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
