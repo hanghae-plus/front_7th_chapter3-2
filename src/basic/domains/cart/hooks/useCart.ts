@@ -6,7 +6,8 @@ import { getMaxApplicableDiscount } from "../utils/getMaxApplicableDiscount";
 import { iife } from "../../../shared/utils/iife";
 import { applyCouponToTotalPrice } from "../utils/applyCoupon";
 import { calculateItemTotalPrice } from "../utils/calculateItemTotal";
-import { getRemainingStock } from "../../products/utils/getRemainingStock";
+import { getRemainingStock } from "../utils/getRemainingStock";
+import { hasBulkPurchase } from "../utils/hasBulkPurchase";
 
 type CartItemInstance = CartItem & {
   totalPrice: number;
@@ -41,26 +42,22 @@ export type CartService = {
 export function useCart(): CartService {
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
-  // useEffect(() => {
-  //   if (cart.length === 0) {
-  //     localStorage.removeItem("cart");
-  //   }
-  // }, [cart]);
-
   useEffect(() => {
-    console.log("cart", cart);
-  }, []);
+    if (cart.length === 0) {
+      localStorage.removeItem("cart");
+    }
+  }, [cart]);
 
-  const hasBulkPurchase = cart.some((item) => item.quantity >= 10);
+  const bulkPurchase = hasBulkPurchase(cart);
 
   const totalItemCount = sumBy(cart, (item) => item.quantity);
 
   const cartInstance: CartItemInstance[] = cart.map((item, idx) => {
     return {
       ...item,
-      totalPrice: calculateItemTotalPrice(item, hasBulkPurchase),
+      totalPrice: calculateItemTotalPrice(item, bulkPurchase),
       discountRate: Math.round(
-        getMaxApplicableDiscount(item, hasBulkPurchase) * 100
+        getMaxApplicableDiscount(item, bulkPurchase) * 100
       ),
       remainingStock: getRemainingStock(item),
       updateQuantity: (newQuantity: number) => {
@@ -68,12 +65,13 @@ export function useCart(): CartService {
         if (newQuantity > item.product.stock) return false;
 
         setCart((prev) => {
+          const next = [...prev];
           if (newQuantity === 0) {
-            return prev.filter((_, i) => i !== idx);
+            return next.filter((_, i) => i !== idx);
           }
 
-          prev[idx].quantity = newQuantity;
-          return [...prev];
+          next[idx].quantity = newQuantity;
+          return next;
         });
 
         return true;
@@ -94,7 +92,7 @@ export function useCart(): CartService {
 
     const discountedTotalPrice = iife(() => {
       const totalPrice = sumBy(cart, (item) =>
-        calculateItemTotalPrice(item, hasBulkPurchase)
+        calculateItemTotalPrice(item, bulkPurchase)
       );
 
       return applyCouponToTotalPrice(totalPrice, selectedCoupon);
@@ -136,7 +134,7 @@ export function useCart(): CartService {
 
   return {
     list: cartInstance,
-    hasBulkPurchase,
+    hasBulkPurchase: bulkPurchase,
     totalItemCount,
     purchaseInfo,
     selectedCoupon,

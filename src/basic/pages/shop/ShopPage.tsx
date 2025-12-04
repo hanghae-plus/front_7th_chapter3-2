@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { Coupon } from "../../../types";
 import { ProductListSection } from "./ProductListSection/ProductListSection";
 import { CartSection } from "./CartSection/CartSection";
 import { CartService } from "../../domains/cart/hooks/useCart";

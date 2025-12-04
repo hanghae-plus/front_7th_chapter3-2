@@ -1,14 +1,9 @@
-import { useState, useEffect } from "react";
-import { Coupon } from "../types";
+import { useState } from "react";
 import { NotificationArea } from "./domains/notifications/components/NotificationArea";
 import { Header } from "./shared/layout/components/Header";
 import { AdminPage } from "./pages/admin/AdminPage";
 import { ShopPage } from "./pages/shop/ShopPage";
 import { useCart } from "./domains/cart/hooks/useCart";
-import { addNotification } from "./domains/notifications/utils/addNotification";
-import { ProductWithUI } from "./domains/products/types/ProductWithUI";
-import { initialProducts } from "./domains/products/constants/initialProducts";
-import { initialCoupons } from "./domains/coupon/constants/initialCoupons";
 import { useProducts } from "./domains/products/hooks/useProducts";
 import { useCoupons } from "./domains/coupon/hooks/useCoupon";
 import { CartIcon } from "./shared/components/icons/CartIcon";

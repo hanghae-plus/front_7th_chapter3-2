@@ -41,8 +41,9 @@ export function useProducts(): ProductsService {
           }),
         update: (updates: Partial<ProductWithUI>) => {
           setProducts((prev) => {
-            prev[idx] = { ...prev[idx], ...updates };
-            return [...prev];
+            const next = [...prev];
+            next[idx] = { ...next[idx], ...updates };
+            return next;
           });
         },
         delete: () => {
