@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Coupon } from '../../../../types';
 import { ProductWithUI } from '../../../shared/config';
-import * as cartModel from '../../../entities/cart/model/cart';
+import * as cartModel from './cart';
 
 interface CartState {
   // 상태
