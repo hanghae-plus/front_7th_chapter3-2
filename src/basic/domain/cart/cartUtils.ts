@@ -1,4 +1,7 @@
-import { CartItem, Coupon } from "../../../types";
+import { CartItem, Coupon, Product } from "../../../types";
+import { PriceType } from "../../constans/constans";
+import { formatPrice } from "../../utils/formatters";
+import { ProductWithUI } from "../product/productTypes";
 
 /** =============================
  * 정책 상수
@@ -110,6 +113,38 @@ export const calculateItemPriceDetails = (item: CartItem, cart: CartItem[]) => {
   return { itemTotal, hasDiscount, discountRate };
 };
 
+export const getDisplayPrice = (
+  cart: CartItem[],
+  product: ProductWithUI,
+  format: PriceType
+): string => {
+  if (isSoldOut(cart, product, product.id)) {
+    return "SOLD OUT";
+  }
+
+  return formatPrice(product.price, format);
+};
+
+// 재고 없는지 여부 확인
+export const isSoldOut = (
+  cart: CartItem[],
+  product: ProductWithUI,
+  productId?: string
+): boolean => {
+  if (!productId) return false;
+  return product ? getRemainingStock(cart, product) <= 0 : false;
+};
+
+// 재고 잔량 확인
+export const getRemainingStock = (
+  cart: CartItem[],
+  product: Product
+): number => {
+  const cartItem = cart.find((item) => item.product.id === product.id);
+  const remaining = product.stock - (cartItem?.quantity || 0);
+
+  return remaining;
+};
 /** =============================
  * 쿠폰 적용 함수
  * ============================== */

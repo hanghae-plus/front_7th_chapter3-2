@@ -1,17 +1,22 @@
+import { CartItem } from "../../../types";
+import { PriceType } from "../../constans/constans";
+import { getDisplayPrice } from "../../domain/cart/cartUtils";
 import { ProductWithUI } from "../../domain/product/productTypes";
 import { ImagePlaceholderIcon } from "../icon/ImagePlaceholderIcon";
 
 interface ProductItemProps {
+  format: PriceType;
+  cart: CartItem[];
   product: ProductWithUI;
   remainingStock: number;
-  getDisplayPrice: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
 }
 
 export const ProductItem = ({
+  format,
+  cart,
   product,
   remainingStock,
-  getDisplayPrice,
   addToCart,
 }: ProductItemProps) => {
   return (
@@ -47,7 +52,7 @@ export const ProductItem = ({
         {/* 가격 정보 */}
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">
-            {getDisplayPrice(product.price, product.id)}
+            {getDisplayPrice(cart, product, format)}
           </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">

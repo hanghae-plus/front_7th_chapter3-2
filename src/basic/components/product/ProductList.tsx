@@ -1,22 +1,24 @@
-import { Product } from "../../../types";
+import { CartItem } from "../../../types";
+import { PriceType } from "../../constans/constans";
+import { getRemainingStock } from "../../domain/cart/cartUtils";
 import { ProductWithUI } from "../../domain/product/productTypes";
 import { ProductItem } from "./ProductItem";
 
 interface ProductListProps {
+  format: PriceType;
+  cart: CartItem[];
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  getDisplayPrice: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
 }
 
 export const ProductList = ({
+  format,
+  cart,
   products,
   filteredProducts,
   debouncedSearchTerm,
-  getRemainingStock,
-  getDisplayPrice,
   addToCart,
 }: ProductListProps) => {
   const EmptyProduct = () => {
@@ -39,13 +41,14 @@ export const ProductList = ({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => {
-            const remainingStock = getRemainingStock(product);
+            const remainingStock = getRemainingStock(cart, product);
             return (
               <ProductItem
                 key={product.id}
+                format={format}
+                cart={cart}
                 product={product}
                 remainingStock={remainingStock}
-                getDisplayPrice={getDisplayPrice}
                 addToCart={addToCart}
               />
             );

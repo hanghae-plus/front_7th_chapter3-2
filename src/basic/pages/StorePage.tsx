@@ -1,5 +1,6 @@
 import { CartSidebar } from "../components/cart/CartSidebar";
 import { ProductList } from "../components/product/ProductList";
+import { PriceType } from "../constans/constans";
 import {
   CartSidebarProps,
   ProductListProps,
@@ -14,25 +15,21 @@ export const StorePage = ({
   productProps,
   cartSidebarProps,
 }: StorePageProps) => {
-  const {
-    products,
-    filteredProducts,
-    debouncedSearchTerm,
-    getRemainingStock,
-    getDisplayPrice,
-    addToCart,
-  } = productProps;
+  const format = PriceType.KR;
+
+  const { cart, products, filteredProducts, debouncedSearchTerm, addToCart } =
+    productProps;
   const { cartProps, couponProps, payment } = cartSidebarProps;
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">
         {/* 상품 목록 */}
         <ProductList
+          format={format}
+          cart={cart}
           products={products}
           filteredProducts={filteredProducts}
           debouncedSearchTerm={debouncedSearchTerm}
-          getRemainingStock={getRemainingStock}
-          getDisplayPrice={getDisplayPrice}
           addToCart={addToCart}
         />
       </div>

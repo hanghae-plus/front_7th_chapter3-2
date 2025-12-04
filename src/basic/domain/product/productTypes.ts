@@ -1,4 +1,4 @@
-import { Coupon, Product } from "../../../types";
+import { CartItem, Coupon, Product } from "../../../types";
 import { FilledCartItem } from "../cart/cartTypes";
 
 export interface ProductWithUI extends Product {
@@ -12,11 +12,10 @@ export interface StorePageProps {
 }
 
 export interface ProductListProps {
+  cart: CartItem[];
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  getDisplayPrice: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
 }
 
@@ -35,4 +34,17 @@ export interface CartSidebarProps {
     totals: { totalBeforeDiscount: number; totalAfterDiscount: number };
     completeOrder: () => void;
   };
+}
+
+export interface DisCount {
+  quantity: number;
+  rate: number;
+}
+
+export interface ProductForm {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: DisCount[];
 }
