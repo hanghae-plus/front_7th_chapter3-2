@@ -1,40 +1,61 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Shared Store
+import { useNotificationStore } from "./shared/lib/notificationStore"; // ✅ 추가
+
+// Shared UI & Lib
+import { NotificationSystem } from "./shared/ui/NotificationSystem";
+import { useDebounce } from "./shared/lib/useDebounce";
+
 // Widgets
 import { Header } from "./widgets/Header/ui";
 import { ProductList } from "./widgets/ProductList/ui";
 import { CartSidebar } from "./widgets/CartSidebar/ui";
 import { AdminDashboard } from "./widgets/AdminDashboard/ui";
-import { NotificationSystem } from "./shared/ui/NotificationSystem";
-// Hooks
-import { useShop } from "./features/app/useShop";
-import { useProductFilter } from "./features/product/model/useProductFilter";
+
+// Feature Hooks
+import { useProducts } from "./features/product/model/useProducts";
+import { useCoupons } from "./features/coupon/model/useCoupons";
+import { useCart } from "./features/cart/model/useCart";
 
 const App = () => {
-  // 1. Facade Hook에서 모든 로직과 상태를 가져옴
-  const { 
-    notifications, 
-    removeNotification, 
-    addNotification, // ✅ 여기서 직접 꺼내야 합니다!
-    productLogic, 
-    couponLogic, 
-    cartLogic 
-  } = useShop();
+  const addNotification = useNotificationStore((state) => state.addNotification);
+  useEffect(() => {
+    useNotificationStore.setState({ notifications: [] });
+  }, []);
 
-  // 2. 검색 필터링 로직
-  const { searchTerm, setSearchTerm, filteredProducts } = useProductFilter(productLogic.products);
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
+  const { coupons, addCoupon, deleteCoupon } = useCoupons(addNotification);
 
-  // 3. 관리자 모드 상태
+  // ✅ useCart는 이제 인자 없이(상품 목록만) 호출
+  const {
+    cart,
+    selectedCoupon,
+    setSelectedCoupon,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    applyCoupon,
+    completeOrder,
+  } = useCart(products);
+
   const [isAdmin, setIsAdmin] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const filteredProducts = debouncedSearchTerm
+    ? products.filter((product) =>
+        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        (product.description && product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
+      )
+    : products;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NotificationSystem
-        notifications={notifications}
-        onClose={removeNotification}
-      />
+      <NotificationSystem />
 
       <Header
-        cart={cartLogic.cart}
+        cart={cart}
         isAdmin={isAdmin}
         onToggleAdmin={() => setIsAdmin(!isAdmin)}
         searchTerm={searchTerm}
@@ -44,36 +65,37 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminDashboard
-            products={productLogic.products}
-            coupons={couponLogic.coupons}
-            onAddProduct={productLogic.addProduct}
-            onUpdateProduct={productLogic.updateProduct}
-            onDeleteProduct={productLogic.deleteProduct}
-            onAddCoupon={couponLogic.addCoupon}
-            onDeleteCoupon={couponLogic.deleteCoupon}
-            onNotification={addNotification} 
+            products={products}
+            coupons={coupons}
+            onAddProduct={addProduct}
+            onUpdateProduct={updateProduct}
+            onDeleteProduct={deleteProduct}
+            onAddCoupon={addCoupon}
+            onDeleteCoupon={deleteCoupon}
+            onNotification={addNotification} // ✅ Store의 함수 전달
           />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <ProductList
                 products={filteredProducts}
-                totalCount={productLogic.products.length}
-                cart={cartLogic.cart}
-                onAddToCart={cartLogic.addToCart}
-                searchTerm={searchTerm}
+                totalCount={products.length}
+                cart={cart}
+                onAddToCart={addToCart}
+                searchTerm={debouncedSearchTerm}
               />
             </div>
+
             <div className="lg:col-span-1">
               <CartSidebar
-                cart={cartLogic.cart}
-                coupons={couponLogic.coupons}
-                selectedCoupon={cartLogic.selectedCoupon}
-                onUpdateQuantity={cartLogic.updateQuantity}
-                onRemoveFromCart={cartLogic.removeFromCart}
-                onApplyCoupon={cartLogic.applyCoupon}
-                onCompleteOrder={cartLogic.completeOrder}
-                onCouponSelected={cartLogic.setSelectedCoupon}
+                cart={cart}
+                coupons={coupons}
+                selectedCoupon={selectedCoupon}
+                onUpdateQuantity={updateQuantity}
+                onRemoveFromCart={removeFromCart}
+                onApplyCoupon={applyCoupon}
+                onCompleteOrder={completeOrder}
+                onCouponSelected={setSelectedCoupon}
               />
             </div>
           </div>
