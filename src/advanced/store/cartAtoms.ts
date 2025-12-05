@@ -61,7 +61,7 @@ export const addToCartAtom = atom(null, (get, set, product: Product) => {
       newCart = [...prevCart, { product, quantity: 1 }];
     }
     
-    set(addNotificationAtom, '장바구니에 담았습니다.');
+    set(addNotificationAtom, '장바구니에 담았습니다');
     return newCart;
   });
 });
