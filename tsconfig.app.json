@@ -17,6 +17,31 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path Mapping */
+    "paths": {
+      "@/constants/*": [
+        "./src/origin/constants/*",
+        "./src/basic/constants/*",
+        "./src/advanced/constants/*"
+      ],
+      "@/features/*": [
+        "./src/origin/features/*",
+        "./src/basic/features/*",
+        "./src/advanced/features/*"
+      ],
+      "@/pages/*": [
+        "./src/origin/pages/*",
+        "./src/basic/pages/*",
+        "./src/advanced/pages/*"
+      ],
+      "@/shared/*": [
+        "./src/origin/shared/*",
+        "./src/basic/shared/*",
+        "./src/advanced/shared/*"
+      ],
+      "@/*": ["./src/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
