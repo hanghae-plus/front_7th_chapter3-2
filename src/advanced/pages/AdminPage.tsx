@@ -1,81 +1,91 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Coupon } from '../../types';
 import { ProductWithUI } from '../models/product';
-import { useProducts } from '../hooks/useProducts';
-import { useCoupons } from '../hooks/useCoupons';
 import {
-  DEFAULT_PRODUCT_FORM,
-  DEFAULT_COUPON_FORM,
-  MESSAGES,
-  MAX_STOCK_LIMIT,
-  MAX_DISCOUNT_AMOUNT,
-} from '../constants';
-import { isNumericInput, parseNumberInput } from '../utils/validators';
+  useProductStore,
+  useCouponStore,
+  useAppStore,
+  useAdminFormStore,
+} from '../stores';
+import { MESSAGES } from '../constants';
 import { ProductManagement } from '../components/admin/ProductManagement';
 import { CouponManagement } from '../components/admin/CouponManagement';
 
-interface AdminPageProps {
-  onNotification: (
-    message: string,
-    type: 'error' | 'success' | 'warning'
-  ) => void;
-}
+export function AdminPage() {
+  const { products, addProduct, updateProduct, deleteProduct } =
+    useProductStore();
+  const { coupons, addCoupon, removeCoupon } = useCouponStore();
+  const { addNotification } = useAppStore();
 
-export function AdminPage({ onNotification }: AdminPageProps) {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { coupons, addCoupon, removeCoupon } = useCoupons();
-
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
-    'products'
-  );
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState(DEFAULT_PRODUCT_FORM);
-  const [couponForm, setCouponForm] = useState(DEFAULT_COUPON_FORM);
+  const {
+    activeTab,
+    setActiveTab,
+    showProductForm,
+    editingProduct,
+    productForm,
+    showCouponForm,
+    couponForm,
+    resetProductForm,
+    startEditProduct,
+    startAddProduct,
+    resetCouponForm,
+    toggleCouponForm,
+    handleProductNameChange,
+    handleProductDescriptionChange,
+    handlePriceChange,
+    handlePriceBlur,
+    handleStockChange,
+    handleStockBlur,
+    handleDiscountsChange,
+    handleCouponNameChange,
+    handleCouponCodeChange,
+    handleCouponTypeChange,
+    handleDiscountValueChange,
+    handleDiscountValueBlur,
+  } = useAdminFormStore();
 
   const handleAddProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
       addProduct(newProduct);
-      onNotification(MESSAGES.PRODUCT_ADDED, 'success');
+      addNotification(MESSAGES.PRODUCT_ADDED, 'success');
     },
-    [addProduct, onNotification]
+    [addProduct, addNotification]
   );
 
   const handleUpdateProduct = useCallback(
     (productId: string, updates: Partial<ProductWithUI>) => {
       updateProduct(productId, updates);
-      onNotification(MESSAGES.PRODUCT_UPDATED, 'success');
+      addNotification(MESSAGES.PRODUCT_UPDATED, 'success');
     },
-    [updateProduct, onNotification]
+    [updateProduct, addNotification]
   );
 
   const handleDeleteProduct = useCallback(
     (productId: string) => {
       deleteProduct(productId);
-      onNotification(MESSAGES.PRODUCT_DELETED, 'success');
+      addNotification(MESSAGES.PRODUCT_DELETED, 'success');
     },
-    [deleteProduct, onNotification]
+    [deleteProduct, addNotification]
   );
 
   const handleAddCoupon = useCallback(
     (newCoupon: Coupon) => {
       const success = addCoupon(newCoupon);
       if (success) {
-        onNotification(MESSAGES.COUPON_ADDED, 'success');
+        addNotification(MESSAGES.COUPON_ADDED, 'success');
       } else {
-        onNotification(MESSAGES.DUPLICATE_COUPON_CODE, 'error');
+        addNotification(MESSAGES.DUPLICATE_COUPON_CODE, 'error');
       }
     },
-    [addCoupon, onNotification]
+    [addCoupon, addNotification]
   );
 
   const handleDeleteCoupon = useCallback(
     (couponCode: string) => {
       removeCoupon(couponCode);
-      onNotification(MESSAGES.COUPON_DELETED, 'success');
+      addNotification(MESSAGES.COUPON_DELETED, 'success');
     },
-    [removeCoupon, onNotification]
+    [removeCoupon, addNotification]
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
@@ -88,102 +98,13 @@ export function AdminPage({ onNotification }: AdminPageProps) {
         discounts: productForm.discounts,
       });
     }
-    setProductForm({ ...DEFAULT_PRODUCT_FORM, discounts: [] });
-    setEditingProduct(null);
-    setShowProductForm(false);
+    resetProductForm();
   };
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleAddCoupon(couponForm);
-    setCouponForm(DEFAULT_COUPON_FORM);
-    setShowCouponForm(false);
-  };
-
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || '',
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
-
-  const resetProductForm = () => {
-    setEditingProduct(null);
-    setProductForm({ ...DEFAULT_PRODUCT_FORM, discounts: [] });
-    setShowProductForm(false);
-  };
-
-  const handlePriceChange = (value: string) => {
-    if (isNumericInput(value)) {
-      setProductForm({
-        ...productForm,
-        price: value === '' ? 0 : parseNumberInput(value),
-      });
-    }
-  };
-
-  const handlePriceBlur = (value: string) => {
-    if (value === '') {
-      setProductForm({ ...productForm, price: 0 });
-    } else if (parseNumberInput(value) < 0) {
-      onNotification(MESSAGES.PRICE_MUST_BE_POSITIVE, 'error');
-      setProductForm({ ...productForm, price: 0 });
-    }
-  };
-
-  const handleStockChange = (value: string) => {
-    if (isNumericInput(value)) {
-      setProductForm({
-        ...productForm,
-        stock: value === '' ? 0 : parseNumberInput(value),
-      });
-    }
-  };
-
-  const handleStockBlur = (value: string) => {
-    const numValue = parseNumberInput(value);
-    if (value === '') {
-      setProductForm({ ...productForm, stock: 0 });
-    } else if (numValue < 0) {
-      onNotification(MESSAGES.STOCK_MUST_BE_POSITIVE, 'error');
-      setProductForm({ ...productForm, stock: 0 });
-    } else if (numValue > MAX_STOCK_LIMIT) {
-      onNotification(MESSAGES.STOCK_EXCEEDS_MAX, 'error');
-      setProductForm({ ...productForm, stock: MAX_STOCK_LIMIT });
-    }
-  };
-
-  const handleDiscountValueChange = (value: string) => {
-    if (isNumericInput(value)) {
-      setCouponForm({
-        ...couponForm,
-        discountValue: value === '' ? 0 : parseNumberInput(value),
-      });
-    }
-  };
-
-  const handleDiscountValueBlur = () => {
-    const value = couponForm.discountValue;
-    if (couponForm.discountType === 'percentage') {
-      if (value > 100) {
-        onNotification(MESSAGES.DISCOUNT_RATE_EXCEEDS_MAX, 'error');
-        setCouponForm({ ...couponForm, discountValue: 100 });
-      } else if (value < 0) {
-        setCouponForm({ ...couponForm, discountValue: 0 });
-      }
-    } else {
-      if (value > MAX_DISCOUNT_AMOUNT) {
-        onNotification(MESSAGES.DISCOUNT_AMOUNT_EXCEEDS_MAX, 'error');
-        setCouponForm({ ...couponForm, discountValue: MAX_DISCOUNT_AMOUNT });
-      } else if (value < 0) {
-        setCouponForm({ ...couponForm, discountValue: 0 });
-      }
-    }
+    resetCouponForm();
   };
 
   return (
@@ -226,49 +147,33 @@ export function AdminPage({ onNotification }: AdminPageProps) {
           showProductForm={showProductForm}
           editingProduct={editingProduct}
           productForm={productForm}
-          onStartAdd={() => {
-            setEditingProduct('new');
-            setProductForm({ ...DEFAULT_PRODUCT_FORM, discounts: [] });
-            setShowProductForm(true);
-          }}
+          onStartAdd={startAddProduct}
           onStartEdit={startEditProduct}
           onDelete={handleDeleteProduct}
           onSubmit={handleProductSubmit}
           onCancel={resetProductForm}
-          onNameChange={(value) =>
-            setProductForm({ ...productForm, name: value })
-          }
-          onDescriptionChange={(value) =>
-            setProductForm({ ...productForm, description: value })
-          }
+          onNameChange={handleProductNameChange}
+          onDescriptionChange={handleProductDescriptionChange}
           onPriceChange={handlePriceChange}
-          onPriceBlur={handlePriceBlur}
+          onPriceBlur={(value) => handlePriceBlur(value, addNotification)}
           onStockChange={handleStockChange}
-          onStockBlur={handleStockBlur}
-          onDiscountsChange={(discounts) =>
-            setProductForm({ ...productForm, discounts })
-          }
+          onStockBlur={(value) => handleStockBlur(value, addNotification)}
+          onDiscountsChange={handleDiscountsChange}
         />
       ) : (
         <CouponManagement
           coupons={coupons}
           showCouponForm={showCouponForm}
           couponForm={couponForm}
-          onToggleForm={() => setShowCouponForm(!showCouponForm)}
+          onToggleForm={toggleCouponForm}
           onDelete={handleDeleteCoupon}
           onSubmit={handleCouponSubmit}
-          onCancel={() => setShowCouponForm(false)}
-          onNameChange={(value) =>
-            setCouponForm({ ...couponForm, name: value })
-          }
-          onCodeChange={(value) =>
-            setCouponForm({ ...couponForm, code: value.toUpperCase() })
-          }
-          onTypeChange={(value) =>
-            setCouponForm({ ...couponForm, discountType: value })
-          }
+          onCancel={resetCouponForm}
+          onNameChange={handleCouponNameChange}
+          onCodeChange={handleCouponCodeChange}
+          onTypeChange={handleCouponTypeChange}
           onValueChange={handleDiscountValueChange}
-          onValueBlur={handleDiscountValueBlur}
+          onValueBlur={() => handleDiscountValueBlur(addNotification)}
         />
       )}
     </div>

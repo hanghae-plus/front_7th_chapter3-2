@@ -1,23 +1,14 @@
 import { CartIcon } from '../ui/icons';
 import { SearchBar } from './SearchBar';
+import { useAppStore, useCartStore } from '../../stores';
 
-interface HeaderProps {
-  isAdmin: boolean;
-  searchTerm: string;
-  cartLength: number;
-  totalItemCount: number;
-  onToggleAdmin: () => void;
-  onSearchChange: (value: string) => void;
-}
+export function Header() {
+  const { isAdmin, searchTerm, toggleAdmin, setSearchTerm } = useAppStore();
+  const cart = useCartStore((state) => state.cart);
+  const getTotalItemCount = useCartStore((state) => state.getTotalItemCount);
 
-export function Header({
-  isAdmin,
-  searchTerm,
-  cartLength,
-  totalItemCount,
-  onToggleAdmin,
-  onSearchChange,
-}: HeaderProps) {
+  const totalItemCount = getTotalItemCount();
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -27,13 +18,13 @@ export function Header({
             {!isAdmin && (
               <SearchBar
                 searchTerm={searchTerm}
-                onSearchChange={onSearchChange}
+                onSearchChange={setSearchTerm}
               />
             )}
           </div>
           <nav className="flex items-center space-x-4">
             <button
-              onClick={onToggleAdmin}
+              onClick={toggleAdmin}
               className={
                 'px-3 py-1.5 text-sm rounded transition-colors ' +
                 (isAdmin
@@ -46,7 +37,7 @@ export function Header({
             {!isAdmin && (
               <div className="relative">
                 <CartIcon />
-                {cartLength > 0 && (
+                {cart.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {totalItemCount}
                   </span>

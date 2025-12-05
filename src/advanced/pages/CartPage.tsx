@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import { CartItem, Coupon } from '../../types';
+import { Coupon } from '../../types';
 import { ProductWithUI } from '../models/product';
-import { useProducts } from '../hooks/useProducts';
-import { useCoupons } from '../hooks/useCoupons';
+import { useProductStore, useCouponStore, useCartStore, useAppStore } from '../stores';
 
 import { ProductList } from '../components/product/ProductList';
 import { EmptySearchResult } from '../components/product/EmptySearchResult';
@@ -15,46 +14,25 @@ import { Cart } from '../components/cart/Cart';
 
 interface CartPageProps {
   searchTerm: string;
-  onNotification: (
-    message: string,
-    type: 'error' | 'success' | 'warning'
-  ) => void;
-  cart: CartItem[];
-  selectedCoupon: Coupon | null;
-  addToCart: (product: ProductWithUI) => { success: boolean; message?: string };
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (
-    productId: string,
-    newQuantity: number
-  ) => { success: boolean; message?: string };
-  applyCoupon: (coupon: Coupon) => { success: boolean; message?: string };
-  clearCoupon: () => void;
-  clearCart: () => void;
-  calculateItemTotal: (item: CartItem) => number;
-  calculateCartTotal: () => {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  getRemainingStock: (product: ProductWithUI) => number;
 }
 
-export function CartPage({
-  searchTerm,
-  onNotification,
-  cart,
-  selectedCoupon,
-  addToCart: addToCartHook,
-  removeFromCart: removeFromCartHook,
-  updateQuantity: updateQuantityHook,
-  applyCoupon: applyCouponHook,
-  clearCoupon,
-  clearCart,
-  calculateItemTotal,
-  calculateCartTotal,
-  getRemainingStock,
-}: CartPageProps) {
-  const { products } = useProducts();
-  const { coupons } = useCoupons();
+export function CartPage({ searchTerm }: CartPageProps) {
+  const { products } = useProductStore();
+  const { coupons } = useCouponStore();
+  const {
+    cart,
+    selectedCoupon,
+    addToCart: addToCartStore,
+    removeFromCart: removeFromCartStore,
+    updateQuantity: updateQuantityStore,
+    applyCoupon: applyCouponStore,
+    clearCoupon,
+    clearCart,
+    calculateItemTotal,
+    calculateCartTotal,
+    getRemainingStock,
+  } = useCartStore();
+  const { addNotification } = useAppStore();
 
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
@@ -68,49 +46,49 @@ export function CartPage({
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const result = addToCartHook(product);
+      const result = addToCartStore(product);
       if (result.message) {
-        onNotification(result.message, result.success ? 'success' : 'error');
+        addNotification(result.message, result.success ? 'success' : 'error');
       }
     },
-    [addToCartHook, onNotification]
+    [addToCartStore, addNotification]
   );
 
   const removeFromCart = useCallback(
     (productId: string) => {
-      removeFromCartHook(productId);
+      removeFromCartStore(productId);
     },
-    [removeFromCartHook]
+    [removeFromCartStore]
   );
 
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
-      const result = updateQuantityHook(productId, newQuantity);
+      const result = updateQuantityStore(productId, newQuantity, products);
       if (!result.success && result.message) {
-        onNotification(result.message, 'error');
+        addNotification(result.message, 'error');
       }
     },
-    [updateQuantityHook, onNotification]
+    [updateQuantityStore, products, addNotification]
   );
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const result = applyCouponHook(coupon);
+      const result = applyCouponStore(coupon);
       if (result.message) {
-        onNotification(result.message, result.success ? 'success' : 'error');
+        addNotification(result.message, result.success ? 'success' : 'error');
       }
     },
-    [applyCouponHook, onNotification]
+    [applyCouponStore, addNotification]
   );
 
   const completeOrder = useCallback(() => {
     const orderNumber = generateOrderNumber();
-    onNotification(
+    addNotification(
       '주문이 완료되었습니다. 주문번호: ' + orderNumber,
       'success'
     );
     clearCart();
-  }, [onNotification, clearCart]);
+  }, [addNotification, clearCart]);
 
   const totals = calculateCartTotal();
   const filteredProducts = filterProductsBySearchTerm(products, searchTerm);
