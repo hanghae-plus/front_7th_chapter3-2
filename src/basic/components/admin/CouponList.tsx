@@ -1,0 +1,58 @@
+import React from 'react';
+import { Coupon } from '../../../types';
+import { CouponCard } from './CouponCard';
+
+interface CouponListProps {
+  coupons: Coupon[];
+  onDeleteCoupon: (couponCode: string) => void;
+  onToggleCouponForm: () => void;
+}
+
+export const CouponList: React.FC<CouponListProps> = ({
+  coupons,
+  onDeleteCoupon,
+  onToggleCouponForm,
+}) => {
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {coupons.map((coupon) => {
+        const discountText =
+          coupon.discountType === 'amount'
+            ? `${coupon.discountValue.toLocaleString()}원 할인`
+            : `${coupon.discountValue}% 할인`;
+
+        return (
+          <CouponCard
+            key={coupon.code}
+            name={coupon.name}
+            code={coupon.code}
+            discountText={discountText}
+            onDelete={() => onDeleteCoupon(coupon.code)}
+          />
+        );
+      })}
+
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
+        <button
+          onClick={onToggleCouponForm}
+          className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
+        >
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
+        </button>
+      </div>
+    </div>
+  );
+};
