@@ -4,7 +4,7 @@ import SelectList from "../components/ui/SelectList";
 import { CartIcon } from "../components/icons";
 import { Card } from "../components/ui";
 import CartList from "../components/domain/cartPage/CartList";
-import ProductList from "../components/domain/product/ProductList";
+import ProductList from "../components/domain/cartPage/ProductList";
 import { isValidStock } from "../utils/validators";
 import CartHeader from "../components/domain/cartPage/CartHeader";
 import cartModel from "../models/cart";

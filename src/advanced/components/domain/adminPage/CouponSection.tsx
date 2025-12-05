@@ -1,4 +1,3 @@
-import { Coupon } from "../../../../types";
 import CouponListItem from "./CouponListItem";
 import CouponForm from "./CouponForm";
 import { useState } from "react";
@@ -6,12 +5,8 @@ import couponModel from "../../../models/coupon";
 import { useCoupons } from "../../../hooks/useCoupons";
 
 const CouponSection = ({
-  selectedCoupon,
-  setSelectedCoupon,
   addNotification,
 }: {
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
   addNotification: (message: string, type: "error" | "success" | "warning") => void;
 }) => {
   const { coupons, addCoupon, deleteCoupon } = useCoupons();
@@ -58,13 +53,7 @@ const CouponSection = ({
       <div className="p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {coupons.map((coupon) => (
-            <CouponListItem
-              key={coupon.code}
-              coupon={coupon}
-              selectedCoupon={selectedCoupon}
-              setSelectedCoupon={setSelectedCoupon}
-              deleteCoupon={handleDeleteCoupon}
-            />
+            <CouponListItem key={coupon.code} coupon={coupon} deleteCoupon={() => handleDeleteCoupon(coupon.code)} />
           ))}
 
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">

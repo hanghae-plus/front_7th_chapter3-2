@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from "react";
-import { CartItem, Coupon, Product } from "../../types";
+import { Coupon, Product } from "../../types";
 import SelectList from "../components/ui/SelectList";
 import { CartIcon } from "../components/icons";
 import { Card } from "../components/ui";
@@ -12,43 +12,27 @@ import productModel from "../models/product";
 import couponModel from "../models/coupon";
 import { useCoupons } from "../hooks/useCoupons";
 import useProducts from "../hooks/useProducts";
+import { useCart } from "../hooks/useCart";
 
 interface CartPageProps {
-  cart: CartItem[];
-  selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
-
-  applyCoupon: (coupon: Coupon | null) => void;
-  addToCart: (product: Product) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
-  removeFromCart: (productId: string) => void;
-
-  getRemainingStock: (product: Product) => number;
-  calculateTotal: () => {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
   addNotification: (message: string, type: "error" | "success" | "warning") => void;
-  clearCart: () => void;
   goAdminPage: () => void;
   setSearchTerm: (value: string) => void;
 }
 
-const CartPage = ({
-  cart,
-  selectedCoupon,
-  debouncedSearchTerm,
-  addToCart,
-  updateQuantity,
-  removeFromCart,
-  applyCoupon,
-  calculateTotal,
-  getRemainingStock,
-  addNotification,
-  clearCart,
-  goAdminPage,
-  setSearchTerm,
-}: CartPageProps) => {
+const CartPage = ({ debouncedSearchTerm, addNotification, goAdminPage, setSearchTerm }: CartPageProps) => {
+  const {
+    cart,
+    selectedCoupon,
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    applyCoupon,
+    calculateTotal,
+    getRemainingStock,
+    clearCart,
+  } = useCart(); // CartProvider 에서 제공하는 값
   const { products } = useProducts();
   const { coupons } = useCoupons();
 

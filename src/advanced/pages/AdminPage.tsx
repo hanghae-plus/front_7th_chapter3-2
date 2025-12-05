@@ -1,20 +1,12 @@
-import { Coupon } from "../../types";
 import { useState } from "react";
 import CouponSection from "../components/domain/adminPage/CouponSection";
 import ProductSection from "../components/domain/adminPage/ProductSection";
 import AdminHeader from "../components/domain/adminPage/AdminHeader";
 
 const AdminPage = ({
-  //   COUPONT FORM
-  selectedCoupon,
-  setSelectedCoupon,
-  //   NOTIFICATION
   addNotification,
   goShoppingPage,
 }: {
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (value: Coupon | null) => void;
-
   addNotification: (value: string, type: "error" | "success" | "warning") => void;
   goShoppingPage: () => void;
 }) => {
@@ -57,11 +49,7 @@ const AdminPage = ({
           {activeTab === "products" ? (
             <ProductSection addNotification={addNotification} />
           ) : (
-            <CouponSection
-              selectedCoupon={selectedCoupon}
-              setSelectedCoupon={setSelectedCoupon}
-              addNotification={addNotification}
-            />
+            <CouponSection addNotification={addNotification} />
           )}
         </div>
       </main>

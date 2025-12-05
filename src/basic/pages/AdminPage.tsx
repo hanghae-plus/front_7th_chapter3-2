@@ -1,7 +1,7 @@
 import { Coupon, Product } from "../../types";
 import { useState } from "react";
-import CouponSection from "../components/domain/coupon/CouponSection";
-import ProductSection from "../components/domain/product/ProductSection";
+import CouponSection from "../components/domain/adminPage/CouponSection";
+import ProductSection from "../components/domain/adminPage/ProductSection";
 import AdminHeader from "../components/domain/adminPage/AdminHeader";
 interface ProductWithUI extends Product {
   description?: string;

@@ -1,16 +1,8 @@
 import { Coupon } from "../../../../types";
+import { useCart } from "../../../hooks/useCart";
 
-const CouponListItem = ({
-  coupon,
-  selectedCoupon,
-  setSelectedCoupon,
-  deleteCoupon,
-}: {
-  coupon: Coupon;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  deleteCoupon: (couponCode: string) => void;
-}) => {
+const CouponListItem = ({ coupon, deleteCoupon }: { coupon: Coupon; deleteCoupon: () => void }) => {
+  const { selectedCoupon, deleteAppliedCoupon } = useCart(); // CartProvider 에서 제공하는 값
   return (
     <div
       key={coupon.code}
@@ -31,9 +23,9 @@ const CouponListItem = ({
         <button
           onClick={() => {
             if (selectedCoupon?.code === coupon.code) {
-              setSelectedCoupon(null);
+              deleteAppliedCoupon();
             }
-            deleteCoupon(coupon.code);
+            deleteCoupon();
           }}
           className="text-gray-400 hover:text-red-600 transition-colors"
         >
