@@ -7,5 +7,15 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@basic/*": ["src/basic/*"],
+      "@advanced/*": ["src/advanced/*"],
+      "@origin/*": ["src/origin/*"],
+      "@types": ["src/types"]
+    }
+  }
 }
