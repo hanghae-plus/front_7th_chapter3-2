@@ -6,17 +6,17 @@ import CartContainer from './components/cart/CartContainer';
 import { useProducts } from './hooks/useProducts';
 import { useCoupons } from './hooks/useCoupons';
 import { useCart } from './hooks/useCart';
-import { useNotifications } from './hooks/useNotifications';
 import { formatPrice as formatCurrency } from './utils/formatters';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { isAdminAtom } from './store/uiAtoms';
+import { addNotificationAtom } from './store/notificationAtoms';
 
 const App = () => {
   const isAdmin = useAtomValue(isAdminAtom);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
-  const { notifications, addNotification, removeNotification } = useNotifications();
+  const addNotification = useSetAtom(addNotificationAtom);
   const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
   const { coupons, addCoupon, deleteCoupon } = useCoupons(addNotification);
   const {
@@ -64,7 +64,7 @@ const App = () => {
 
   return (
       <div className="min-h-screen bg-gray-50">
-        <NotificationContainer notifications={notifications} onClose={removeNotification} />
+        <NotificationContainer />
         <Header
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -82,7 +82,6 @@ const App = () => {
                   addCoupon={addCoupon}
                   deleteCoupon={deleteCoupon}
                   formatPrice={formatPrice}
-                  addNotification={addNotification}
               />
           ) : (
               <CartContainer

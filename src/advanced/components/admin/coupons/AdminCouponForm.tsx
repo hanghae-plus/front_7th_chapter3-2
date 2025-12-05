@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Coupon } from '../../../../types';
 import Button from '../../ui/Button';
 import { validateCoupon } from '../../../entities/coupon/lib/validator';
+import { useSetAtom } from 'jotai';
+import { addNotificationAtom } from '../../../store/notificationAtoms';
 
 interface AdminCouponFormProps {
   addCoupon: (newCoupon: Coupon) => void;
   setShowCouponForm: (show: boolean) => void;
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
-const AdminCouponForm: React.FC<AdminCouponFormProps> = ({ addCoupon, setShowCouponForm, addNotification }) => {
+const AdminCouponForm: React.FC<AdminCouponFormProps> = ({ addCoupon, setShowCouponForm }) => {
+  const addNotification = useSetAtom(addNotificationAtom);
   const [couponForm, setCouponForm] = useState({
     name: '',
     code: '',
@@ -21,7 +23,7 @@ const AdminCouponForm: React.FC<AdminCouponFormProps> = ({ addCoupon, setShowCou
     e.preventDefault();
     const validation = validateCoupon(couponForm);
     if (!validation.isValid) {
-      addNotification(validation.message || '쿠폰 정보가 올바르지 않습니다.', 'error');
+      addNotification(validation.message || '쿠폰 정보가 올바르지 않습니다.');
       return;
     }
 
@@ -38,7 +40,7 @@ const AdminCouponForm: React.FC<AdminCouponFormProps> = ({ addCoupon, setShowCou
   const handleValueBlur = () => {
     const validation = validateCoupon(couponForm);
     if (!validation.isValid && validation.message) {
-      addNotification(validation.message, 'error');
+      addNotification(validation.message);
     }
   };
 

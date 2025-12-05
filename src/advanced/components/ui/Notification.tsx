@@ -1,13 +1,15 @@
 import React from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { notificationsAtom, removeNotificationAtom } from '../../store/notificationAtoms';
+import { Notification as NotificationType } from '../../model/notificationModels';
 
 interface NotificationProps {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-  onClose: (id: string) => void;
+  notification: NotificationType;
+  onClose: (id: number) => void;
 }
 
-const Notification: React.FC<NotificationProps> = ({ id, message, type, onClose }) => {
+const Notification: React.FC<NotificationProps> = ({ notification, onClose }) => {
+  const { id, message, type } = notification;
   const baseClasses = "p-4 rounded-md shadow-md text-white flex justify-between items-center";
   const typeClasses = {
     error: 'bg-red-600',
@@ -30,14 +32,17 @@ const Notification: React.FC<NotificationProps> = ({ id, message, type, onClose 
   );
 };
 
-const NotificationContainer: React.FC<{ notifications: Omit<NotificationProps, 'onClose'>[], onClose: (id: string) => void }> = ({ notifications, onClose }) => {
+const NotificationContainer: React.FC = () => {
+  const [notifications] = useAtom(notificationsAtom);
+  const removeNotification = useSetAtom(removeNotificationAtom);
+
   return (
     <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
       {notifications.map(notif => (
         <Notification
           key={notif.id}
-          {...notif}
-          onClose={onClose}
+          notification={notif}
+          onClose={removeNotification}
         />
       ))}
     </div>
