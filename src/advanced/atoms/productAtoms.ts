@@ -5,15 +5,11 @@ import { Product, Discount } from '../../types';
 // Product 상태 - localStorage에서 읽거나 빈 배열로 시작
 export const productsAtom = atomWithStorage<Product[]>('products', []);
 
-// 상품 추가
+// 상품 추가 (순수 함수 - ID는 외부에서 주입)
 export const addProductAtom = atom(
   null,
-  (get, set, newProduct: Omit<Product, 'id'>) => {
+  (get, set, product: Product) => {
     const products = get(productsAtom);
-    const product: Product = {
-      ...newProduct,
-      id: `p${Date.now()}`
-    };
     set(productsAtom, [...products, product]);
     return { success: true, message: '상품이 추가되었습니다.' };
   }

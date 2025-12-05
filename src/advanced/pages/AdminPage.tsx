@@ -2,6 +2,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { PlusIcon, TrashIcon } from "../components/icons";
 import { Product, Coupon } from "../../types";
 import { formatAdminPrice, formatPercentage } from "../utils/formatters";
+import { generateProductId } from "../utils/idGenerator";
 import { Button } from "../components/ui/Button";
 import { ProductForm } from "../components/entities/ProductForm";
 import { CouponForm } from "../components/entities/CouponForm";
@@ -35,7 +36,12 @@ const AdminPage = () => {
   const addNotification = useSetAtom(addNotificationAtom);
 
   const handleAddProduct = (newProduct: Omit<ProductWithUI, 'id'>) => {
-    const result = addProduct(newProduct);
+    // 액션: ID 생성 (시간 의존)
+    const id = generateProductId();
+    const product: ProductWithUI = { ...newProduct, id };
+    
+    // 순수: 상태 업데이트
+    const result = addProduct(product);
     if (result.message) {
       addNotification({ message: result.message, type: 'success' });
     }

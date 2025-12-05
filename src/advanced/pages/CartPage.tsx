@@ -4,6 +4,7 @@ import { Product } from "../../types";
 import { ProductCard } from "../components/entities/ProductCard";
 import { Cart } from "../components/entities/Cart";
 import { getMaxApplicableDiscount } from "../utils/cartCalculations";
+import { generateOrderNumber } from "../utils/idGenerator";
 import { useSearch } from "../hooks/useSearch";
 import { useCouponValidation } from "../hooks/useCouponValidation";
 import { useCartPage } from "../hooks/useCartPage";
@@ -49,7 +50,11 @@ const CartPage = () => {
     coupons,
     cart,
     onCompleteOrder: () => {
-      const result = completeOrderAction();
+      // 액션: 주문번호 생성 (시간 의존)
+      const orderNumber = generateOrderNumber();
+      
+      // 순수: 상태 업데이트
+      const result = completeOrderAction(orderNumber);
       if (result.message) {
         addNotification({ message: result.message, type: 'success' });
       }

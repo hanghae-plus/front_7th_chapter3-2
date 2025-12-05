@@ -1,7 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { CartItem, Product } from '../../types';
-import { formatDate } from '../utils/formatters';
 
 // Cart 상태
 export const cartAtom = atomWithStorage<CartItem[]>('cart', []);
@@ -94,15 +93,10 @@ export const updateQuantityAtom = atom(
   }
 );
 
-// 주문 완료
+// 주문 완료 (순수 함수 - 주문번호는 외부에서 주입)
 export const completeOrderAtom = atom(
   null,
-  (_get, set) => {
-    const now = new Date();
-    const dateStr = formatDate(now).replace(/-/g, '');
-    const timeStr = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
-    const orderNumber = `ORD-${dateStr}-${timeStr}`;
-    
+  (_get, set, orderNumber: string) => {
     set(cartAtom, []);
     
     return { 
