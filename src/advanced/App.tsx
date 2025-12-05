@@ -5,16 +5,18 @@
 // 3. 조건부 렌더링으로 CartPage 또는 AdminPage 표시
 // 4. 상태 관리는 각 페이지 컴포넌트에서 처리 (App은 라우팅만 담당)
 
-import { useState } from "react";
+import { useAtomValue } from "jotai";
+import { useCallback, useState } from "react";
 import { Header } from "./components/layout/Header";
 import Notifications from "./components/Notifications";
 import { AdminPage } from "./pages/Admin/AdminPage";
 import { ShopPage } from "./pages/Shop/ShopPage";
 import { useProducts } from "./hooks/useProducts";
-import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useNotifications } from "./hooks/useNotifications";
 import { useDebounce } from "./utils/hooks/useDebounce";
+import { selectedCouponAtom } from "./atoms";
+import { useSetAtom } from "jotai";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -28,16 +30,19 @@ const App = () => {
     onMessage: addNotification,
   });
 
-  const cart = useCart({
-    products: products.value,
-    onMessage: addNotification,
-  });
+  const setSelectedCoupon = useSetAtom(selectedCouponAtom);
 
   const coupons = useCoupons({
     onMessage: addNotification,
-    onDeleteSelectedCoupon: (deletedCode) => {
-      cart.clearSelectedCouponByCode(deletedCode); // cart가 책임지는 로직
-    },
+    onDeleteSelectedCoupon: useCallback(
+      (deletedCode) => {
+        const currentCoupon = useAtomValue(selectedCouponAtom);
+        if (currentCoupon?.code === deletedCode) {
+          setSelectedCoupon(null);
+        }
+      },
+      [setSelectedCoupon]
+    ),
   });
 
   return (
@@ -51,8 +56,6 @@ const App = () => {
         onAdminToggle={() => setIsAdmin((prev) => !prev)}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
-        hasCartItems={cart.value.length > 0}
-        totalItemCount={cart.totalItemCount}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -66,7 +69,6 @@ const App = () => {
           <ShopPage
             products={products.value}
             searchTerm={debouncedSearchTerm}
-            cart={cart}
             coupons={coupons}
             addNotification={addNotification}
           />

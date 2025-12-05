@@ -1,29 +1,25 @@
 import { useMemo } from "react";
-import { CartItem, Coupon, ProductWithUI } from "../../../types";
+import { Coupon, ProductWithUI } from "../../../types";
 import { ProductList } from "./components/ProductList";
 import { CartSection } from "./components/CartSection";
 import { filterProductsBySearchTerm } from "../../models/product";
+import { useCart } from "../../hooks/useCart";
 
 interface ShopPageProps {
   products: ProductWithUI[];
   searchTerm: string;
-  cart: {
-    value: CartItem[];
-    add: (product: ProductWithUI) => void;
-  };
   coupons: {
     value: Coupon[];
   };
   addNotification: (
     message: string,
-    type: "error" | "success" | "warning"
+    type?: "error" | "success" | "warning"
   ) => void;
 }
 
 export function ShopPage({
   products,
   searchTerm,
-  cart,
   coupons,
   addNotification,
 }: ShopPageProps) {
@@ -32,6 +28,12 @@ export function ShopPage({
     () => filterProductsBySearchTerm(products, searchTerm),
     [products, searchTerm]
   );
+
+  // Cart actions for ProductList
+  const cart = useCart({
+    products: [], // TODO: products도 atom으로 변경 후 제거
+    onMessage: addNotification,
+  });
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

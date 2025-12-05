@@ -1,12 +1,12 @@
+import { useAtomValue } from "jotai";
 import { ShoppingCartIcon } from "../icons";
+import { cartItemCountAtom } from "../../atoms";
 
 interface HeaderProps {
   isAdmin: boolean;
   onAdminToggle: () => void;
   searchValue: string;
   onSearchChange: (value: string) => void;
-  hasCartItems: boolean;
-  totalItemCount: number;
 }
 
 export function Header({
@@ -14,9 +14,10 @@ export function Header({
   onAdminToggle,
   searchValue,
   onSearchChange,
-  hasCartItems,
-  totalItemCount,
 }: HeaderProps) {
+  const totalItemCount = useAtomValue(cartItemCountAtom);
+  const hasCartItems = totalItemCount > 0;
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
