@@ -1,4 +1,7 @@
 import { Coupon } from "../../../../types";
+import { Button } from "../../../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Select } from "../../../components/ui/Select";
 
 interface CouponFormProps {
   couponForm: Coupon;
@@ -29,76 +32,52 @@ export const CouponForm = ({
       <form onSubmit={onSubmit} className="space-y-4">
         <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              쿠폰명
-            </label>
-            <input
-              type="text"
-              value={couponForm.name}
-              onChange={onNameChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-              placeholder="신규 가입 쿠폰"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              쿠폰 코드
-            </label>
-            <input
-              type="text"
-              value={couponForm.code}
-              onChange={onCodeChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
-              placeholder="WELCOME2024"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              할인 타입
-            </label>
-            <select
-              value={couponForm.discountType}
-              onChange={onDiscountTypeChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-            >
-              <option value="amount">정액 할인</option>
-              <option value="percentage">정률 할인</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"}
-            </label>
-            <input
-              type="text"
-              value={
-                couponForm.discountValue === 0 ? "" : couponForm.discountValue
-              }
-              onChange={onDiscountValueChange}
-              onBlur={onDiscountValueBlur}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-              placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
-              required
-            />
-          </div>
+          <Input
+            label="쿠폰명"
+            type="text"
+            value={couponForm.name}
+            onChange={onNameChange}
+            placeholder="신규 가입 쿠폰"
+            required
+          />
+          <Input
+            label="쿠폰 코드"
+            type="text"
+            value={couponForm.code}
+            onChange={onCodeChange}
+            placeholder="WELCOME2024"
+            required
+          />
+          <Select
+            label="할인 타입"
+            value={couponForm.discountType}
+            onChange={onDiscountTypeChange}
+            options={[
+              { value: "amount", label: "정액 할인" },
+              { value: "percentage", label: "정률 할인" },
+            ]}
+          />
+          <Input
+            label={
+              couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"
+            }
+            type="text"
+            value={
+              couponForm.discountValue === 0 ? "" : couponForm.discountValue
+            }
+            onChange={onDiscountValueChange}
+            onBlur={onDiscountValueBlur}
+            placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
+            required
+          />
         </div>
         <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
+          <Button type="button" onClick={onCancel} variant="outline">
             취소
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
-          >
+          </Button>
+          <Button type="submit" variant="primary">
             쿠폰 생성
-          </button>
+          </Button>
         </div>
       </form>
     </div>
