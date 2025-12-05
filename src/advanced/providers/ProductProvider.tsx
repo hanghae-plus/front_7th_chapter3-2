@@ -1,7 +1,6 @@
-import { createContext, type Dispatch, type SetStateAction, useContext } from 'react';
-import { type ProductWithUI } from '../types';
-import { useProductsStorage } from '../hooks/useProductsStorage';
-import { initialProducts } from '../../../mock/product';
+import { createContext, type Dispatch, type SetStateAction, useContext, useMemo } from 'react';
+import { type ProductWithUI, useProductsStorage } from '../entities/product';
+import { initialProducts } from '../mock/product';
 
 interface ProductContextType {
   products: ProductWithUI[];
@@ -13,7 +12,8 @@ export const ProductContext = createContext<ProductContextType | null>(null);
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useProductsStorage(initialProducts);
 
-  return <ProductContext value={{ products, setProducts }}>{children}</ProductContext>;
+  const value = useMemo(() => ({ products, setProducts }), [products, setProducts]);
+  return <ProductContext value={value}>{children}</ProductContext>;
 };
 
 export const useProductContext = () => {

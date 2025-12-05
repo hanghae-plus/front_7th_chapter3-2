@@ -2,7 +2,7 @@ import { canAddToCart, getAddToCart } from '../../../entities/cart';
 import { type ProductWithUI, filterProducts, getRemainingStock } from '../../../entities/product';
 import ProductCard from './ProductCard';
 import { useProductContext } from '../../../entities/product/contexts/productContext';
-import { useCartContext } from '../../../entities/cart/contexts/cartContext';
+import { useCartContext } from '../../../providers/CartProvider';
 interface ProductSectionProps {
   debouncedSearchTerm: string;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;

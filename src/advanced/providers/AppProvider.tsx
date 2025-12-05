@@ -1,6 +1,6 @@
-import { ProductProvider } from '../entities/product';
-import { CouponProvider } from '../entities/coupon';
-import { CartProvider } from '../entities/cart';
+import { ProductProvider } from './ProductProvider';
+import { CouponProvider } from './CouponProvider';
+import { CartProvider } from './CartProvider';
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -1,6 +1,6 @@
-import { createContext, type Dispatch, type SetStateAction, useContext } from 'react';
-import { useCartStorage } from '../hooks/useCartStorage';
-import { type CartItem } from '../types';
+import { createContext, type Dispatch, type SetStateAction, useContext, useMemo } from 'react';
+import { useCartStorage } from '../entities/cart/hooks/useCartStorage';
+import { type CartItem } from '../entities/cart/types';
 
 interface CartContextType {
   cart: CartItem[];
@@ -11,7 +11,10 @@ export const CartContext = createContext<CartContextType | null>(null);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useCartStorage([]);
-  return <CartContext value={{ cart, setCart }}>{children}</CartContext>;
+
+  const value = useMemo(() => ({ cart, setCart }), [cart, setCart]);
+
+  return <CartContext value={value}>{children}</CartContext>;
 };
 
 export const useCartContext = () => {

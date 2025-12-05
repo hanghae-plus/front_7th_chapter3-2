@@ -6,7 +6,7 @@ import { calculateItemTotal, getUpdateCartQuantity } from '../../../entities/car
 import { type Coupon, canApplyCoupon } from '../../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
 import { useProductContext } from '../../../entities/product/contexts/productContext';
-import { useCartContext } from '../../../entities/cart/contexts/cartContext';
+import { useCartContext } from '../../../providers/CartProvider';
 interface CartViewProps {
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
