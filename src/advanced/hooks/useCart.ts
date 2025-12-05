@@ -24,14 +24,15 @@
 // - getRemainingStock: 재고 확인 함수 -
 // - clearCart: 장바구니 비우기 함수
 
-import { useCallback, useMemo, useState } from "react";
-import { CartItem, Coupon, Product, ProductWithUI } from "../../types";
+import { useAtom, useAtomValue } from "jotai";
+import { useCallback } from "react";
+import { Coupon, ProductWithUI } from "../../types";
+import { cartAtom, cartItemCountAtom, selectedCouponAtom } from "../atoms";
 import {
   calculateCartTotal,
   getRemainingStock,
   removeItemFromCart,
 } from "../models/cart";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export function useCart({
   products,
@@ -40,9 +41,9 @@ export function useCart({
   products: ProductWithUI[];
   onMessage: (message: string, type?: "error" | "success" | "warning") => void;
 }) {
-  // TODO: 구현
-  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [cart, setCart] = useAtom(cartAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  const totalItemCount = useAtomValue(cartItemCountAtom);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
@@ -77,12 +78,15 @@ export function useCart({
 
       onMessage("장바구니에 담았습니다", "success");
     },
-    [cart, onMessage, getRemainingStock]
+    [cart, onMessage, setCart]
   );
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart(prevCart => removeItemFromCart(prevCart, productId));
-  }, []);
+  const removeFromCart = useCallback(
+    (productId: string) => {
+      setCart((prevCart) => removeItemFromCart(prevCart, productId));
+    },
+    [setCart]
+  );
 
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
@@ -108,7 +112,7 @@ export function useCart({
         )
       );
     },
-    [products, removeFromCart, onMessage, getRemainingStock]
+    [products, removeFromCart, onMessage, setCart]
   );
 
   const applyCoupon = useCallback(
@@ -129,17 +133,17 @@ export function useCart({
       setSelectedCoupon(coupon);
       onMessage("쿠폰이 적용되었습니다.", "success");
     },
-    [onMessage, calculateCartTotal]
+    [cart, selectedCoupon, onMessage, setSelectedCoupon]
   );
 
   const clearCart = useCallback(() => {
     setCart([]);
     setSelectedCoupon(null);
-  }, []);
+  }, [setCart, setSelectedCoupon]);
 
   const clearSelectedCoupon = useCallback(() => {
     setSelectedCoupon(null);
-  }, []);
+  }, [setSelectedCoupon]);
 
   const clearSelectedCouponByCode = useCallback(
     (code: string) => {
@@ -147,13 +151,8 @@ export function useCart({
         setSelectedCoupon(null);
       }
     },
-    [selectedCoupon]
+    [selectedCoupon, setSelectedCoupon]
   );
-
-  // 파생 상태: 장바구니 총 아이템 개수
-  const totalItemCount = useMemo(() => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  }, [cart]);
 
   return {
     value: cart,
