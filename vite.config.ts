@@ -14,28 +14,21 @@ const base: string =
   process.env.NODE_ENV === "production" ? "/front_7th_chapter3-2/" : "";
 
 export default mergeConfig(
-  defineConfig(({ command }) => {
-    const isBuild = command === "build";
-
-    return {
-      base, // GitHub Pages 배포 경로 설정
-      plugins: [react()],
-      resolve: {
-        alias: {
-          "@": path.resolve(__dirname, "./src"),
-        },
+  defineConfig({
+    base, // GitHub Pages 배포 경로 설정
+    plugins: [react()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
       },
-      // 빌드 시 index.advanced.html을 index.html로 사용
-      ...(isBuild
-        ? {
-            build: {
-              rollupOptions: {
-                input: path.resolve(__dirname, "index.advanced.html"),
-              },
-            },
-          }
-        : {}),
-    };
+    },
+    // 빌드 시 index.advanced.html을 index.html로 사용
+    // 개발 모드에서는 각 dev 스크립트에서 다른 HTML 파일을 명시적으로 지정하므로 문제 없음
+    build: {
+      rollupOptions: {
+        input: path.resolve(__dirname, "index.advanced.html"),
+      },
+    },
   }),
   defineTestConfig({
     test: {
