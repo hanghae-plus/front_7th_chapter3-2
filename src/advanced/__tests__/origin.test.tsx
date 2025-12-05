@@ -7,9 +7,11 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { vi } from "vitest";
+import { useSetAtom } from "jotai";
 import App from "../App";
 import "../../setupTests";
 import { ToastProvider } from "../context/ToastProvider";
+import { isAdminAtom, searchTermAtom } from "../store";
 
 const AppWithToast = () => {
   return (
@@ -19,10 +21,28 @@ const AppWithToast = () => {
   );
 };
 
+// Atom 상태 초기화 헬퍼 컴포넌트
+const AtomReset = () => {
+  const setIsAdmin = useSetAtom(isAdminAtom);
+  const setSearchTerm = useSetAtom(searchTermAtom);
+
+  setIsAdmin(false);
+  setSearchTerm("");
+
+  return null;
+};
+
 describe("쇼핑몰 앱 통합 테스트", () => {
   beforeEach(() => {
     // localStorage 초기화
     localStorage.clear();
+    // Atom 상태 초기화
+    const { unmount } = render(
+      <ToastProvider>
+        <AtomReset />
+      </ToastProvider>
+    );
+    unmount();
     // console 경고 무시
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.spyOn(console, "log").mockImplementation(() => {});

@@ -1,8 +1,11 @@
+import { useAtomValue, useSetAtom } from "jotai";
 import { IconPlus } from "./icons";
 import { Coupon } from "../types";
 import { CouponCard } from "./CouponCard";
 import { CouponForm } from "./CouponForm";
 import { useState } from "react";
+import { couponsAtom, addCouponAtom, deleteCouponAtom } from "../store";
+import { useToast } from "../utils/hooks/useToast";
 
 const getInitialCouponForm = (): Coupon => {
   return {
@@ -13,23 +16,30 @@ const getInitialCouponForm = (): Coupon => {
   };
 };
 
-export function CouponDashboard({
-  coupons,
-  addCoupon,
-  deleteCoupon,
-}: {
-  coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => void;
-  deleteCoupon: (code: string) => void;
-}) {
+export function CouponDashboard() {
+  const coupons = useAtomValue(couponsAtom);
+  const addCouponAction = useSetAtom(addCouponAtom);
+  const deleteCouponAction = useSetAtom(deleteCouponAtom);
+  const { notify } = useToast();
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [couponForm, setCouponForm] = useState(getInitialCouponForm());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
+    const existingCoupon = coupons.find((c) => c.code === couponForm.code);
+    if (existingCoupon) {
+      notify("이미 존재하는 쿠폰 코드입니다.", "error");
+      return;
+    }
+    addCouponAction(couponForm);
+    notify("쿠폰이 추가되었습니다.", "success");
     setCouponForm(getInitialCouponForm());
     setShowCouponForm(false);
+  };
+
+  const handleDelete = (code: string) => {
+    deleteCouponAction(code);
+    notify("쿠폰이 삭제되었습니다.", "success");
   };
 
   return (
@@ -43,7 +53,7 @@ export function CouponDashboard({
             <CouponCard
               key={coupon.code}
               coupon={coupon}
-              onDelete={deleteCoupon}
+              onDelete={handleDelete}
             />
           ))}
 

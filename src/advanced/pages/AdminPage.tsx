@@ -1,25 +1,8 @@
+import { useState } from "react";
 import { CouponDashboard } from "../components/CouponDashboard";
 import { ProductDashboard } from "../components/ProductDashboard";
-import { Coupon, ProductForm, ProductWithUI } from "../types";
-import { useState } from "react";
 
-export function AdminPage({
-  products,
-  coupons,
-  addCoupon,
-  deleteCoupon,
-  deleteProduct,
-  updateProduct,
-  addProduct,
-}: {
-  products: ProductWithUI[];
-  coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => void;
-  deleteCoupon: (code: string) => void;
-  deleteProduct: (productId: string) => void;
-  updateProduct: (productId: string, product: ProductForm) => void;
-  addProduct: (product: ProductForm) => void;
-}) {
+export function AdminPage() {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -55,20 +38,7 @@ export function AdminPage({
         </nav>
       </div>
 
-      {activeTab === "products" ? (
-        <ProductDashboard
-          products={products}
-          deleteProduct={deleteProduct}
-          updateProduct={updateProduct}
-          addProduct={addProduct}
-        />
-      ) : (
-        <CouponDashboard
-          coupons={coupons}
-          addCoupon={addCoupon}
-          deleteCoupon={deleteCoupon}
-        />
-      )}
+      {activeTab === "products" ? <ProductDashboard /> : <CouponDashboard />}
     </div>
   );
 }

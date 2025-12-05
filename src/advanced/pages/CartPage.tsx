@@ -1,4 +1,6 @@
-import { CartItem, Coupon, Product, ProductWithUI } from "../types";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useMemo } from "react";
+import { useDebounce } from "../utils/hooks/useDebounce";
 import { CouponSelector } from "../components/CouponSelector";
 import { CartPayment } from "../components/CartPayment";
 import { calculateCartTotal } from "../models/calculateCartTotal";
@@ -9,35 +11,119 @@ import { IconShopping } from "../components/icons";
 import { calculateItemTotal } from "../models/calculateItemTotal";
 import { isSoldOut } from "../models/isSoldOut";
 import { formatPriceWon } from "../utils/formatPriceWon";
+import { useToast } from "../utils/hooks/useToast";
+import {
+  cartAtom,
+  productsAtom,
+  searchTermAtom,
+  couponsAtom,
+  selectedCouponAtom,
+  addToCartAtom,
+  removeFromCartAtom,
+  updateQuantityAtom,
+  applyCouponAtom,
+} from "../store";
 
-export function CartPage({
-  products,
-  filteredProducts,
-  debouncedSearchTerm,
-  addToCart,
-  cart,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  applyCoupon,
-  onPurchase,
-  removeFromCart,
-  updateQuantity,
-}: {
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-  addToCart: (product: ProductWithUI) => void;
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  applyCoupon: (coupon: Coupon) => void;
-  onPurchase: () => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (product: Product, newQuantity: number) => void;
-}) {
-  const formatPrice = (product: ProductWithUI) => {
+export function CartPage({ onPurchase }: { onPurchase: () => void }) {
+  const products = useAtomValue(productsAtom);
+  const searchTerm = useAtomValue(searchTermAtom);
+  // 초기 렌더링에서는 즉시 반환, 이후 변경사항만 debounce
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const cart = useAtomValue(cartAtom);
+  const coupons = useAtomValue(couponsAtom);
+  const selectedCoupon = useAtomValue(selectedCouponAtom);
+  const setSelectedCoupon = useSetAtom(selectedCouponAtom);
+  const addToCartAction = useSetAtom(addToCartAtom);
+  const removeFromCartAction = useSetAtom(removeFromCartAtom);
+  const updateQuantityAction = useSetAtom(updateQuantityAtom);
+  const applyCouponAction = useSetAtom(applyCouponAtom);
+  const { notify } = useToast();
+
+  const handleAddToCart = useCallback(
+    (product: (typeof products)[0]) => {
+      const remainingStock = calculateRemainingStock(product, cart);
+      if (remainingStock <= 0) {
+        notify("재고가 부족합니다!", "error");
+        return;
+      }
+
+      const existingItem = cart.find((item) => item.product.id === product.id);
+      if (existingItem) {
+        const newQuantity = existingItem.quantity + 1;
+        if (newQuantity > product.stock) {
+          notify(`재고는 ${product.stock}개까지만 있습니다.`, "error");
+          return;
+        }
+      }
+
+      addToCartAction(product);
+      notify("장바구니에 담았습니다", "success");
+    },
+    [cart, addToCartAction, notify]
+  );
+
+  const handleRemoveFromCart = useCallback(
+    (productId: string) => {
+      removeFromCartAction(productId);
+    },
+    [removeFromCartAction]
+  );
+
+  const handleUpdateQuantity = useCallback(
+    (product: (typeof products)[0], newQuantity: number) => {
+      if (newQuantity <= 0) {
+        removeFromCartAction(product.id);
+        return;
+      }
+
+      const maxStock = product.stock;
+      if (newQuantity > maxStock) {
+        notify(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+        return;
+      }
+
+      updateQuantityAction(product, newQuantity);
+    },
+    [updateQuantityAction, removeFromCartAction, notify]
+  );
+
+  const handleApplyCoupon = useCallback(
+    (coupon: (typeof coupons)[0]) => {
+      const currentTotal = calculateCartTotal(
+        cart,
+        selectedCoupon
+      ).totalAfterDiscount;
+
+      if (currentTotal < 10000 && coupon.discountType === "percentage") {
+        notify(
+          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
+          "error"
+        );
+        return;
+      }
+
+      applyCouponAction(coupon);
+      notify("쿠폰이 적용되었습니다.", "success");
+    },
+    [cart, selectedCoupon, applyCouponAction, notify]
+  );
+  // 컴포넌트 레벨에서 필터링 처리
+  const filteredProducts = useMemo(() => {
+    if (!debouncedSearchTerm) return products;
+
+    return products.filter(
+      (product) =>
+        product.name
+          .toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        (product.description &&
+          product.description
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase()))
+    );
+  }, [products, debouncedSearchTerm]);
+
+  const formatPrice = (product: (typeof products)[0]) => {
     return isSoldOut(product, cart)
       ? "SOLD OUT"
       : formatPriceWon(product.price);
@@ -53,7 +139,7 @@ export function CartPage({
               총 {products.length}개 상품
             </div>
           </div>
-          {filteredProducts.length === 0 ? (
+          {debouncedSearchTerm && filteredProducts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500">
                 "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
@@ -66,7 +152,7 @@ export function CartPage({
                   key={product.id}
                   product={product}
                   remainingStock={calculateRemainingStock(product, cart)}
-                  onAddToCart={addToCart}
+                  onAddToCart={handleAddToCart}
                   formattedPrice={formatPrice(product)}
                 />
               ))}
@@ -94,8 +180,8 @@ export function CartPage({
                     key={item.product.id}
                     item={item}
                     itemTotal={calculateItemTotal(cart, item)}
-                    onRemove={removeFromCart}
-                    onChangeQuantity={updateQuantity}
+                    onRemove={handleRemoveFromCart}
+                    onChangeQuantity={handleUpdateQuantity}
                   />
                 ))}
               </div>
@@ -108,7 +194,7 @@ export function CartPage({
                 coupons={coupons}
                 selectedCoupon={selectedCoupon}
                 setSelectedCoupon={setSelectedCoupon}
-                applyCoupon={applyCoupon}
+                applyCoupon={handleApplyCoupon}
               />
               <CartPayment
                 totals={calculateCartTotal(cart, selectedCoupon)}

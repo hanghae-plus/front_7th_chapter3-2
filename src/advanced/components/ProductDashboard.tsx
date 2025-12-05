@@ -1,7 +1,15 @@
+import { useAtomValue, useSetAtom } from "jotai";
 import { ProductForm as ProductFormType, ProductWithUI } from "../types";
 import { ProductForm } from "./ProductForm";
 import { ProductTable } from "./ProductTable";
 import { useState } from "react";
+import {
+  productsAtom,
+  addProductAtom,
+  updateProductAtom,
+  deleteProductAtom,
+} from "../store";
+import { useToast } from "../utils/hooks/useToast";
 
 export const getInitialProductForm = (): ProductFormType => ({
   name: "",
@@ -11,17 +19,12 @@ export const getInitialProductForm = (): ProductFormType => ({
   discounts: [],
 });
 
-export function ProductDashboard({
-  products,
-  deleteProduct,
-  updateProduct,
-  addProduct,
-}: {
-  products: ProductWithUI[];
-  deleteProduct: (productId: string) => void;
-  updateProduct: (productId: string, product: ProductFormType) => void;
-  addProduct: (product: ProductFormType) => void;
-}) {
+export function ProductDashboard() {
+  const products = useAtomValue(productsAtom);
+  const addProductAction = useSetAtom(addProductAtom);
+  const updateProductAction = useSetAtom(updateProductAtom);
+  const deleteProductAction = useSetAtom(deleteProductAtom);
+  const { notify } = useToast();
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState(getInitialProductForm());
@@ -29,10 +32,12 @@ export function ProductDashboard({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
+      updateProductAction(editingProduct, productForm);
+      notify("상품이 수정되었습니다.", "success");
       setEditingProduct(null);
     } else {
-      addProduct({ ...productForm, discounts: productForm.discounts });
+      addProductAction({ ...productForm, discounts: productForm.discounts });
+      notify("상품이 추가되었습니다.", "success");
     }
     setProductForm(getInitialProductForm());
     setEditingProduct(null);
@@ -81,7 +86,10 @@ export function ProductDashboard({
         <ProductTable
           products={products}
           onEdit={handleEditProduct}
-          onDelete={deleteProduct}
+          onDelete={(productId) => {
+            deleteProductAction(productId);
+            notify("상품이 삭제되었습니다.", "success");
+          }}
         />
       </div>
       {showProductForm && (
