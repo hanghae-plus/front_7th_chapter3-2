@@ -1,0 +1,100 @@
+import { useMemo } from 'react';
+import PaymentInfoSection from './PaymentInfoSection';
+import CouponSection from './CouponSection';
+import CartSection from './CartSection';
+import {
+  getUpdateCartQuantity,
+  getTotalWithDiscount,
+  getOriginTotal,
+} from '../../../entities/cart';
+import { type Coupon, canApplyCoupon, getTotalWithCoupon } from '../../../entities/coupon';
+import { Dispatch, SetStateAction } from 'react';
+import { useProductContext } from '../../../providers/ProductProvider';
+import { useCartContext } from '../../../providers/CartProvider';
+import { generateId } from '../../../utils/id-generator';
+import { useNotificationContext } from '../../../providers/NotificationProvider';
+interface CartViewProps {
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
+}
+
+export default function CartView({ selectedCoupon, setSelectedCoupon }: CartViewProps) {
+  const { products } = useProductContext();
+  const { cart, setCart } = useCartContext();
+  const { addNotification } = useNotificationContext();
+  // Computed Values
+  const originTotal = useMemo(() => {
+    const total = getOriginTotal(cart);
+    return Math.round(total);
+  }, [cart]);
+
+  const caculatedTotal = useMemo(() => {
+    const total = getTotalWithDiscount(cart);
+    const totalWithCoupon = getTotalWithCoupon(total, selectedCoupon);
+    return Math.round(totalWithCoupon);
+  }, [cart, selectedCoupon]);
+
+  // Events
+  const removeFromCart = (productId: string) => {
+    setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
+  };
+
+  const updateQuantity = (productId: string, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const maxStock = product.stock;
+    if (newQuantity > maxStock) {
+      addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
+      return;
+    }
+
+    setCart(prevCart => getUpdateCartQuantity(prevCart, productId, newQuantity));
+  };
+
+  const applyCoupon = (coupon: Coupon) => {
+    if (!canApplyCoupon(caculatedTotal, coupon)) {
+      addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
+      return;
+    }
+
+    setSelectedCoupon(coupon);
+    addNotification('쿠폰이 적용되었습니다.', 'success');
+  };
+
+  const completeOrder = () => {
+    const orderNumber = generateId('ORD');
+    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    setCart([]);
+    setSelectedCoupon(null);
+  };
+
+  return (
+    <div className="lg:col-span-1">
+      <div className="sticky top-24 space-y-4">
+        <CartSection cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />
+
+        {cart.length > 0 && (
+          <CouponSection
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+            applyCoupon={applyCoupon}
+          />
+        )}
+
+        {cart.length > 0 && (
+          <PaymentInfoSection
+            originTotal={originTotal}
+            caculatedTotal={caculatedTotal}
+            completeOrder={completeOrder}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
