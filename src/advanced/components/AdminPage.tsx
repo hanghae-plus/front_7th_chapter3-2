@@ -1,18 +1,3 @@
-// 1. 탭 UI로 상품 관리와 쿠폰 관리 분리
-// 2. 상품 추가/수정/삭제 기능
-// 3. 쿠폰 생성 기능
-// 4. 할인 규칙 설정
-//
-// 필요한 hooks:
-// - useProducts: 상품 CRUD
-// - useCoupons: 쿠폰 CRUD
-//
-// 하위 컴포넌트:
-// - ProductForm: 새 상품 추가 폼
-// - ProductAccordion: 상품 정보 표시 및 수정
-// - CouponForm: 새 쿠폰 추가 폼
-// - CouponList: 쿠폰 목록 표시
-
 import { useState } from "react";
 import { useProducts, type ProductWithUI } from "../hooks/useProducts";
 import { ProductList } from "./admin/ProductList";
@@ -21,28 +6,10 @@ import { ProductForm } from "./admin/ProductForm";
 import { CouponList } from "./admin/CouponList";
 import { useCouponForm } from "../hooks/useCouponForm";
 import { CouponForm } from "./admin/CouponForm";
-import { Coupon } from "../../types";
 import { useNotification } from "../hooks/useNotification";
+import { useCoupons } from "../hooks/useCoupons";
 
-interface AdminPageProps {
-  coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-  isDuplicateCoupon: (coupon: Coupon) => boolean;
-  toggleCouponForm: () => void;
-  showCouponForm: boolean;
-  setShowCouponForm: (show: boolean) => void;
-}
-
-const AdminPage = ({
-  coupons,
-  addCoupon,
-  deleteCoupon,
-  isDuplicateCoupon,
-  toggleCouponForm,
-  showCouponForm,
-  setShowCouponForm,
-}: AdminPageProps) => {
+const AdminPage = () => {
   const { addProduct, updateProduct } = useProducts();
   const {
     productForm,
@@ -55,8 +22,14 @@ const AdminPage = ({
     resetProductForm,
   } = useProductForm();
   const { addNotification } = useNotification();
-  const { couponForm, updateCouponForm, resetCouponForm } = useCouponForm();
-
+  const {
+    couponForm,
+    updateCouponForm,
+    resetCouponForm,
+    toggleCouponForm,
+    showCouponForm,
+  } = useCouponForm();
+  const { addCoupon, isDuplicateCoupon } = useCoupons();
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -103,7 +76,7 @@ const AdminPage = ({
     addCoupon(couponForm);
     addNotification("쿠폰이 추가되었습니다.", "success");
     resetCouponForm();
-    setShowCouponForm(false);
+    toggleCouponForm();
   };
 
   return (
@@ -168,12 +141,7 @@ const AdminPage = ({
             <h2 className="text-lg font-semibold">쿠폰 관리</h2>
           </div>
           <div className="p-6">
-            <CouponList
-              coupons={coupons}
-              deleteCoupon={deleteCoupon}
-              toggleCouponForm={toggleCouponForm}
-              addNotification={addNotification}
-            />
+            <CouponList toggleCouponForm={toggleCouponForm} />
 
             {showCouponForm && (
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
@@ -181,8 +149,7 @@ const AdminPage = ({
                   couponForm={couponForm}
                   updateCouponForm={updateCouponForm}
                   handleCouponSubmit={handleCouponSubmit}
-                  addNotification={addNotification}
-                  setShowCouponForm={setShowCouponForm}
+                  toggleCouponForm={toggleCouponForm}
                 />
               </div>
             )}

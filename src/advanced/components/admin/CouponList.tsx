@@ -1,22 +1,14 @@
 import { useEffect } from "react";
-import { Coupon } from "../../../types";
-
-interface CouponListProps {
-  coupons: Coupon[];
-  deleteCoupon: (couponCode: string) => void;
-  toggleCouponForm: () => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
+import { useCoupons } from "../../hooks/useCoupons";
+import { useNotification } from "../../hooks/useNotification";
 
 export const CouponList = ({
-  coupons,
-  deleteCoupon,
   toggleCouponForm,
-  addNotification,
-}: CouponListProps) => {
+}: {
+  toggleCouponForm: () => void;
+}) => {
+  const { coupons, deleteCoupon } = useCoupons();
+  const { addNotification } = useNotification();
   const handleDeleteCoupon = (couponCode: string) => {
     deleteCoupon(couponCode);
     addNotification("쿠폰이 삭제되었습니다.", "success");

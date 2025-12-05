@@ -1,30 +1,21 @@
 import { useCallback } from "react";
-import { Coupon } from "../../types";
-import { ProductWithUI, useProducts } from "../hooks/useProducts";
+import { useProducts } from "../hooks/useProducts";
 import { ProductCard } from "./cart/ProductCard";
 import { ShoppingCart } from "./cart/ShoppingCart";
 import { SelectCoupon } from "./cart/SelectCoupon";
 import { PaymentInfo } from "./cart/PaymentInfo";
 import { useNotification } from "../hooks/useNotification";
 import { useCart } from "../hooks/useCart";
+import { useCoupons } from "../hooks/useCoupons";
 
 interface CartPageProps {
   debouncedSearchTerm: string;
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  applyCoupon: (coupon: Coupon, currentTotal: number) => void;
 }
 
-const CartPage = ({
-  debouncedSearchTerm,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  applyCoupon,
-}: CartPageProps) => {
+const CartPage = ({ debouncedSearchTerm }: CartPageProps) => {
   const { addNotification } = useNotification();
   const { cart, setCart } = useCart();
+  const { coupons, setSelectedCoupon } = useCoupons();
   const { products, filterProductsBySearchTerm } = useProducts();
 
   const filteredProducts = filterProductsBySearchTerm(debouncedSearchTerm);
@@ -72,15 +63,7 @@ const CartPage = ({
 
           {cart.length > 0 && (
             <>
-              {coupons.length > 0 && (
-                <SelectCoupon
-                  selectedCoupon={selectedCoupon}
-                  coupons={coupons}
-                  applyCoupon={applyCoupon}
-                  setSelectedCoupon={setSelectedCoupon}
-                />
-              )}
-
+              {coupons.length > 0 && <SelectCoupon />}
               <PaymentInfo completeOrder={completeOrder} />
             </>
           )}

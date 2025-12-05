@@ -17,6 +17,10 @@ export const useCouponForm = () => {
 
   const [showCouponForm, setShowCouponForm] = useState(false);
 
+  const toggleCouponForm = () => {
+    setShowCouponForm(!showCouponForm);
+  };
+
   const updateCouponForm = (updates: Partial<CouponFormType>) => {
     setCouponForm({ ...couponForm, ...updates });
   };
@@ -36,5 +40,6 @@ export const useCouponForm = () => {
     resetCouponForm,
     showCouponForm,
     setShowCouponForm,
+    toggleCouponForm,
   };
 };

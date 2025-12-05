@@ -1,9 +1,9 @@
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { notificationsAtom } from "../atoms/notifications";
 import { NotificationType } from "../atoms/notifications";
 
 export function useNotification() {
-  const [notifications, setNotifications] = useAtom(notificationsAtom);
+  const setNotifications = useSetAtom(notificationsAtom);
 
   const addNotification = (
     msg: string,
@@ -12,10 +12,11 @@ export function useNotification() {
     const id = String(Date.now());
     const newNotification: NotificationType = { id, message: msg, type };
 
-    // atom 업데이트
-    setNotifications((prev) => [...prev, newNotification]);
+    setNotifications((prev) => {
+      const updated = [...prev, newNotification];
+      return updated;
+    });
 
-    // 3초 후 자동 제거
     setTimeout(() => {
       setNotifications((prev) => prev.filter((n) => n.id !== id));
     }, 3000);
@@ -25,5 +26,5 @@ export function useNotification() {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  return { notifications, addNotification, clearNotification };
+  return { addNotification, clearNotification };
 }

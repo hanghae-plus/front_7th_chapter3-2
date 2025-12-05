@@ -1,7 +1,10 @@
+import { useAtomValue } from "jotai";
 import { useNotification } from "../hooks/useNotification";
+import { notificationsAtom } from "../atoms/notifications";
 
 export const Notifications = () => {
-  const { notifications, clearNotification } = useNotification();
+  const notifications = useAtomValue(notificationsAtom);
+  const { clearNotification } = useNotification();
 
   if (notifications.length === 0) return null;
 

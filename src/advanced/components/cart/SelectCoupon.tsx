@@ -1,21 +1,11 @@
-import { Coupon } from "../../../types";
 import { useCart } from "../../hooks/useCart";
+import { useCoupons } from "../../hooks/useCoupons";
 
-interface SelectCouponProps {
-  selectedCoupon: Coupon | null;
-  coupons: Coupon[];
-  applyCoupon: (coupon: Coupon, currentTotal: number) => void;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}
-
-export const SelectCoupon = ({
-  selectedCoupon,
-  coupons,
-  applyCoupon,
-  setSelectedCoupon,
-}: SelectCouponProps) => {
+export const SelectCoupon = () => {
   const { calculateCartTotal } = useCart();
-  const totals = calculateCartTotal();
+  const { selectedCoupon, applyCoupon, setSelectedCoupon, coupons } =
+    useCoupons();
+  const totals = calculateCartTotal(selectedCoupon);
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">

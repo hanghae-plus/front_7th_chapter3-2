@@ -1,5 +1,5 @@
 import { CouponFormType } from "../../hooks/useCouponForm";
-
+import { useNotification } from "../../hooks/useNotification";
 interface CouponFormProps {
   couponForm: {
     name: string;
@@ -9,20 +9,16 @@ interface CouponFormProps {
   };
   updateCouponForm: (updates: Partial<CouponFormType>) => void;
   handleCouponSubmit: (e: React.FormEvent) => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-  setShowCouponForm: (show: boolean) => void;
+  toggleCouponForm: () => void;
 }
 
 export const CouponForm = ({
   couponForm,
   updateCouponForm,
   handleCouponSubmit,
-  addNotification,
-  setShowCouponForm,
+  toggleCouponForm,
 }: CouponFormProps) => {
+  const { addNotification } = useNotification();
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <form onSubmit={handleCouponSubmit} className="space-y-4">
@@ -145,7 +141,7 @@ export const CouponForm = ({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => setShowCouponForm(false)}
+            onClick={toggleCouponForm}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소
