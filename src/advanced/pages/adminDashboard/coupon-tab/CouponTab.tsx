@@ -3,7 +3,7 @@ import CouponItem from './CouponItem';
 import CouponForm from './CouponForm';
 import { type Coupon, canAddCoupon } from '../../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
-import { useCouponContext } from '../../../entities/coupon';
+import { useCouponContext } from '../../../providers/CouponProvider';
 
 interface CouponTabProps {
   selectedCoupon: Coupon | null;

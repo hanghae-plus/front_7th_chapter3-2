@@ -6,7 +6,7 @@ import {
 import { useState } from 'react';
 import ProductForm from './ProductForm';
 import ProductListRowItem from './ProductListRowItem';
-import { useProductContext } from '../../../entities/product/contexts/productContext';
+import { useProductContext } from '../../../providers/ProductProvider';
 
 interface ProductTabProps {
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
