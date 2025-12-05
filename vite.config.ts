@@ -6,6 +6,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default mergeConfig(
   defineConfig({
     plugins: [react(), tsconfigPaths()],
+    base: process.env.NODE_ENV === "production" ? "/front_7th_chapter3-2/" : "/",
   }),
   defineTestConfig({
     test: {

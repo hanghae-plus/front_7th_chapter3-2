@@ -13,6 +13,10 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
+    "build:basic": "tsc -b && vite build --outDir dist/basic --mode production --config vite.config.basic.ts",
+    "build:advanced": "tsc -b && vite build --outDir dist/advanced --mode production --config vite.config.advanced.ts",
+    "build:all": "pnpm run build:basic && pnpm run build:advanced",
+    "deploy": "pnpm run build:all && gh-pages -d dist -t true",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
@@ -33,6 +37,7 @@
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "gh-pages": "^6.3.0",
     "jsdom": "^26.1.0",
     "prettier": "^3.7.3",
     "typescript": "^5.9.2",
