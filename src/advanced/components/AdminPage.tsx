@@ -14,7 +14,7 @@
 // - CouponList: 쿠폰 목록 표시
 
 import { useState } from "react";
-import { type ProductWithUI } from "../hooks/useProducts";
+import { useProducts, type ProductWithUI } from "../hooks/useProducts";
 import { ProductList } from "./admin/ProductList";
 import { useProductForm } from "../hooks/useProductForm";
 import { ProductForm } from "./admin/ProductForm";
@@ -25,10 +25,6 @@ import { Coupon } from "../../types";
 import { useNotification } from "../hooks/useNotification";
 
 interface AdminPageProps {
-  products: ProductWithUI[];
-  addProduct: (product: Omit<ProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (product: string) => void;
   coupons: Coupon[];
   addCoupon: (coupon: Coupon) => void;
   deleteCoupon: (couponCode: string) => void;
@@ -39,10 +35,6 @@ interface AdminPageProps {
 }
 
 const AdminPage = ({
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
   coupons,
   addCoupon,
   deleteCoupon,
@@ -51,6 +43,7 @@ const AdminPage = ({
   showCouponForm,
   setShowCouponForm,
 }: AdminPageProps) => {
+  const { addProduct, updateProduct } = useProducts();
   const {
     productForm,
     setProductForm,
@@ -157,12 +150,8 @@ const AdminPage = ({
               </button>
             </div>
           </div>
+          <ProductList startEditProduct={startEditProduct} />
 
-          <ProductList
-            products={products}
-            deleteProduct={deleteProduct}
-            startEditProduct={startEditProduct}
-          />
           {showProductForm && (
             <ProductForm
               productForm={productForm}

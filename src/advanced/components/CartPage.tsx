@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { CartItem, Coupon } from "../../types";
-import { ProductWithUI } from "../hooks/useProducts";
+import { Coupon } from "../../types";
+import { ProductWithUI, useProducts } from "../hooks/useProducts";
 import { ProductCard } from "./cart/ProductCard";
 import { ShoppingCart } from "./cart/ShoppingCart";
 import { SelectCoupon } from "./cart/SelectCoupon";
@@ -9,8 +9,6 @@ import { useNotification } from "../hooks/useNotification";
 import { useCart } from "../hooks/useCart";
 
 interface CartPageProps {
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
@@ -19,8 +17,6 @@ interface CartPageProps {
 }
 
 const CartPage = ({
-  products,
-  filteredProducts,
   debouncedSearchTerm,
   coupons,
   selectedCoupon,
@@ -29,6 +25,9 @@ const CartPage = ({
 }: CartPageProps) => {
   const { addNotification } = useNotification();
   const { cart, setCart } = useCart();
+  const { products, filterProductsBySearchTerm } = useProducts();
+
+  const filteredProducts = filterProductsBySearchTerm(debouncedSearchTerm);
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;

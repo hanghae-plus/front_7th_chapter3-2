@@ -1,19 +1,14 @@
 import { useEffect } from "react";
-import { ProductWithUI } from "../../hooks/useProducts";
+import { ProductWithUI, useProducts } from "../../hooks/useProducts";
 import { formatPriceWon } from "../../utils/formatters";
 import { useNotification } from "../../hooks/useNotification";
 
 interface ProductListProps {
-  products: ProductWithUI[];
-  deleteProduct: (productId: string) => void;
   startEditProduct: (product: ProductWithUI) => void;
 }
 
-export const ProductList = ({
-  products,
-  deleteProduct,
-  startEditProduct,
-}: ProductListProps) => {
+export const ProductList = ({ startEditProduct }: ProductListProps) => {
+  const { products, deleteProduct } = useProducts();
   const { addNotification } = useNotification();
   const handleDelete = (productId: string) => {
     deleteProduct(productId);

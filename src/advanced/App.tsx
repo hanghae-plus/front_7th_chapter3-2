@@ -16,13 +16,7 @@ const App = () => {
   // 검색 기능
   const { searchTerm, debouncedSearchTerm, setSearchTerm } = useSearch(500);
 
-  const {
-    products,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-    filterProductsBySearchTerm,
-  } = useProducts();
+  const { filterProductsBySearchTerm } = useProducts();
 
   const {
     coupons,
@@ -37,22 +31,10 @@ const App = () => {
     applyCoupon,
   } = useCoupons();
 
-  // const {
-  //   cart,
-  //   setCart,
-  //   addToCart,
-  //   updateQuantity,
-  //   calculateCartTotal,
-  //   calculateItemTotal,
-  //   removeFromCart,
-  //   getRemainingStock,
-  // } = useCart();
-
   const [isAdmin, setIsAdmin] = useState(false);
 
   // const totals = calculateCartTotal(selectedCoupon);
   // 검색어로 상품 필터링
-  const filteredProducts = filterProductsBySearchTerm(debouncedSearchTerm);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -75,11 +57,6 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage
-            //products
-            products={products}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            deleteProduct={deleteProduct}
             //coupons
             coupons={coupons}
             addCoupon={addCoupon}
@@ -91,8 +68,6 @@ const App = () => {
           />
         ) : (
           <CartPage
-            products={products}
-            filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
