@@ -1,5 +1,4 @@
-import { CartItem } from "../model/types";
-import { Product } from "../../product/model/types";
+import { CartItem, Product } from "../../../../types";
 
 export function addItem(cart: CartItem[], productToAdd: Product): { newCart: CartItem[], success: boolean, notification: string } {
     const stock = productToAdd.stock;

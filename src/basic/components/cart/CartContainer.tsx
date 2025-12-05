@@ -1,12 +1,14 @@
 import React from 'react';
-import { Product } from '../../entities/product/model/types';
-import { CartItem } from '../../entities/cart/model/types';
-import { Coupon } from '../../entities/coupon/model/types';
+import { Product, CartItem, Coupon } from '../../../types';
 import Products from './Products';
 import Cart from './Cart';
 
+interface ProductWithUI extends Product {
+  isRecommended?: boolean;
+}
+
 interface CartContainerProps {
-  products: Product[];
+  products: ProductWithUI[];
   cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
@@ -14,9 +16,9 @@ interface CartContainerProps {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
   };
-  getRemainingStock: (product: Product) => number;
+  getRemainingStock: (product: ProductWithUI) => number;
   formatPrice: (price: number, productId?: string) => string;
-  addToCart: (product: Product) => void;
+  addToCart: (product: ProductWithUI) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
   applyCoupon: (coupon: Coupon) => void;

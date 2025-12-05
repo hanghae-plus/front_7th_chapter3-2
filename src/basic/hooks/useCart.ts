@@ -1,7 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem } from '../entities/cart/model/types';
-import { Coupon } from '../entities/coupon/model/types';
-import { Product } from '../entities/product/model/types';
+import { CartItem, Coupon, Product } from '../../types';
 import { ProductWithUI } from '../model/productModels';
 import { getRemainingStock } from '../entities/product/lib/stock';
 import { calculateCartTotal, calculateItemTotal } from '../entities/cart/lib/calc';
