@@ -159,11 +159,36 @@ https://사용자명.github.io/front_7th_chapter3-2/
    - Settings → Pages에서 gh-pages 브랜치 사용 시
    - 브랜치에 파일이 있는지 확인
 
-### 404 에러가 날 때
+### 404 에러가 날 때 ⚠️
 
-- vite.config.ts의 base path가 저장소 이름과 일치하는지 확인
-- GitHub Pages 설정에서 올바른 브랜치/폴더가 선택되었는지 확인
-- 브라우저 캐시를 지우고 다시 접속 (Ctrl + Shift + R 또는 Cmd + Shift + R)
+**가장 흔한 원인**: GitHub Pages Source 설정이 잘못되었습니다!
+
+1. **GitHub Settings → Pages 확인**
+
+   - Source가 **"GitHub Actions"**로 설정되어 있어야 합니다
+   - ⚠️ "Deploy from a branch" + "gh-pages"로 설정되어 있다면, 이것이 문제입니다!
+   - Source를 **"GitHub Actions"**로 변경하고 Save 클릭
+
+2. **GitHub Actions 워크플로우 확인**
+
+   - Actions 탭에서 "Deploy to GitHub Pages" 워크플로우가 성공적으로 실행되었는지 확인
+   - 실패했다면 로그 확인
+
+3. **gh-pages 브랜치 확인**
+
+   - `https://github.com/jumoooo/front_7th_chapter3-2/tree/gh-pages`
+   - `index.html` 파일이 있는지 확인
+
+4. **저장소 이름 확인**
+
+   - 저장소 이름이 정확히 `front_7th_chapter3-2`인지 확인
+   - 다르다면 `vite.config.ts`의 base path도 함께 수정 필요
+
+5. **브라우저 캐시 지우기**
+   - Ctrl + Shift + R 또는 Cmd + Shift + R
+   - 또는 시크릿 모드로 접속
+
+자세한 내용은 `GITHUB_PAGES_TROUBLESHOOTING.md` 파일을 참고하세요!
 
 ## 📝 참고 사항
 
