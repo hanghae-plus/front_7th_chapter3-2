@@ -37,11 +37,11 @@ function dynamicAliasPlugin(): Plugin {
 export default mergeConfig(
   defineConfig({
     plugins: [react(), dynamicAliasPlugin()],
+    // GitHub Pages 배포 시에만 base 경로 설정 (동적 alias와는 별개로 작동)
+    base: '/front_7th_chapter3-2/',
     build: {
       rollupOptions: {
-        input: {
-          main: path.resolve(__dirname, 'index.advanced.html')
-        }
+        input: path.resolve(__dirname, 'index.advanced.html')
       }
     }
   }),

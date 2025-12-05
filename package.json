@@ -14,6 +14,7 @@
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
     "build:advanced": "tsc -b tsconfig.advanced.json && vite build --outDir dist --config vite.config.ts",
+    "preview:advanced": "vite preview --outDir dist",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\""
