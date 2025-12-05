@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Coupon } from '../../../../types';
 import Button from '../../ui/Button';
+import { validateCoupon } from '../../../entities/coupon/lib/validator';
 
 interface AdminCouponFormProps {
   addCoupon: (newCoupon: Coupon) => void;
@@ -18,6 +19,12 @@ const AdminCouponForm: React.FC<AdminCouponFormProps> = ({ addCoupon, setShowCou
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const validation = validateCoupon(couponForm);
+    if (!validation.isValid) {
+      addNotification(validation.message || '쿠폰 정보가 올바르지 않습니다.', 'error');
+      return;
+    }
+
     addCoupon(couponForm);
     setCouponForm({
       name: '',
@@ -26,6 +33,13 @@ const AdminCouponForm: React.FC<AdminCouponFormProps> = ({ addCoupon, setShowCou
       discountValue: 0
     });
     setShowCouponForm(false);
+  };
+
+  const handleValueBlur = () => {
+    const validation = validateCoupon(couponForm);
+    if (!validation.isValid && validation.message) {
+      addNotification(validation.message, 'error');
+    }
   };
 
   return (
@@ -82,24 +96,7 @@ const AdminCouponForm: React.FC<AdminCouponFormProps> = ({ addCoupon, setShowCou
                   setCouponForm({ ...couponForm, discountValue: value === '' ? 0 : parseInt(value) });
                 }
               }}
-              onBlur={(e) => {
-                const value = parseInt(e.target.value) || 0;
-                if (couponForm.discountType === 'percentage') {
-                  if (value > 100) {
-                    addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
-                    setCouponForm({ ...couponForm, discountValue: 100 });
-                  } else if (value < 0) {
-                    setCouponForm({ ...couponForm, discountValue: 0 });
-                  }
-                } else {
-                  if (value > 100000) {
-                    addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
-                    setCouponForm({ ...couponForm, discountValue: 100000 });
-                  } else if (value < 0) {
-                    setCouponForm({ ...couponForm, discountValue: 0 });
-                  }
-                }
-              }}
+              onBlur={handleValueBlur}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}
               required
