@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Product } from '../../../../types';
 import { ProductWithUI } from '../../../model/productModels';
 import Button from '../../ui/Button';
 import AdminProductList from './AdminProductList';
