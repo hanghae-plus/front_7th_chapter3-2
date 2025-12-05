@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product } from '../types';
+import { CartItem } from './entities/cart/model/types';
+import { Coupon } from './entities/coupon/model/types';
+import { Product } from './entities/product/model/types';
 import { ProductWithUI } from './model/productModels';
 import { Notification } from './model/notificationModels';
 import { initialCoupons } from "./constant/coupons";
@@ -8,8 +10,9 @@ import AdminContainer from './components/admin/AdminContainer';
 import NotificationContainer from './components/ui/Notification';
 import Header from './components/Header';
 import CartContainer from './components/cart/CartContainer';
-import { formatPrice } from './utils/formatters';
-import { getRemainingStock, calculateItemTotal, calculateCartTotal } from './utils/calculations';
+import { formatPrice as formatCurrency } from './utils/formatters';
+import { getRemainingStock } from './entities/product/lib/stock';
+import { calculateItemTotal, calculateCartTotal } from './entities/cart/lib/calc';
 
 const App = () => {
 
@@ -56,10 +59,15 @@ const App = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const memoizedGetRemainingStock = useCallback((product: Product) => getRemainingStock(product, cart), [cart]);
-  const memoizedFormatPrice = (price: number, productId?: string) => {
+  
+  const formatPrice = (price: number, productId?: string): string => {
     const product = products.find(p => p.id === productId);
-    return formatPrice(price, isAdmin, memoizedGetRemainingStock, product);
+    if (product && memoizedGetRemainingStock(product) <= 0) {
+      return 'SOLD OUT';
+    }
+    return formatCurrency(price, { currency: isAdmin ? 'WON' : 'KRW' });
   };
+
   const memoizedCalculateItemTotal = (item: CartItem) => calculateItemTotal(item, cart);
   const totals = calculateCartTotal(cart, selectedCoupon);
 
@@ -255,7 +263,7 @@ const App = () => {
             deleteProduct={deleteProduct}
             addCoupon={addCoupon}
             deleteCoupon={deleteCoupon}
-            formatPrice={memoizedFormatPrice}
+            formatPrice={formatPrice}
             addNotification={addNotification}
           />
         ) : (
@@ -266,7 +274,7 @@ const App = () => {
             selectedCoupon={selectedCoupon}
             totals={totals}
             getRemainingStock={memoizedGetRemainingStock}
-            formatPrice={memoizedFormatPrice}
+            formatPrice={formatPrice}
             addToCart={addToCart}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
