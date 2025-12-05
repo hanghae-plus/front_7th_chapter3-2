@@ -16,7 +16,7 @@
     "build:basic": "tsc -b && vite build --outDir dist/basic --mode production --config vite.config.basic.ts",
     "build:advanced": "tsc -b && vite build --outDir dist/advanced --mode production --config vite.config.advanced.ts",
     "build:all": "pnpm run build:basic && pnpm run build:advanced",
-    "deploy": "pnpm run build:all && gh-pages -d dist -t true",
+    "deploy": "pnpm run build:all && gh-pages -d dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
