@@ -1,4 +1,4 @@
-import { useCartContext } from '../entities/cart';
+import { useCartContext } from '../providers/CartProvider';
 import { useMemo } from 'react';
 
 interface HeaderProps {
