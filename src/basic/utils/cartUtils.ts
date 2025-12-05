@@ -1,4 +1,4 @@
-import { CartItem, Coupon, Product } from '../../types';
+import type { CartItem, Coupon, Product } from '../../types';
 
 /**
  * 장바구니 총액 계산 결과
@@ -10,32 +10,55 @@ export interface CartTotal {
 }
 
 /**
+ * 장바구니에 대량 구매 상품이 있는지 확인합니다.
+ *
+ * @param cart - 장바구니 아이템 배열
+ * @returns 10개 이상 구매한 상품이 있으면 true
+ */
+export const hasBulkPurchase = (cart: CartItem[]): boolean => {
+  return cart.some(item => item.quantity >= 10);
+};
+
+/**
  * 장바구니 아이템에 적용 가능한 최대 할인율을 계산합니다.
+ * 대량 구매 보너스를 적용하려면 cart를 전달합니다.
  *
  * @param item - 장바구니 아이템
+ * @param cart - 장바구니 (대량 구매 보너스 계산용, 선택사항)
  * @returns 적용 가능한 최대 할인율 (0 ~ 1)
  */
-export const getMaxApplicableDiscount = (item: CartItem): number => {
+export const getMaxApplicableDiscount = (
+  item: CartItem,
+  cart?: CartItem[]
+): number => {
   const { discounts } = item.product;
   const { quantity } = item;
 
-  return discounts.reduce((maxDiscount, discount) => {
+  const baseDiscount = discounts.reduce((maxDiscount, discount) => {
     return quantity >= discount.quantity && discount.rate > maxDiscount
       ? discount.rate
       : maxDiscount;
   }, 0);
+
+  // 대량 구매 보너스: 장바구니에 10개 이상 구매한 상품이 있으면 +5% (최대 50%)
+  if (cart && hasBulkPurchase(cart)) {
+    return Math.min(baseDiscount + 0.05, 0.5);
+  }
+
+  return baseDiscount;
 };
 
 /**
  * 장바구니 아이템의 총 금액을 계산합니다. (할인 적용)
  *
  * @param item - 장바구니 아이템
+ * @param cart - 장바구니 (대량 구매 보너스 계산용, 선택사항)
  * @returns 할인이 적용된 총 금액
  */
-export const calculateItemTotal = (item: CartItem): number => {
+export const calculateItemTotal = (item: CartItem, cart?: CartItem[]): number => {
   const { price } = item.product;
   const { quantity } = item;
-  const discount = getMaxApplicableDiscount(item);
+  const discount = getMaxApplicableDiscount(item, cart);
 
   return Math.round(price * quantity * (1 - discount));
 };
@@ -57,7 +80,7 @@ export const calculateCartTotal = (
   cart.forEach(item => {
     const itemPrice = item.product.price * item.quantity;
     totalBeforeDiscount += itemPrice;
-    totalAfterDiscount += calculateItemTotal(item);
+    totalAfterDiscount += calculateItemTotal(item, cart);
   });
 
   // 쿠폰 할인 적용
@@ -150,11 +173,12 @@ export const removeItemFromCart = (cart: CartItem[], productId: string): CartIte
  * 장바구니 아이템에 적용된 할인율을 계산합니다.
  *
  * @param item - 장바구니 아이템
+ * @param cart - 장바구니 (대량 구매 보너스 계산용, 선택사항)
  * @returns 적용된 할인율 (퍼센트, 0 ~ 100)
  */
-export const getAppliedDiscountRate = (item: CartItem): number => {
+export const getAppliedDiscountRate = (item: CartItem, cart?: CartItem[]): number => {
   const originalPrice = item.product.price * item.quantity;
-  const discountedPrice = calculateItemTotal(item);
+  const discountedPrice = calculateItemTotal(item, cart);
 
   if (originalPrice === 0) return 0;
 

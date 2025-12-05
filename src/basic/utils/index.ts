@@ -8,6 +8,7 @@ export {
   addItemToCart,
   removeItemFromCart,
   getAppliedDiscountRate,
+  hasBulkPurchase,
   type CartTotal
 } from './cartUtils';
 
