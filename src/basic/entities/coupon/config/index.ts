@@ -1,0 +1,3 @@
+export const COUPON_CONFIG = {
+  MIN_ORDER_FOR_PERCENTAGE_DISCOUNT: 10000,
+} as const;

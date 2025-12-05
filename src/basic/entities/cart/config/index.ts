@@ -1,0 +1,5 @@
+export const CART_CONFIG = {
+  BULK_QUANTITY_THRESHOLD: 10,
+  BULK_DISCOUNT_RATE: 0.05,
+  MAX_DISCOUNT_RATE: 0.5,
+} as const;

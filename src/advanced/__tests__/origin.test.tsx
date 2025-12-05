@@ -3,11 +3,24 @@ import { render, screen, fireEvent, within, waitFor } from '@testing-library/rea
 import { vi } from 'vitest';
 import App from '../App';
 import '../../setupTests';
+import { useCartStore } from '../shared/stores/cartStore';
+import { useProductStore } from '../shared/stores/productStore';
+import { useCouponStore } from '../shared/stores/couponStore';
+import { useToastStore } from '../shared/stores/toastStore';
+import { initialProducts } from '../entities/product/model/data';
+import { initialCoupons } from '../entities/coupon/model/data';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
-    // localStorage 초기화
+    // localStorage 초기화 (먼저 clear해야 persist가 새로 시작)
     localStorage.clear();
+
+    // Zustand store 데이터만 초기화 (replace: false로 함수 유지)
+    useCartStore.setState({ cart: [] });
+    useProductStore.setState({ products: initialProducts });
+    useCouponStore.setState({ coupons: initialCoupons });
+    useToastStore.setState({ toasts: [] });
+
     // console 경고 무시
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -405,35 +418,36 @@ describe('쇼핑몰 앱 통합 테스트', () => {
   describe('로컬스토리지 동기화', () => {
     test('상품, 장바구니, 쿠폰이 localStorage에 저장된다', () => {
       render(<App />);
-      
+
       // 상품을 장바구니에 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
-      
-      // localStorage 확인
+
+      // localStorage 확인 (Zustand persist 형식: { state: { cart: [...] }, version: 0 })
       expect(localStorage.getItem('cart')).toBeTruthy();
-      expect(JSON.parse(localStorage.getItem('cart'))).toHaveLength(1);
-      
+      const cartData = JSON.parse(localStorage.getItem('cart'));
+      expect(cartData.state.cart).toHaveLength(1);
+
       // 관리자 모드로 전환하여 새 상품 추가
       fireEvent.click(screen.getByText('관리자 페이지로'));
       fireEvent.click(screen.getByText('새 상품 추가'));
-      
+
       const labels = screen.getAllByText('상품명');
       const nameLabel = labels.find(el => el.tagName === 'LABEL');
       const nameInput = nameLabel.closest('div').querySelector('input');
       fireEvent.change(nameInput, { target: { value: '저장 테스트' } });
-      
+
       const priceInput = screen.getAllByPlaceholderText('숫자만 입력')[0];
       fireEvent.change(priceInput, { target: { value: '10000' } });
-      
+
       const stockInput = screen.getAllByPlaceholderText('숫자만 입력')[1];
       fireEvent.change(stockInput, { target: { value: '10' } });
-      
+
       fireEvent.click(screen.getByText('추가'));
-      
-      // localStorage에 products가 저장되었는지 확인
+
+      // localStorage에 products가 저장되었는지 확인 (Zustand persist 형식)
       expect(localStorage.getItem('products')).toBeTruthy();
-      const products = JSON.parse(localStorage.getItem('products'));
-      expect(products.some(p => p.name === '저장 테스트')).toBe(true);
+      const productsData = JSON.parse(localStorage.getItem('products'));
+      expect(productsData.state.products.some(p => p.name === '저장 테스트')).toBe(true);
     });
 
     test('페이지 새로고침 후에도 데이터가 유지된다', () => {
