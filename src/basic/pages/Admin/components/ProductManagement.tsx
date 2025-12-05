@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ProductWithUI } from "../../../../types";
 import { formatAdminPrice } from "../../../utils/formatters";
 import { useProductForm } from "../hooks/useProductForm";
+import { ProductForm } from "./ProductForm";
 
 type ProductManagementProps = {
   products: {
@@ -21,7 +22,20 @@ export function ProductManagement({
   addNotification,
 }: ProductManagementProps) {
   const [showProductForm, setShowProductForm] = useState(false);
-  const { formState, editingProduct, handlers } = useProductForm({
+  const {
+    productForm,
+    editingProduct,
+    startEditProduct,
+    startAddProduct,
+    handleSubmit,
+    resetForm,
+    handleChange,
+    handlePriceBlur,
+    handleStockBlur,
+    handleDiscountChange,
+    handleRemoveDiscount,
+    handleAddDiscount,
+  } = useProductForm({
     onAdd: (product) => {
       products.add(product);
       setShowProductForm(false);
@@ -30,17 +44,8 @@ export function ProductManagement({
       products.update(id, product);
       setShowProductForm(false);
     },
+    addNotification,
   });
-
-  const { productForm } = { productForm: formState };
-
-  const {
-    startEditProduct,
-    startAddProduct,
-    handleSubmit,
-    resetForm,
-    updateFormField,
-  } = handlers;
 
   const handleEditProduct = (product: ProductWithUI) => {
     startEditProduct(product);
@@ -55,43 +60,6 @@ export function ProductManagement({
   const handleCancel = () => {
     resetForm();
     setShowProductForm(false);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === "price" || name === "stock") {
-      if (value === "" || /^\d+$/.test(value)) {
-        updateFormField(
-          name as "price" | "stock",
-          value === "" ? 0 : parseInt(value)
-        );
-      }
-      return;
-    }
-    updateFormField(name as "name" | "description", value);
-  };
-
-  const handleDiscountChange = (
-    index: number,
-    field: "quantity" | "rate",
-    value: number
-  ) => {
-    const newDiscounts = [...productForm.discounts];
-    newDiscounts[index][field] = value;
-    updateFormField("discounts", newDiscounts);
-  };
-
-  const handleRemoveDiscount = (index: number) => {
-    const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
-    updateFormField("discounts", newDiscounts);
-  };
-
-  const handleAddDiscount = () => {
-    const newDiscounts = [
-      ...productForm.discounts,
-      { quantity: 10, rate: 0.1 },
-    ];
-    updateFormField("discounts", newDiscounts);
   };
 
   return (
@@ -174,179 +142,18 @@ export function ProductManagement({
         </table>
       </div>
       {showProductForm && (
-        <div className="p-6 border-t border-gray-200 bg-gray-50">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">
-              {editingProduct === "new" ? "새 상품 추가" : "상품 수정"}
-            </h3>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  상품명
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={productForm.name}
-                  onChange={handleChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  설명
-                </label>
-                <input
-                  type="text"
-                  name="description"
-                  value={productForm.description}
-                  onChange={handleChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  가격
-                </label>
-                <input
-                  type="text"
-                  name="price"
-                  value={productForm.price === 0 ? "" : productForm.price}
-                  onChange={handleChange}
-                  onBlur={(e) => {
-                    const value = e.target.value;
-                    if (value === "") {
-                      updateFormField("price", 0);
-                    } else if (parseInt(value) < 0) {
-                      addNotification("가격은 0보다 커야 합니다", "error");
-                      updateFormField("price", 0);
-                    }
-                  }}
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                  placeholder="숫자만 입력"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  재고
-                </label>
-                <input
-                  type="text"
-                  name="stock"
-                  value={productForm.stock === 0 ? "" : productForm.stock}
-                  onChange={handleChange}
-                  onBlur={(e) => {
-                    const value = e.target.value;
-                    if (value === "") {
-                      updateFormField("stock", 0);
-                    } else if (parseInt(value) < 0) {
-                      addNotification("재고는 0보다 커야 합니다", "error");
-                      updateFormField("stock", 0);
-                    } else if (parseInt(value) > 9999) {
-                      addNotification(
-                        "재고는 9999개를 초과할 수 없습니다",
-                        "error"
-                      );
-                      updateFormField("stock", 9999);
-                    }
-                  }}
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-                  placeholder="숫자만 입력"
-                  required
-                />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                할인 정책
-              </label>
-              <div className="space-y-2">
-                {productForm.discounts.map((discount, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 bg-gray-50 p-2 rounded"
-                  >
-                    <input
-                      type="number"
-                      value={discount.quantity}
-                      onChange={(e) =>
-                        handleDiscountChange(
-                          index,
-                          "quantity",
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                      className="w-20 px-2 py-1 border rounded"
-                      min="1"
-                      placeholder="수량"
-                    />
-                    <span className="text-sm">개 이상 구매 시</span>
-                    <input
-                      type="number"
-                      value={discount.rate * 100}
-                      onChange={(e) =>
-                        handleDiscountChange(
-                          index,
-                          "rate",
-                          (parseInt(e.target.value) || 0) / 100
-                        )
-                      }
-                      className="w-16 px-2 py-1 border rounded"
-                      min="0"
-                      max="100"
-                      placeholder="%"
-                    />
-                    <span className="text-sm">% 할인</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveDiscount(index)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={handleAddDiscount}
-                  className="text-sm text-indigo-600 hover:text-indigo-800"
-                >
-                  + 할인 추가
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                취소
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
-              >
-                {editingProduct === "new" ? "추가" : "수정"}
-              </button>
-            </div>
-          </form>
-        </div>
+        <ProductForm
+          productForm={productForm}
+          editingProduct={editingProduct}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          onChange={handleChange}
+          onPriceBlur={handlePriceBlur}
+          onStockBlur={handleStockBlur}
+          onDiscountChange={handleDiscountChange}
+          onRemoveDiscount={handleRemoveDiscount}
+          onAddDiscount={handleAddDiscount}
+        />
       )}
     </section>
   );
