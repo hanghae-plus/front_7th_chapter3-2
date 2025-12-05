@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { Coupon } from '../../types';
 import type { ProductWithUI } from '../hooks';
-import { ProductManagement } from './admin/ProductManagement';
-import { CouponManagement } from './admin/CouponManagement';
+import { ProductManagement } from '../features/admin/ProductManagement';
+import { CouponManagement } from '../features/admin/CouponManagement';
 
 interface AdminPageProps {
   products: ProductWithUI[];

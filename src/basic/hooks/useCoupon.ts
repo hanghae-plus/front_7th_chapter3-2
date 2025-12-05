@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Coupon } from '../../types';
-import { useLocalStorage } from '../utils';
+import { useLocalStorage } from './useLocalStorage';
 import { initialCoupons } from '../constants';
 
 /**

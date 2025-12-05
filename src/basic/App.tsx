@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useProduct, useCoupon, useCart, type ProductWithUI } from './hooks';
 import { getMaxDiscountPercent, getAppliedDiscountRate } from './models';
 import { formatPrice, formatAdminPrice } from './utils';
-import { CartPage, AdminPage } from './components';
+import { CartPage, AdminPage } from './pages';
 
 interface Notification {
   id: string;

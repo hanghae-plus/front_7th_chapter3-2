@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useLocalStorage } from '../utils';
+import { useLocalStorage } from './useLocalStorage';
 import { initialProducts, type ProductWithUI } from '../constants';
 
 // Re-export ProductWithUI for external use

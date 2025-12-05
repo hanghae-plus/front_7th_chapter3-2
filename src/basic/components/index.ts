@@ -1,20 +1,9 @@
-// Page Components
-export { CartPage } from './CartPage';
-export { AdminPage } from './AdminPage';
-
-// Cart Components
-export { Cart } from './cart';
-export { CartItem } from './cart';
-
-// Product Components
-export { ProductList } from './product';
-export { ProductCard } from './product';
-
-// Coupon Components
-export { CouponSelector } from './coupon';
-
-// Order Components
-export { OrderSummary } from './order';
-
-// Admin Components
-export { ProductManagement, CouponManagement } from './admin';
+/**
+ * UI 컴포넌트
+ *
+ * Entity에 의존하지 않는 순수 UI 컴포넌트들입니다.
+ * 재사용 가능하며, 전역 상태를 직접 참조하지 않습니다.
+ */
+export { Button } from './Button';
+export { Input } from './Input';
+export { Select } from './Select';

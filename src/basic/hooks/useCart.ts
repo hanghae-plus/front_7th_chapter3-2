@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import type { CartItem, Coupon, Product } from '../../types';
-import { useLocalStorage } from '../utils';
+import { useLocalStorage } from './useLocalStorage';
 import {
   calculateCartTotal,
   calculateItemTotal,

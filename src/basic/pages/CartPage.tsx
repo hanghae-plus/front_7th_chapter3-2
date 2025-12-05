@@ -1,10 +1,10 @@
 import type { CartItem, Coupon } from '../../types';
 import type { ProductWithUI } from '../hooks';
 import type { CartTotal } from '../models';
-import { Cart } from './cart';
-import { ProductList } from './product';
-import { CouponSelector } from './coupon';
-import { OrderSummary } from './order';
+import { Cart } from '../features/cart';
+import { ProductList } from '../features/product';
+import { CouponSelector } from '../features/coupon';
+import { OrderSummary } from '../features/order';
 
 interface CartPageProps {
   products: ProductWithUI[];

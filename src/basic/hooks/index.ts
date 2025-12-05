@@ -1,8 +1,13 @@
 /**
- * 엔티티 훅
+ * 커스텀 훅
  *
- * 특정 엔티티의 상태와 비즈니스 로직을 관리하는 훅들입니다.
+ * 엔티티 훅과 범용 훅을 포함합니다.
  */
+
+// 엔티티 훅
 export { useProduct, type ProductWithUI, type UseProductReturn } from './useProduct';
 export { useCoupon, type UseCouponReturn } from './useCoupon';
 export { useCart, type UseCartReturn } from './useCart';
+
+// 범용 훅
+export { useLocalStorage } from './useLocalStorage';
