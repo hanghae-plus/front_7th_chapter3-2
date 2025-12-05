@@ -10,26 +10,22 @@
 // - updateProduct: 상품 정보 수정 -
 // - addProduct: 새 상품 추가 -
 
+import { useAtom } from "jotai";
 import { useCallback } from "react";
 import { ProductWithUI } from "../../types";
-import { initialProducts } from "../constant";
+import { productsAtom } from "../atoms";
 import {
   addProductToList,
-  filterProductsBySearchTerm,
   removeProductFromList,
   updateProductInList,
 } from "../models/product";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useProducts = ({
   onMessage,
 }: {
   onMessage?: (message: string, type?: "error" | "success" | "warning") => void;
 }) => {
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    "products",
-    initialProducts
-  );
+  const [products, setProducts] = useAtom(productsAtom);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
@@ -37,7 +33,7 @@ export const useProducts = ({
       setProducts(product);
       onMessage?.("상품이 추가되었습니다.");
     },
-    [onMessage]
+    [products, setProducts, onMessage]
   );
 
   const updateProduct = useCallback(
@@ -46,7 +42,7 @@ export const useProducts = ({
       setProducts(nextProducts);
       onMessage?.("상품이 수정되었습니다.");
     },
-    [onMessage]
+    [products, setProducts, onMessage]
   );
 
   const deleteProduct = useCallback(
@@ -55,7 +51,7 @@ export const useProducts = ({
       setProducts(nextProducts);
       onMessage?.("상품이 삭제되었습니다.");
     },
-    [onMessage]
+    [products, setProducts, onMessage]
   );
 
   return {
