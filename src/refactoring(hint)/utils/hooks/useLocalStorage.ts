@@ -1,4 +1,4 @@
-// TODO: LocalStorage Hook
+/**  TODO: LocalStorage Hook
 // 힌트:
 // 1. localStorage와 React state 동기화
 // 2. 초기값 로드 시 에러 처리
@@ -13,3 +13,4 @@ export function useLocalStorage<T>(
 ): [T, (value: T | ((val: T) => T)) => void] {
   // TODO: 구현
 }
+  */
