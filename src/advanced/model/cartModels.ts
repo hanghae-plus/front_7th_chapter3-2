@@ -1,4 +1,4 @@
-import { Product } from './productModels';
+import { Product } from '../entities/product/model/types.ts';
 
 export interface CartItem {
   product: Product;

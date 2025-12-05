@@ -37,7 +37,7 @@ export const itemTotalSelector = atom((get) => (item: CartItem) => {
 });
 
 // 쓰기 전용 아톰: 장바구니에 상품 추가 (함수형 업데이트 사용)
-export const addToCartAtom = atom(null, (get, set, product: Product) => {
+export const addToCartAtom = atom(null, (_get, set, product: Product) => {
   set(cartAtom, (prevCart) => {
     const remainingStock = getRemainingStock(product, prevCart);
     if (remainingStock <= 0) {
@@ -67,12 +67,12 @@ export const addToCartAtom = atom(null, (get, set, product: Product) => {
 });
 
 // 쓰기 전용 아톰: 장바구니에서 상품 제거
-export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
+export const removeFromCartAtom = atom(null, (_get, set, productId: string) => {
   set(cartAtom, (prevCart) => prevCart.filter((item) => item.product.id !== productId));
 });
 
 // 쓰기 전용 아톰: 장바구니 상품 수량 변경 (product 객체를 직접 받도록 수정)
-export const updateQuantityAtom = atom(null, (get, set, { product, newQuantity }: { product: Product; newQuantity: number }) => {
+export const updateQuantityAtom = atom(null, (_get, set, { product, newQuantity }: { product: Product; newQuantity: number }) => {
   set(cartAtom, (prevCart) => {
     if (newQuantity <= 0) {
       return prevCart.filter((item) => item.product.id !== product.id);
@@ -92,7 +92,7 @@ export const updateQuantityAtom = atom(null, (get, set, { product, newQuantity }
 });
 
 // 쓰기 전용 아톰: 쿠폰 적용
-export const applyCouponAtom = atom(null, (get, set, coupon: Coupon) => {
+export const applyCouponAtom = atom(null, (_get, set, coupon: Coupon) => {
   set(selectedCouponAtom, coupon);
   set(addNotificationAtom, `${coupon.name} 쿠폰이 적용되었습니다.`);
 });

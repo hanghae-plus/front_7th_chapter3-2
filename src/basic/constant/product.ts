@@ -1,6 +1,10 @@
-import { ProductViewModel } from "../entities/ProductViewModel"
+import {Product} from "../../types.ts";
 
-export const initialProducts: ProductViewModel[] = [
+interface ProductWithUI extends Product {
+    isRecommended?: boolean;
+}
+
+export const initialProducts: ProductWithUI[] = [
     {
         id: "p1",
         name: "상품1",

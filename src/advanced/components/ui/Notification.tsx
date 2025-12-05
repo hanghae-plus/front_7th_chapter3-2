@@ -21,7 +21,7 @@ const Notification: React.FC<NotificationProps> = ({ notification, onClose }) =>
     <div className={`${baseClasses} ${typeClasses[type]}`}>
       <span className="mr-2">{message}</span>
       <button 
-        onClick={() => onClose(id)}
+        onClick={() => onClose(Number(id))}
         className="text-white hover:text-gray-200"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

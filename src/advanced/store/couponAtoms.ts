@@ -10,7 +10,7 @@ export const couponsAtom = atomWithStorage<Coupon[]>('coupons', initialCoupons);
 // 읽기/쓰기 아톰: 쿠폰 추가 로직
 export const addCouponAtom = atom(
   null,
-  (get, set, newCoupon: Coupon) => {
+  (_get, set, newCoupon: Coupon) => {
     set(couponsAtom, (prev) => [...prev, newCoupon]);
     set(addNotificationAtom, '쿠폰이 추가되었습니다.');
   }
@@ -19,7 +19,7 @@ export const addCouponAtom = atom(
 // 읽기/쓰기 아톰: 쿠폰 삭제 로직
 export const deleteCouponAtom = atom(
   null,
-  (get, set, couponCode: string) => {
+  (_get, set, couponCode: string) => {
     set(couponsAtom, (prev) => prev.filter((c) => c.code !== couponCode));
     set(addNotificationAtom, '쿠폰이 삭제되었습니다.');
   }

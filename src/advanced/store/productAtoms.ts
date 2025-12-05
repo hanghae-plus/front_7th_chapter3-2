@@ -10,7 +10,7 @@ export const productsAtom = atomWithStorage<Product[]>('products', initialProduc
 // 읽기/쓰기 아톰: 상품 추가 로직
 export const addProductAtom = atom(
   null,
-  (get, set, newProduct: Omit<Product, 'id'>) => {
+  (_get, set, newProduct: Omit<Product, 'id'>) => {
     const newProductWithId = { ...newProduct, id: `p${Date.now()}` };
     set(productsAtom, (prev) => [...prev, newProductWithId]);
     set(addNotificationAtom, '상품이 추가되었습니다.');
@@ -20,7 +20,7 @@ export const addProductAtom = atom(
 // 읽기/쓰기 아톰: 상품 수정 로직
 export const updateProductAtom = atom(
   null,
-  (get, set, updatedProduct: Product) => {
+  (_get, set, updatedProduct: Product) => {
     set(productsAtom, (prev) => 
       prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
@@ -31,7 +31,7 @@ export const updateProductAtom = atom(
 // 읽기/쓰기 아톰: 상품 삭제 로직
 export const deleteProductAtom = atom(
   null,
-  (get, set, productId: string) => {
+  (_get, set, productId: string) => {
     set(productsAtom, (prev) => prev.filter((p) => p.id !== productId));
     set(addNotificationAtom, '상품이 삭제되었습니다.');
   }
