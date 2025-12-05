@@ -38,7 +38,9 @@ jobs:
         run: pnpm run build:advanced
 
       - name: Prepare deployment
-        run: cp dist/index.html dist/404.html
+        run: |
+          mv dist/index.advanced.html dist/index.html
+          cp dist/index.html dist/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
