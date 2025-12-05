@@ -1,9 +1,10 @@
 import NotificationToast from './NotificationToast';
 import { Notification as NotificationType } from '../types';
+import { Dispatch, SetStateAction } from 'react';
 
 interface NotificationProps {
   notifications: NotificationType[];
-  setNotifications: (notifications: NotificationType[]) => void;
+  setNotifications: Dispatch<SetStateAction<NotificationType[]>>;
 }
 
 export function NotificationContainer({ notifications, setNotifications }: NotificationProps) {
