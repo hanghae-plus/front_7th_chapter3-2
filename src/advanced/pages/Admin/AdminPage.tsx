@@ -1,32 +1,16 @@
 import { useState } from "react";
-import { Coupon, ProductWithUI } from "../../../types";
 import { TabNavigation } from "./components/TabNavigation";
 import { ProductManagement } from "./components/ProductManagement";
 import { CouponManagement } from "./components/CouponManagement";
 
 type AdminPageProps = {
-  products: {
-    value: ProductWithUI[];
-    add: (p: Omit<ProductWithUI, "id">) => void;
-    update: (id: string, updates: Partial<ProductWithUI>) => void;
-    delete: (id: string) => void;
-  };
-  coupons: {
-    value: Coupon[];
-    add: (newCoupon: Coupon) => void;
-    remove: (code: string) => void;
-  };
   addNotification: (
     message: string,
-    type: "error" | "success" | "warning"
+    type?: "error" | "success" | "warning"
   ) => void;
 };
 
-export function AdminPage({
-  products,
-  coupons,
-  addNotification,
-}: AdminPageProps) {
+export function AdminPage({ addNotification }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -40,12 +24,9 @@ export function AdminPage({
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === "products" ? (
-        <ProductManagement
-          products={products}
-          addNotification={addNotification}
-        />
+        <ProductManagement addNotification={addNotification} />
       ) : (
-        <CouponManagement coupons={coupons} addNotification={addNotification} />
+        <CouponManagement addNotification={addNotification} />
       )}
     </div>
   );

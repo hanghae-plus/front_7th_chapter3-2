@@ -1,28 +1,38 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { PlusIcon } from "../../../components/icons";
 import { Coupon } from "../../../../types";
 import { useCouponForm } from "../hooks/useCouponForm";
-
 import { CouponForm } from "./CouponForm";
 import { CouponCard } from "./CouponCard";
+import { useCoupons } from "../../../hooks/useCoupons";
+import { useAtomValue, useSetAtom } from "jotai";
+import { selectedCouponAtom } from "../../../atoms";
 
 type CouponManagementProps = {
-  coupons: {
-    value: Coupon[];
-    add: (newCoupon: Coupon) => void;
-    remove: (code: string) => void;
-  };
   addNotification: (
     message: string,
-    type: "error" | "success" | "warning"
+    type?: "error" | "success" | "warning"
   ) => void;
 };
 
-export function CouponManagement({
-  coupons,
-  addNotification,
-}: CouponManagementProps) {
+export function CouponManagement({ addNotification }: CouponManagementProps) {
   const [showCouponForm, setShowCouponForm] = useState(false);
+
+  // useCoupons hook에서 직접 가져오기
+  const setSelectedCoupon = useSetAtom(selectedCouponAtom);
+  const selectedCoupon = useAtomValue(selectedCouponAtom);
+
+  const coupons = useCoupons({
+    onMessage: addNotification,
+    onDeleteSelectedCoupon: useCallback(
+      (deletedCode) => {
+        if (selectedCoupon?.code === deletedCode) {
+          setSelectedCoupon(null);
+        }
+      },
+      [selectedCoupon, setSelectedCoupon]
+    ),
+  });
 
   const {
     couponForm,

@@ -27,7 +27,12 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback } from "react";
 import { Coupon, ProductWithUI } from "../../types";
-import { cartAtom, cartItemCountAtom, selectedCouponAtom } from "../atoms";
+import {
+  cartAtom,
+  cartItemCountAtom,
+  selectedCouponAtom,
+  productsAtom,
+} from "../atoms";
 import {
   calculateCartTotal,
   getRemainingStock,
@@ -35,15 +40,14 @@ import {
 } from "../models/cart";
 
 export function useCart({
-  products,
   onMessage,
 }: {
-  products: ProductWithUI[];
   onMessage: (message: string, type?: "error" | "success" | "warning") => void;
 }) {
   const [cart, setCart] = useAtom(cartAtom);
   const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
   const totalItemCount = useAtomValue(cartItemCountAtom);
+  const products = useAtomValue(productsAtom);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {

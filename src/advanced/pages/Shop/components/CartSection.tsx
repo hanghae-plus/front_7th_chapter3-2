@@ -1,32 +1,33 @@
 import { useAtomValue } from "jotai";
 import { useCallback } from "react";
-import { Coupon } from "../../../../types";
 import { CartItemList } from "./CartItemList";
 import { OrderCouponSection } from "./OrderCouponSection";
 import { OrderSummary } from "./OrderSummary";
 import { EmptyCartIcon, ShoppingBagIcon } from "../../../components/icons";
-import { cartAtom, cartTotalsAtom, selectedCouponAtom } from "../../../atoms";
+import {
+  cartAtom,
+  cartTotalsAtom,
+  selectedCouponAtom,
+  couponsAtom,
+} from "../../../atoms";
 import { useCart } from "../../../hooks/useCart";
 
 interface CartSectionProps {
-  coupons: {
-    value: Coupon[];
-  };
   addNotification: (
     message: string,
     type?: "error" | "success" | "warning"
   ) => void;
 }
 
-export const CartSection = ({ coupons, addNotification }: CartSectionProps) => {
+export const CartSection = ({ addNotification }: CartSectionProps) => {
   // Jotai atoms 직접 사용
   const cart = useAtomValue(cartAtom);
   const selectedCoupon = useAtomValue(selectedCouponAtom);
   const totals = useAtomValue(cartTotalsAtom);
+  const coupons = useAtomValue(couponsAtom);
 
   // useCart hook에서 필요한 함수만 가져오기
   const cartActions = useCart({
-    products: [], // 여기서는 products 불필요 (나중에 제거 예정)
     onMessage: addNotification,
   });
 
@@ -63,7 +64,7 @@ export const CartSection = ({ coupons, addNotification }: CartSectionProps) => {
       {cart.length > 0 && (
         <>
           <OrderCouponSection
-            coupons={coupons.value}
+            coupons={coupons}
             selectedCoupon={selectedCoupon}
             onApply={cartActions.apply}
             onClear={cartActions.clearSelectedCoupon}

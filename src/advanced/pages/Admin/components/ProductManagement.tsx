@@ -3,25 +3,21 @@ import { ProductWithUI } from "../../../../types";
 import { useProductForm } from "../hooks/useProductForm";
 import { ProductForm } from "./ProductForm";
 import { ProductList } from "./ProductList";
+import { useProducts } from "../../../hooks/useProducts";
 
 type ProductManagementProps = {
-  products: {
-    value: ProductWithUI[];
-    add: (p: Omit<ProductWithUI, "id">) => void;
-    update: (id: string, updates: Partial<ProductWithUI>) => void;
-    delete: (id: string) => void;
-  };
   addNotification: (
     message: string,
-    type: "error" | "success" | "warning"
+    type?: "error" | "success" | "warning"
   ) => void;
 };
 
-export function ProductManagement({
-  products,
-  addNotification,
-}: ProductManagementProps) {
+export function ProductManagement({ addNotification }: ProductManagementProps) {
   const [showProductForm, setShowProductForm] = useState(false);
+
+  // useProducts hook에서 직접 가져오기
+  const products = useProducts({ onMessage: addNotification });
+
   const {
     productForm,
     editingProduct,

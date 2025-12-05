@@ -1,28 +1,23 @@
 import { useMemo } from "react";
-import { Coupon, ProductWithUI } from "../../../types";
+import { useAtomValue } from "jotai";
 import { ProductList } from "./components/ProductList";
 import { CartSection } from "./components/CartSection";
 import { filterProductsBySearchTerm } from "../../models/product";
 import { useCart } from "../../hooks/useCart";
+import { productsAtom } from "../../atoms";
 
 interface ShopPageProps {
-  products: ProductWithUI[];
   searchTerm: string;
-  coupons: {
-    value: Coupon[];
-  };
   addNotification: (
     message: string,
     type?: "error" | "success" | "warning"
   ) => void;
 }
 
-export function ShopPage({
-  products,
-  searchTerm,
-  coupons,
-  addNotification,
-}: ShopPageProps) {
+export function ShopPage({ searchTerm, addNotification }: ShopPageProps) {
+  // Jotai atoms에서 products 가져오기
+  const products = useAtomValue(productsAtom);
+
   // 파생 상태: 필터링된 상품 목록
   const filteredProducts = useMemo(
     () => filterProductsBySearchTerm(products, searchTerm),
@@ -31,7 +26,6 @@ export function ShopPage({
 
   // Cart actions for ProductList
   const cart = useCart({
-    products: [], // TODO: products도 atom으로 변경 후 제거
     onMessage: addNotification,
   });
 
@@ -48,7 +42,7 @@ export function ShopPage({
       </div>
 
       <div className="lg:col-span-1">
-        <CartSection coupons={coupons} addNotification={addNotification} />
+        <CartSection addNotification={addNotification} />
       </div>
     </div>
   );
