@@ -39,6 +39,7 @@ jobs:
 
       - name: Prepare deployment
         run: |
+          mv dist/index.advanced.html dist/index.html
           cp dist/index.html dist/404.html
 
       - name: Setup Pages
