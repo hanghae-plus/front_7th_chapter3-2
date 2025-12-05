@@ -16,6 +16,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "jotai": "^2.15.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
