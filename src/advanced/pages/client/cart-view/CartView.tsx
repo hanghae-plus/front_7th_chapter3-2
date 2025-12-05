@@ -2,11 +2,16 @@ import { useMemo } from 'react';
 import PaymentInfoSection from './PaymentInfoSection';
 import CouponSection from './CouponSection';
 import CartSection from './CartSection';
-import { calculateItemTotal, getUpdateCartQuantity } from '../../../entities/cart';
-import { type Coupon, canApplyCoupon } from '../../../entities/coupon';
+import {
+  getUpdateCartQuantity,
+  getTotalWithDiscount,
+  getOriginTotal,
+} from '../../../entities/cart';
+import { type Coupon, canApplyCoupon, getTotalWithCoupon } from '../../../entities/coupon';
 import { Dispatch, SetStateAction } from 'react';
 import { useProductContext } from '../../../providers/ProductProvider';
 import { useCartContext } from '../../../providers/CartProvider';
+import { generateId } from '../../../utils/id-generator';
 interface CartViewProps {
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
@@ -23,26 +28,14 @@ export default function CartView({
 
   // Computed Values
   const originTotal = useMemo(() => {
-    const total = cart.reduce((total, item) => {
-      return total + item.product.price * item.quantity;
-    }, 0);
+    const total = getOriginTotal(cart);
     return Math.round(total);
   }, [cart]);
 
   const caculatedTotal = useMemo(() => {
-    const total = cart.reduce((total, item) => {
-      return total + calculateItemTotal(item, cart);
-    }, 0);
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        return Math.max(0, total - selectedCoupon.discountValue);
-      } else {
-        return Math.round(total * (1 - selectedCoupon.discountValue / 100));
-      }
-    }
-
-    return Math.round(total);
+    const total = getTotalWithDiscount(cart);
+    const totalWithCoupon = getTotalWithCoupon(total, selectedCoupon);
+    return Math.round(totalWithCoupon);
   }, [cart, selectedCoupon]);
 
   // Events

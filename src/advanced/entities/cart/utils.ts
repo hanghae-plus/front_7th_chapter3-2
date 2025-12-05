@@ -6,8 +6,10 @@ const BULK_PURCHASE_QUANTITY = 10;
 const MAX_DISCOUNT = 0.5;
 
 // ADD TO CART
+const getExistingItem = (cart: CartItem[], product: Product) =>
+  cart.find(item => item.product.id === product.id);
 export const getAddToCart = (cart: CartItem[], product: Product) => {
-  const existingItem = cart.find(item => item.product.id === product.id);
+  const existingItem = getExistingItem(cart, product);
 
   if (existingItem) {
     const newQuantity = existingItem.quantity + 1;
@@ -22,7 +24,7 @@ export const getAddToCart = (cart: CartItem[], product: Product) => {
 };
 
 export const canAddToCart = (cart: CartItem[], product: Product) => {
-  const existingItem = cart.find(item => item.product.id === product.id);
+  const existingItem = getExistingItem(cart, product);
   if (existingItem) {
     const newQuantity = existingItem.quantity + 1;
     return newQuantity <= product.stock;
@@ -65,4 +67,15 @@ export const calculateItemTotal = (item: CartItem, cartItems: CartItem[]): numbe
   const discount = Math.min(baseDiscount + bulkPurchaseDiscount, MAX_DISCOUNT);
 
   return Math.round(price * quantity * (1 - discount));
+};
+
+export const getOriginTotal = (cartItems: CartItem[]): number => {
+  return cartItems.reduce((total, item) => {
+    return total + item.product.price * item.quantity;
+  }, 0);
+};
+export const getTotalWithDiscount = (cartItems: CartItem[]): number => {
+  return cartItems.reduce((total, item) => {
+    return total + calculateItemTotal(item, cartItems);
+  }, 0);
 };

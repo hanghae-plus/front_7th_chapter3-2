@@ -7,6 +7,13 @@ export const canApplyCoupon = (total: number, coupon: Coupon) => {
   return true;
 };
 
+export const getTotalWithCoupon = (total: number, coupon: Coupon | null) => {
+  if (!coupon) return Math.round(total);
+  return coupon.discountType === 'amount'
+    ? Math.max(0, total - coupon.discountValue)
+    : Math.round(total * (1 - coupon.discountValue / 100));
+};
+
 // ADD COUPON
 export const canAddCoupon = (coupons: Coupon[], newCoupon: Coupon) => {
   const existingCoupon = coupons.find(c => c.code === newCoupon.code);
