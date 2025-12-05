@@ -1,5 +1,6 @@
 import { Discount, Product, ProductWithUI } from './types';
 import { CartItem } from '../cart/types';
+import { generateId } from '../../utils/id-generator';
 
 // GET REMAINING STOCK
 export const getRemainingStock = (product: Product, cartItems: CartItem[]): number => {
@@ -28,8 +29,9 @@ export const filterProducts = (
 // ADD PRODUCT
 export const getNewProducts = (
   products: ProductWithUI[],
-  newProduct: Omit<ProductWithUI, 'id'>
-): ProductWithUI[] => [...products, { ...newProduct, id: `p${Date.now()}` }];
+  newProduct: Omit<ProductWithUI, 'id'>,
+  idGenerator: () => string = () => generateId('product')
+): ProductWithUI[] => [...products, { ...newProduct, id: idGenerator() }];
 
 // UPDATE PRODUCT
 export const getUpdatedProducts = (

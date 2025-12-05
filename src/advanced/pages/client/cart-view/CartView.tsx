@@ -79,7 +79,7 @@ export default function CartView({
   };
 
   const completeOrder = () => {
-    const orderNumber = `ORD-${Date.now()}`;
+    const orderNumber = generateId('ORD');
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     setCart([]);
     setSelectedCoupon(null);

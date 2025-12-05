@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Notification } from '../types';
+import { generateId } from '../../../utils/id-generator';
 
 const NOTIFICATION_TIMEOUT = 3000;
 
@@ -9,7 +10,7 @@ export function useNotification() {
   const addNotification = (
     message: string,
     type: 'error' | 'success' | 'warning' = 'success',
-    idGenerator: () => string = generateId
+    idGenerator: () => string = () => generateId('notification')
   ) => {
     const id = idGenerator();
     setNotifications(prev => [...prev, { id, message, type }]);
@@ -25,5 +26,3 @@ export function useNotification() {
     addNotification,
   };
 }
-
-const generateId = () => Date.now().toString();
