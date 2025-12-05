@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from "react";
-import { CartItem, ProductWithUI, Coupon, Product } from "../../types";
+import { CartItem, Coupon, Product } from "../../types";
 import SelectList from "../components/ui/SelectList";
 import { CartIcon } from "../components/icons";
 import { Card } from "../components/ui";
@@ -11,9 +11,9 @@ import cartModel from "../models/cart";
 import productModel from "../models/product";
 import couponModel from "../models/coupon";
 import { useCoupons } from "../hooks/useCoupons";
+import useProducts from "../hooks/useProducts";
 
 interface CartPageProps {
-  products: ProductWithUI[];
   cart: CartItem[];
   selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
@@ -35,7 +35,6 @@ interface CartPageProps {
 }
 
 const CartPage = ({
-  products,
   cart,
   selectedCoupon,
   debouncedSearchTerm,
@@ -50,6 +49,7 @@ const CartPage = ({
   goAdminPage,
   setSearchTerm,
 }: CartPageProps) => {
+  const { products } = useProducts();
   const { coupons } = useCoupons();
 
   const filteredProducts = useMemo(() => {

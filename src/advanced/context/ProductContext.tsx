@@ -1,14 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
-import { Product } from "../../types";
+import { createContext, useCallback, useEffect, useState, ReactNode } from "react";
+import { ProductWithUI } from "../../types";
 import productModel from "../models/product";
 import { initialProducts } from "../constants";
 
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-} // 초기 데이터
+export interface ProductContextType {
+  data: ProductWithUI[];
+  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
+  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
+  deleteProduct: (productId: string) => void;
+  updateProductStock: (productId: string, newStock: number) => void;
+}
 
-const useProducts = () => {
+export const ProductContext = createContext<ProductContextType | null>(null);
+
+interface ProductProviderProps {
+  children: ReactNode;
+}
+
+export const ProductProvider = ({ children }: ProductProviderProps) => {
   const [_products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem("products");
     if (saved) {
@@ -42,13 +51,14 @@ const useProducts = () => {
     setProducts((prev) => productModel.updateProductStock(prev, productId, newStock));
   }, []);
 
-  return {
+  const value: ProductContextType = {
     data: _products,
     addProduct,
     updateProduct,
     deleteProduct,
     updateProductStock,
   };
+
+  return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
 };
 
-export default useProducts;

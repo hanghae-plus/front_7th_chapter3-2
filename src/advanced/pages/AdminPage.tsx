@@ -1,20 +1,10 @@
-import { Coupon, Product } from "../../types";
+import { Coupon } from "../../types";
 import { useState } from "react";
 import CouponSection from "../components/domain/adminPage/CouponSection";
 import ProductSection from "../components/domain/adminPage/ProductSection";
 import AdminHeader from "../components/domain/adminPage/AdminHeader";
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 const AdminPage = ({
-  //   PRODUCTS
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-
   //   COUPONT FORM
   selectedCoupon,
   setSelectedCoupon,
@@ -22,11 +12,6 @@ const AdminPage = ({
   addNotification,
   goShoppingPage,
 }: {
-  products: ProductWithUI[];
-  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
-
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (value: Coupon | null) => void;
 
@@ -70,13 +55,7 @@ const AdminPage = ({
           </div>
 
           {activeTab === "products" ? (
-            <ProductSection
-              products={products}
-              addProduct={addProduct}
-              updateProduct={updateProduct}
-              deleteProduct={deleteProduct}
-              addNotification={addNotification}
-            />
+            <ProductSection addNotification={addNotification} />
           ) : (
             <CouponSection
               selectedCoupon={selectedCoupon}

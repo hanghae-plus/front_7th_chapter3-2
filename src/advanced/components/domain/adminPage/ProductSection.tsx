@@ -2,20 +2,15 @@ import { useState } from "react";
 import { ProductWithUI } from "../../../../types";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
+import useProducts from "../../../hooks/useProducts";
 
 const ProductSection = ({
-  products,
-  deleteProduct,
-  updateProduct,
-  addProduct,
   addNotification,
 }: {
-  products: ProductWithUI[];
-  deleteProduct: (productId: string) => void;
   addNotification: (message: string, type: "error" | "success" | "warning") => void;
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
 }) => {
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductForm>({
     name: "",
