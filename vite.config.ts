@@ -37,6 +37,13 @@ function dynamicAliasPlugin(): Plugin {
 export default mergeConfig(
   defineConfig({
     plugins: [react(), dynamicAliasPlugin()],
+    build: {
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.advanced.html')
+        }
+      }
+    }
   }),
   defineTestConfig({
     test: {

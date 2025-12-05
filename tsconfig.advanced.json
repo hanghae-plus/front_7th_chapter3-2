@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "paths": {
+      "@/constants/*": ["./src/advanced/constants/*"],
+      "@/features/*": ["./src/advanced/features/*"],
+      "@/pages/*": ["./src/advanced/pages/*"],
+      "@/shared/*": ["./src/advanced/shared/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/advanced",
+    "src/setupTests.ts",
+    "src/vite-env.d.ts"
+  ],
+  "exclude": [
+    "src/origin",
+    "src/basic",
+    "src/refactoring(hint)"
+  ]
+}

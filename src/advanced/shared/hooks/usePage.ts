@@ -7,7 +7,7 @@ export interface PageItem<T = Record<string, unknown>> {
 }
 
 export const usePage = <T = Record<string, unknown>>(
-  pages: PageItem<T>[],
+  pages: readonly PageItem<T>[],
   initialPageId?: string
 ) => {
   const initialPage = initialPageId

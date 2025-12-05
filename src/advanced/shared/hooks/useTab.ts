@@ -7,7 +7,7 @@ export interface TabItem<T = unknown> {
 }
 
 export const useTab = <T = unknown>(
-  tabs: TabItem<T>[],
+  tabs: readonly TabItem<T>[],
   initialTabId?: string
 ) => {
   const initialTab = initialTabId
