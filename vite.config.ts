@@ -5,7 +5,7 @@ import { defineConfig as defineTestConfig, mergeConfig } from 'vitest/config';
 export default mergeConfig(
   defineConfig({
     plugins: [react()],
-    base: '/front_7th_chapter3-2/',
+    base: process.env.VITE_BASE_PATH || '/',
     build: {
       rollupOptions: {
         input: ['./index.advanced.html', './index.basic.html']

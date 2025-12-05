@@ -47,6 +47,7 @@ jobs:
         run: pnpm run build
         env:
           NODE_ENV: production
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
 
       - name: Set advanced as default
         run: cp dist/index.advanced.html dist/index.html
