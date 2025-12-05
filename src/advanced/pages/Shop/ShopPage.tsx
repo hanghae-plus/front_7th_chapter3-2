@@ -1,12 +1,13 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { CartItem, Coupon, ProductWithUI } from "../../../types";
 import { ProductList } from "./components/ProductList";
 import { CartSection } from "./components/CartSection";
+import { calculateCartTotal } from "../../models/cart";
+import { filterProductsBySearchTerm } from "../../models/product";
 
 interface ShopPageProps {
   products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
+  searchTerm: string;
   cart: {
     value: CartItem[];
     add: (product: ProductWithUI) => void;
@@ -20,10 +21,6 @@ interface ShopPageProps {
   coupons: {
     value: Coupon[];
   };
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -32,13 +29,23 @@ interface ShopPageProps {
 
 export function ShopPage({
   products,
-  filteredProducts,
-  debouncedSearchTerm,
+  searchTerm,
   cart,
   coupons,
-  totals,
   addNotification,
 }: ShopPageProps) {
+  // 파생 상태: 필터링된 상품 목록
+  const filteredProducts = useMemo(
+    () => filterProductsBySearchTerm(products, searchTerm),
+    [products, searchTerm]
+  );
+
+  // 파생 상태: 장바구니 총액
+  const totals = useMemo(
+    () => calculateCartTotal(cart.value, cart.selectedCoupon),
+    [cart.value, cart.selectedCoupon]
+  );
+
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
@@ -54,7 +61,7 @@ export function ShopPage({
         <ProductList
           productsLength={products.length}
           filteredProducts={filteredProducts}
-          debouncedSearchTerm={debouncedSearchTerm}
+          debouncedSearchTerm={searchTerm}
           cart={cart.value}
           addToCart={cart.add}
         />
