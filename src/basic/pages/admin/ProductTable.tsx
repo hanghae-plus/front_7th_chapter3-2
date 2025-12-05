@@ -1,5 +1,6 @@
 import { ProductWithUI } from "../../../types";
 import { formatPrice } from "../../utils/formatters";
+import { Button } from "../../components/ui/Button";
 
 interface ProductTableProps {
   products: ProductWithUI[];
@@ -60,18 +61,24 @@ export function ProductTable({
                 {product.description || "-"}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button
-                  onClick={() => onEdit(product)}
-                  className="text-indigo-600 hover:text-indigo-900 mr-3"
-                >
-                  수정
-                </button>
-                <button
-                  onClick={() => onDelete(product.id)}
-                  className="text-red-600 hover:text-red-900"
-                >
-                  삭제
-                </button>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEdit(product)}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    수정
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDelete(product.id)}
+                    className="text-red-600 hover:text-red-900 hover:bg-red-50"
+                  >
+                    삭제
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}

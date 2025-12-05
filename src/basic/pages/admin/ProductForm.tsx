@@ -1,4 +1,6 @@
 import { ProductWithUI } from "../../../types";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
 
 interface ProductFormProps {
   productForm: Omit<ProductWithUI, 'id'>;
@@ -29,105 +31,89 @@ export function ProductForm({
           {editingProduct === "new" ? "새 상품 추가" : "상품 수정"}
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              상품명
-            </label>
-            <input
-              type="text"
-              value={productForm.name}
-              onChange={(e) =>
-                setProductForm({ ...productForm, name: e.target.value })
-              }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              설명
-            </label>
-            <input
-              type="text"
-              value={productForm.description}
-              onChange={(e) =>
+          <Input
+            label="상품명"
+            type="text"
+            value={productForm.name}
+            onChange={(e) =>
+              setProductForm({ ...productForm, name: e.target.value })
+            }
+            fullWidth
+            required
+          />
+          <Input
+            label="설명"
+            type="text"
+            value={productForm.description}
+            onChange={(e) =>
+              setProductForm({
+                ...productForm,
+                description: e.target.value,
+              })
+            }
+            fullWidth
+          />
+          <Input
+            label="가격"
+            type="text"
+            value={productForm.price === 0 ? "" : productForm.price}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || /^\d+$/.test(value)) {
                 setProductForm({
                   ...productForm,
-                  description: e.target.value,
-                })
+                  price: value === "" ? 0 : parseInt(value),
+                });
               }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              가격
-            </label>
-            <input
-              type="text"
-              value={productForm.price === 0 ? "" : productForm.price}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    price: value === "" ? 0 : parseInt(value),
-                  });
+            }}
+            onBlur={(e) => {
+              const value = e.target.value;
+              if (value === "") {
+                setProductForm({ ...productForm, price: 0 });
+              } else if (parseInt(value) < 0) {
+                if (addNotification) {
+                  addNotification("가격은 0보다 커야 합니다", "error");
                 }
-              }}
-              onBlur={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setProductForm({ ...productForm, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  if (addNotification) {
-                    addNotification("가격은 0보다 커야 합니다", "error");
-                  }
-                  setProductForm({ ...productForm, price: 0 });
+                setProductForm({ ...productForm, price: 0 });
+              }
+            }}
+            placeholder="숫자만 입력"
+            fullWidth
+            required
+          />
+          <Input
+            label="재고"
+            type="text"
+            value={productForm.stock === 0 ? "" : productForm.stock}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || /^\d+$/.test(value)) {
+                setProductForm({
+                  ...productForm,
+                  stock: value === "" ? 0 : parseInt(value),
+                });
+              }
+            }}
+            onBlur={(e) => {
+              const value = e.target.value;
+              if (value === "") {
+                setProductForm({ ...productForm, stock: 0 });
+              } else if (parseInt(value) < 0) {
+                if (addNotification) {
+                  addNotification("재고는 0보다 커야 합니다", "error");
                 }
-              }}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-              placeholder="숫자만 입력"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              재고
-            </label>
-            <input
-              type="text"
-              value={productForm.stock === 0 ? "" : productForm.stock}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    stock: value === "" ? 0 : parseInt(value),
-                  });
+                setProductForm({ ...productForm, stock: 0 });
+              } else if (parseInt(value) > 9999) {
+                if (addNotification) {
+                  addNotification("재고는 9999개를 초과할 수 없습니다", "error");
                 }
-              }}
-              onBlur={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  if (addNotification) {
-                    addNotification("재고는 0보다 커야 합니다", "error");
-                  }
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  if (addNotification) {
-                    addNotification("재고는 9999개를 초과할 수 없습니다", "error");
-                  }
-                  setProductForm({ ...productForm, stock: 9999 });
-                }
-              }}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-              placeholder="숫자만 입력"
-              required
-            />
-          </div>
+                setProductForm({ ...productForm, stock: 9999 });
+              }
+            }}
+            placeholder="숫자만 입력"
+            fullWidth
+            required
+          />
         </div>
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -174,8 +160,10 @@ export function ProductForm({
                   placeholder="%"
                 />
                 <span className="text-sm">% 할인</span>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     const newDiscounts = productForm.discounts.filter(
                       (_, i) => i !== index
@@ -185,7 +173,7 @@ export function ProductForm({
                       discounts: newDiscounts,
                     });
                   }}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
                 >
                   <svg
                     className="w-4 h-4"
@@ -200,11 +188,13 @@ export function ProductForm({
                       d="M6 18L18 6M6 6l12 12"
                     />
                   </svg>
-                </button>
+                </Button>
               </div>
             ))}
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setProductForm({
                   ...productForm,
@@ -214,27 +204,27 @@ export function ProductForm({
                   ],
                 });
               }}
-              className="text-sm text-indigo-600 hover:text-indigo-800"
+              className="text-indigo-600 hover:text-indigo-800"
             >
               + 할인 추가
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className="flex justify-end gap-3">
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
+            variant="primary"
           >
             {editingProduct === "new" ? "추가" : "수정"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

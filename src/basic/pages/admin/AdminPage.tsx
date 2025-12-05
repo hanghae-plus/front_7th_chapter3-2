@@ -6,6 +6,7 @@ import { ProductForm } from './ProductForm';
 import { CouponList } from './CouponList';
 import { CouponForm } from './CouponForm';
 import { ProductWithUI, Coupon } from '../../../types';
+import { Button } from '../../components/ui/Button';
 
 interface AdminPageProps {
   productsHook: ReturnType<typeof useProducts>;
@@ -78,7 +79,7 @@ export function AdminPage({
           <div className="p-6 border-b border-gray-200">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">상품 목록</h2>
-              <button
+              <Button
                 onClick={() => {
                   setEditingProduct("new");
                   setProductForm({
@@ -90,10 +91,9 @@ export function AdminPage({
                   });
                   setShowProductForm(true);
                 }}
-                className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
               >
                 새 상품 추가
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export function AdminPage({
           <div className="p-6 border-b border-gray-200">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">쿠폰 관리</h2>
-              <button
+              <Button
                 onClick={() => {
                   setCouponForm({
                     name: "",
@@ -150,10 +150,9 @@ export function AdminPage({
                   });
                   setShowCouponForm(true);
                 }}
-                className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
               >
                 새 쿠폰 추가
-              </button>
+              </Button>
             </div>
           </div>
           <div className="p-6">
