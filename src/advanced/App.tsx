@@ -1,22 +1,24 @@
 import { Provider as JotaiProvider } from 'jotai';
 import { PAGES } from '@/constants/pages';
-import { usePage } from '@/shared/hooks';
-import { Notifications, PageLayout } from '@/shared/ui';
-import { NotificationProvider, useNotification } from '@/shared/contexts';
+import { Notifications } from '@/shared/ui';
+import { PageLayout } from '@/shared/ui';
+import {
+  NotificationProvider,
+  useNotification,
+  PageProvider,
+} from '@/shared/contexts';
 
 const AppContent = () => {
-  const { PageComponent, goPage } = usePage(PAGES, 'products');
-
   const { notifications, removeNotification } = useNotification();
 
   return (
-    <PageLayout>
+    <>
       <Notifications
         notifications={notifications}
         removeNotification={removeNotification}
       />
-      <PageComponent goPage={goPage} />
-    </PageLayout>
+      <PageLayout />
+    </>
   );
 };
 
@@ -24,7 +26,9 @@ const App = () => {
   return (
     <JotaiProvider>
       <NotificationProvider>
-        <AppContent />
+        <PageProvider pages={PAGES} initialPageId="products">
+          <AppContent />
+        </PageProvider>
       </NotificationProvider>
     </JotaiProvider>
   );

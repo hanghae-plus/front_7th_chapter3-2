@@ -3,7 +3,7 @@ import { useTab } from '@/shared/hooks';
 import { AdminHeader } from '@/shared/ui';
 import { clsx } from 'clsx';
 
-export const AdminPage = ({ goPage }: { goPage: (id: string) => void }) => {
+export const AdminPage = () => {
   const { activeTab, changeTab, ActiveComponent } = useTab(
     ADMIN_TABS,
     'products'
@@ -11,7 +11,7 @@ export const AdminPage = ({ goPage }: { goPage: (id: string) => void }) => {
 
   return (
     <>
-      <AdminHeader goPage={goPage} />
+      <AdminHeader />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">

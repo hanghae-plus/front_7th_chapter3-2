@@ -4,7 +4,7 @@ import { CouponSelector } from '@/features/coupon';
 import { useFilter } from '@/shared/hooks';
 import { ProductHeader } from '@/shared/ui';
 
-export const ProductsPage = ({ goPage }: { goPage: (id: string) => void }) => {
+export const ProductsPage = () => {
   const { cart } = useCartStore();
   const { products } = useProductStore();
 
@@ -25,7 +25,7 @@ export const ProductsPage = ({ goPage }: { goPage: (id: string) => void }) => {
 
   return (
     <>
-      <ProductHeader query={query} setQuery={setQuery} goPage={goPage} />
+      <ProductHeader query={query} setQuery={setQuery} />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">

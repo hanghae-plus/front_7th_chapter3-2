@@ -1,15 +1,16 @@
 import { useCartStore } from '@/features/cart';
+import { useRouter } from '@/shared/contexts';
 
 export const ProductHeader = ({
   setQuery,
   query,
-  goPage,
 }: {
   query: string;
   setQuery: (value: string) => void;
-  goPage: (id: string) => void;
 }) => {
   const { cart, totalItemCount } = useCartStore();
+  const { goPage } = useRouter();
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
