@@ -7,7 +7,7 @@ interface ProductListProps {
   debouncedSearchTerm: string;
   cart: CartItem[];
   addToCart: (product: ProductWithUI) => void;
-  formatPrice: (price: number, productId?: string) => string;
+  formatPrice: (price: number) => string;
 }
 
 export const ProductList = ({
@@ -84,7 +84,9 @@ export const ProductList = ({
                   {/* 가격 정보 */}
                   <div className="mb-3">
                     <p className="text-lg font-bold text-gray-900">
-                      {formatPrice(product.price, product.id)}
+                      {remainingStock <= 0
+                        ? "SOLD OUT"
+                        : formatPrice(product.price)}
                     </p>
                     {product.discounts.length > 0 && (
                       <p className="text-xs text-gray-500">

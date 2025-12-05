@@ -42,21 +42,6 @@ const App = () => {
     },
   });
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.value.find((p) => p.id === productId);
-      if (product && getRemainingStock(product, cart.value) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
@@ -102,7 +87,6 @@ const App = () => {
             debouncedSearchTerm={debouncedSearchTerm}
             cart={cart}
             coupons={coupons}
-            formatPrice={formatPrice}
             totals={totals}
             completeOrder={completeOrder}
           />
