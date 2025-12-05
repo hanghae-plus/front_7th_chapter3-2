@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Product } from "../../types";
+import productModel from "../models/product";
 interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
@@ -38,7 +39,7 @@ const initialProducts: ProductWithUI[] = [
     description: "대용량과 고성능을 자랑하는 상품입니다.",
   },
 ];
-const useProducts = (addNotification: (message: string, type: "error" | "success" | "warning") => void) => {
+const useProducts = () => {
   const [_products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem("products");
     if (saved) {
@@ -57,20 +58,28 @@ const useProducts = (addNotification: (message: string, type: "error" | "success
 
   const addProduct = useCallback((newProduct: Omit<ProductWithUI, "id">) => {
     const product: ProductWithUI = { ...newProduct, id: `p${Date.now()}` };
-    setProducts((prev) => [...prev, product]);
-    addNotification("상품이 추가되었습니다.", "success");
+    setProducts((prev) => productModel.addProduct(prev, product));
   }, []);
 
   const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
-    setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
-    addNotification("상품이 수정되었습니다.", "success");
+    setProducts((prev) => productModel.updateProduct(prev, productId, updates));
   }, []);
 
   const deleteProduct = useCallback((productId: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== productId));
-    addNotification("상품이 삭제되었습니다.", "success");
+    setProducts((prev) => productModel.deleteProduct(prev, productId));
   }, []);
 
-  return { data: _products, addProduct, updateProduct, deleteProduct };
+  const updateProductStock = useCallback((productId: string, newStock: number) => {
+    setProducts((prev) => productModel.updateProductStock(prev, productId, newStock));
+  }, []);
+
+  return {
+    data: _products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    updateProductStock,
+  };
 };
+
 export default useProducts;
