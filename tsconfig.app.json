@@ -17,11 +17,22 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@basic/*": ["src/basic/*"],
+      "@advanced/*": ["src/advanced/*"],
+      "@origin/*": ["src/origin/*"],
+      "@types": ["src/types"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/refactoring(hint)"]
 }
