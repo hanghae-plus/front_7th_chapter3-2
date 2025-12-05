@@ -9,10 +9,12 @@
 **해결 방법**:
 
 1. **GitHub 저장소로 이동**
+
    - `https://github.com/jumoooo/front_7th_chapter3-2`
    - Settings → Pages 메뉴로 이동
 
 2. **Source 설정 확인**
+
    - ⚠️ **중요**: Source가 "Deploy from a branch"로 되어 있고, 브랜치가 "gh-pages"로 설정되어 있다면, 이것이 문제일 수 있습니다.
    - **올바른 설정**: Source를 **"GitHub Actions"**로 변경해야 합니다!
    - "Deploy from a branch"는 GitHub Actions 없이 수동으로 배포할 때만 사용합니다.
@@ -29,9 +31,11 @@
 **확인 방법**:
 
 1. **Actions 탭으로 이동**
+
    - `https://github.com/jumoooo/front_7th_chapter3-2/actions`
 
 2. **"Deploy to GitHub Pages" 워크플로우 확인**
+
    - 워크플로우가 실행되었는지 확인
    - 실패했다면 로그 확인
    - 성공했다면 다음 단계로
@@ -47,10 +51,12 @@
 **확인 방법**:
 
 1. **브랜치 목록 확인**
+
    - `https://github.com/jumoooo/front_7th_chapter3-2/branches`
    - `gh-pages` 브랜치가 있는지 확인
 
 2. **gh-pages 브랜치 내용 확인**
+
    - `https://github.com/jumoooo/front_7th_chapter3-2/tree/gh-pages`
    - `index.html` 파일이 있어야 합니다
    - `assets` 폴더가 있어야 합니다
@@ -112,4 +118,3 @@ ls -la dist/
 2. gh-pages 브랜치의 실제 파일 구조 확인
 3. 브라우저 개발자 도구(F12)에서 네트워크 탭 확인
 4. 콘솔 에러 메시지 확인
-
