@@ -3,6 +3,7 @@ import {
   type ProductWithUI,
   getNewProducts,
   getUpdatedProducts,
+  INITIAL_PRODUCT_FORM_STATE,
 } from '../../../entities/product';
 import DiscountForm from './DiscountForm';
 import { Dispatch, SetStateAction } from 'react';
@@ -98,13 +99,7 @@ export default function ProductForm({
 
   const handleCancelProduct = () => {
     setEditingProduct(null);
-    setProductForm({
-      name: '',
-      price: 0,
-      stock: 0,
-      description: '',
-      discounts: [],
-    });
+    setProductForm(INITIAL_PRODUCT_FORM_STATE);
     setShowProductForm(false);
   };
 

@@ -2,6 +2,7 @@ import {
   type ProductFormState,
   type ProductWithUI,
   getDeletedProducts,
+  INITIAL_PRODUCT_FORM_STATE,
 } from '../../../entities/product';
 import { useState } from 'react';
 import ProductForm from './ProductForm';
@@ -18,13 +19,7 @@ export default function ProductTab({ addNotification }: ProductTabProps) {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
 
-  const [productForm, setProductForm] = useState<ProductFormState>({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [],
-  });
+  const [productForm, setProductForm] = useState<ProductFormState>(INITIAL_PRODUCT_FORM_STATE);
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
@@ -40,13 +35,7 @@ export default function ProductTab({ addNotification }: ProductTabProps) {
 
   const handleAddProduct = () => {
     setEditingProduct('new');
-    setProductForm({
-      name: '',
-      price: 0,
-      stock: 0,
-      description: '',
-      discounts: [],
-    });
+    setProductForm(INITIAL_PRODUCT_FORM_STATE);
     setShowProductForm(true);
   };
 
