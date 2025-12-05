@@ -1,15 +1,12 @@
 import { type Notification } from '../types';
-import { Dispatch, SetStateAction } from 'react';
+import { useNotificationContext } from '../../../providers/NotificationProvider';
 
 interface NotificationToastProps {
   notification: Notification;
-  setNotifications: Dispatch<SetStateAction<Notification[]>>;
 }
 
-export default function NotificationToast({
-  notification,
-  setNotifications,
-}: NotificationToastProps) {
+export default function NotificationToast({ notification }: NotificationToastProps) {
+  const { setNotifications } = useNotificationContext();
   const handleClose = () => {
     setNotifications(prev => prev.filter(n => n.id !== notification.id));
   };

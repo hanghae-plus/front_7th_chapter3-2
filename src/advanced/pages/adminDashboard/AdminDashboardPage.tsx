@@ -7,13 +7,11 @@ import { Dispatch, SetStateAction } from 'react';
 interface AdminDashboardPageProps {
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export default function AdminDashboardPage({
   selectedCoupon,
   setSelectedCoupon,
-  addNotification,
 }: AdminDashboardPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
@@ -49,13 +47,9 @@ export default function AdminDashboardPage({
       </div>
 
       {activeTab === 'products' ? (
-        <ProductTab addNotification={addNotification} />
+        <ProductTab />
       ) : (
-        <CouponTab
-          addNotification={addNotification}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-        />
+        <CouponTab selectedCoupon={selectedCoupon} setSelectedCoupon={setSelectedCoupon} />
       )}
     </div>
   );

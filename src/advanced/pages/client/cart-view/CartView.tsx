@@ -12,20 +12,16 @@ import { Dispatch, SetStateAction } from 'react';
 import { useProductContext } from '../../../providers/ProductProvider';
 import { useCartContext } from '../../../providers/CartProvider';
 import { generateId } from '../../../utils/id-generator';
+import { useNotificationContext } from '../../../providers/NotificationProvider';
 interface CartViewProps {
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
-export default function CartView({
-  addNotification,
-  selectedCoupon,
-  setSelectedCoupon,
-}: CartViewProps) {
+export default function CartView({ selectedCoupon, setSelectedCoupon }: CartViewProps) {
   const { products } = useProductContext();
   const { cart, setCart } = useCartContext();
-
+  const { addNotification } = useNotificationContext();
   // Computed Values
   const originTotal = useMemo(() => {
     const total = getOriginTotal(cart);

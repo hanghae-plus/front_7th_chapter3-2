@@ -2,7 +2,7 @@ import { useState } from 'react';
 import AdminDashboardPage from './pages/adminDashboard/AdminDashboardPage';
 import { type Coupon } from './entities/coupon';
 import ProductPage from './pages/client/ProductPage';
-import { NotificationContainer, useNotification } from './entities/notification';
+import { NotificationContainer } from './entities/notification';
 import { Header } from './components/Header';
 import { useDebounce } from './hooks/useDebounce';
 
@@ -15,11 +15,11 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DEBOUNCE_DELAY);
 
-  const { notifications, setNotifications, addNotification } = useNotification();
+  // const { notifications, setNotifications, addNotification } = useNotification();
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NotificationContainer notifications={notifications} setNotifications={setNotifications} />
+      <NotificationContainer />
 
       <Header
         isAdmin={isAdmin}
@@ -32,14 +32,12 @@ const App = () => {
           <AdminDashboardPage
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
-            addNotification={addNotification}
           />
         ) : (
           <ProductPage
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             debouncedSearchTerm={debouncedSearchTerm}
-            addNotification={addNotification}
           />
         )}
       </main>

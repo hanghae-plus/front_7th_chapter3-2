@@ -8,14 +8,11 @@ import { useState } from 'react';
 import ProductForm from './ProductForm';
 import ProductListRowItem from './ProductListRowItem';
 import { useProductContext } from '../../../providers/ProductProvider';
+import { useNotificationContext } from '../../../providers/NotificationProvider';
 
-interface ProductTabProps {
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
-
-export default function ProductTab({ addNotification }: ProductTabProps) {
+export default function ProductTab() {
   const { products, setProducts } = useProductContext();
-
+  const { addNotification } = useNotificationContext();
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
 

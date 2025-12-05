@@ -3,17 +3,15 @@ import { type ProductWithUI, filterProducts, getRemainingStock } from '../../../
 import ProductCard from './ProductCard';
 import { useCartContext } from '../../../providers/CartProvider';
 import { useProductContext } from '../../../providers/ProductProvider';
+import { useNotificationContext } from '../../../providers/NotificationProvider';
 interface ProductSectionProps {
   debouncedSearchTerm: string;
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
-export default function ProductSection({
-  debouncedSearchTerm,
-  addNotification,
-}: ProductSectionProps) {
+export default function ProductSection({ debouncedSearchTerm }: ProductSectionProps) {
   const { products } = useProductContext();
   const { cart, setCart } = useCartContext();
+  const { addNotification } = useNotificationContext();
   const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   // Events
