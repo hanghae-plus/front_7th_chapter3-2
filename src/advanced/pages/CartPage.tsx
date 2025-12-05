@@ -4,17 +4,17 @@ import SelectList from "../components/ui/SelectList";
 import { CartIcon } from "../components/icons";
 import { Card } from "../components/ui";
 import CartList from "../components/domain/cartPage/CartList";
-import ProductList from "../components/domain/product/ProductList";
+import ProductList from "../components/domain/cartPage/ProductList";
 import { isValidStock } from "../utils/validators";
 import CartHeader from "../components/domain/cartPage/CartHeader";
 import cartModel from "../models/cart";
 import productModel from "../models/product";
 import couponModel from "../models/coupon";
+import { useCoupons } from "../hooks/useCoupons";
 
 interface CartPageProps {
   products: ProductWithUI[];
   cart: CartItem[];
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
 
@@ -37,7 +37,6 @@ interface CartPageProps {
 const CartPage = ({
   products,
   cart,
-  coupons,
   selectedCoupon,
   debouncedSearchTerm,
   addToCart,
@@ -51,6 +50,8 @@ const CartPage = ({
   goAdminPage,
   setSearchTerm,
 }: CartPageProps) => {
+  const { coupons } = useCoupons();
+
   const filteredProducts = useMemo(() => {
     if (!debouncedSearchTerm) return products;
 

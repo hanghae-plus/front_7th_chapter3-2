@@ -1,7 +1,7 @@
 import { Coupon, Product } from "../../types";
 import { useState } from "react";
-import CouponSection from "../components/domain/coupon/CouponSection";
-import ProductSection from "../components/domain/product/ProductSection";
+import CouponSection from "../components/domain/adminPage/CouponSection";
+import ProductSection from "../components/domain/adminPage/ProductSection";
 import AdminHeader from "../components/domain/adminPage/AdminHeader";
 interface ProductWithUI extends Product {
   description?: string;
@@ -14,10 +14,7 @@ const AdminPage = ({
   addProduct,
   updateProduct,
   deleteProduct,
-  //   COUPON
-  coupons,
-  addCoupon,
-  deleteCoupon,
+
   //   COUPONT FORM
   selectedCoupon,
   setSelectedCoupon,
@@ -29,10 +26,6 @@ const AdminPage = ({
   addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (productId: string) => void;
-
-  coupons: Coupon[];
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
 
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (value: Coupon | null) => void;
@@ -86,12 +79,9 @@ const AdminPage = ({
             />
           ) : (
             <CouponSection
-              coupons={coupons}
               selectedCoupon={selectedCoupon}
               setSelectedCoupon={setSelectedCoupon}
-              deleteCoupon={deleteCoupon}
               addNotification={addNotification}
-              addCoupon={addCoupon}
             />
           )}
         </div>

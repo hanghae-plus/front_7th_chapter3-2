@@ -4,7 +4,6 @@ import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
 import useProducts from "./hooks/useProducts";
 import useCart from "./hooks/useCart";
-import useCoupons from "./hooks/useCoupons";
 import { useDebounce } from "./utils/hooks/useDebounce";
 import { useLocalStorage } from "./utils/hooks/useLocalStorage";
 import { useNotification } from "./utils/hooks/useNotification";
@@ -19,9 +18,6 @@ const App = () => {
 
   const cart = useCart();
   useLocalStorage("cart", cart.data, { removeIfEmpty: true });
-
-  const coupons = useCoupons();
-  useLocalStorage("coupons", coupons.data);
 
   // 상태 관리
   const [isAdmin, setIsAdmin] = useState(false);
@@ -41,9 +37,6 @@ const App = () => {
           addProduct={products.addProduct}
           updateProduct={products.updateProduct}
           deleteProduct={products.deleteProduct}
-          coupons={coupons.data}
-          addCoupon={coupons.addCoupon}
-          deleteCoupon={coupons.deleteCoupon}
           selectedCoupon={cart.selectedCoupon}
           setSelectedCoupon={cart.applyCoupon}
           addNotification={addNotification}
@@ -53,7 +46,6 @@ const App = () => {
         <CartPage
           products={products.data}
           cart={cart.data}
-          coupons={coupons.data}
           selectedCoupon={cart.selectedCoupon}
           debouncedSearchTerm={debouncedSearchTerm}
           addNotification={addNotification}

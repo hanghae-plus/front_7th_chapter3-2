@@ -3,22 +3,19 @@ import CouponListItem from "./CouponListItem";
 import CouponForm from "./CouponForm";
 import { useState } from "react";
 import couponModel from "../../../models/coupon";
+import { useCoupons } from "../../../hooks/useCoupons";
 
 const CouponSection = ({
-  coupons,
   selectedCoupon,
   setSelectedCoupon,
-  deleteCoupon,
   addNotification,
-  addCoupon,
 }: {
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
-  deleteCoupon: (couponCode: string) => void;
   addNotification: (message: string, type: "error" | "success" | "warning") => void;
-  addCoupon: (coupon: Coupon) => void;
 }) => {
+  const { coupons, addCoupon, deleteCoupon } = useCoupons();
+
   const [couponForm, setCouponForm] = useState({
     name: "",
     code: "",
