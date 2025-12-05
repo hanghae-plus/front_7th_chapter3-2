@@ -1,0 +1,123 @@
+import { CartItem } from '../../../../../types';
+
+const DeleteButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <button onClick={onClick} className="text-gray-400 hover:text-red-500 ml-2">
+      <svg
+        className="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+  );
+};
+
+const Button = ({
+  onClick,
+  children,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+    >
+      {children}
+    </button>
+  );
+};
+
+const CartQuantityHandler = ({
+  item,
+  updateQuantity,
+}: {
+  item: CartItem;
+  updateQuantity: (productId: string, quantity: number) => void;
+}) => {
+  return (
+    <div className="flex items-center">
+      <Button
+        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+        children={<span className="text-xs">−</span>}
+      />
+      <span className="mx-3 text-sm font-medium w-8 text-center">
+        {item.quantity}
+      </span>
+      <Button
+        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+        children={<span className="text-xs">+</span>}
+      />
+    </div>
+  );
+};
+
+const CartItemPrice = ({
+  hasDiscount,
+  discountRate,
+  itemTotal,
+}: {
+  hasDiscount: boolean;
+  discountRate: number;
+  itemTotal: number;
+}) => {
+  return (
+    <div className="text-right">
+      {hasDiscount && (
+        <span className="text-xs text-red-500 font-medium block">
+          -{discountRate}%
+        </span>
+      )}
+      <p className="text-sm font-medium text-gray-900">
+        {Math.round(itemTotal).toLocaleString()}원
+      </p>
+    </div>
+  );
+};
+
+export const CartItemComponent = ({
+  item,
+  itemTotal,
+  removeFromCart,
+  updateQuantity,
+  originalPrice,
+}: {
+  item: CartItem;
+  itemTotal: number;
+  originalPrice: number;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
+}) => {
+  const hasDiscount = itemTotal < originalPrice;
+  const discountRate = hasDiscount
+    ? Math.round((1 - itemTotal / originalPrice) * 100)
+    : 0;
+
+  return (
+    <div key={item.product.id} className="border-b pb-3 last:border-b-0">
+      <div className="flex justify-between items-start mb-2">
+        <h4 className="text-sm font-medium text-gray-900 flex-1">
+          {item.product.name}
+        </h4>
+        <DeleteButton onClick={() => removeFromCart(item.product.id)} />
+      </div>
+      <div className="flex items-center justify-between">
+        <CartQuantityHandler item={item} updateQuantity={updateQuantity} />
+        <CartItemPrice
+          hasDiscount={hasDiscount}
+          discountRate={discountRate}
+          itemTotal={itemTotal}
+        />
+      </div>
+    </div>
+  );
+};
