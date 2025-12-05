@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 
 interface ProductWithUI extends Product {
