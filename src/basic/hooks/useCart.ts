@@ -4,9 +4,11 @@ import { Coupon } from '../entities/coupon/model/types';
 import { Product } from '../entities/product/model/types';
 import { ProductWithUI } from '../model/productModels';
 import { getRemainingStock } from '../entities/product/lib/stock';
-import { calculateCartTotal } from '../entities/cart/lib/calc';
+import { calculateCartTotal, calculateItemTotal } from '../entities/cart/lib/calc';
 
-export const useCart = (products: ProductWithUI[]) => {
+type AddNotification = (message: string, type?: 'error' | 'success' | 'warning') => void;
+
+export const useCart = (products: ProductWithUI[], addNotification: AddNotification) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -23,12 +25,7 @@ export const useCart = (products: ProductWithUI[]) => {
 
   const memoizedGetRemainingStock = useCallback((product: Product) => getRemainingStock(product, cart), [cart]);
   const totals = calculateCartTotal(cart, selectedCoupon);
-
-  const addNotification = (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-    // 이 함수는 App.tsx에서 props로 받아야 하지만, 일단 임시로 구현합니다.
-    // 실제 구현에서는 의존성 주입 등의 방법을 사용해야 합니다.
-    console.log(`${type}: ${message}`);
-  };
+  const memoizedCalculateItemTotal = (item: CartItem) => calculateItemTotal(item, cart);
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -126,6 +123,7 @@ export const useCart = (products: ProductWithUI[]) => {
     applyCoupon,
     setSelectedCoupon,
     completeOrder,
-    getRemainingStock: memoizedGetRemainingStock
+    getRemainingStock: memoizedGetRemainingStock,
+    calculateItemTotal: memoizedCalculateItemTotal
   };
 };
