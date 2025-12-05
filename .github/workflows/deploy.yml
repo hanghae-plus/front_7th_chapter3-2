@@ -43,6 +43,11 @@ jobs:
       - name: Build advanced
         run: pnpm run build --config vite.config.advanced.ts
 
+      - name: Rename index files
+        run: |
+          mv dist/basic/index.basic.html dist/basic/index.html
+          mv dist/advanced/index.advanced.html dist/advanced/index.html
+
       - name: Copy root index.html
         run: cp index.html dist/index.html
 
