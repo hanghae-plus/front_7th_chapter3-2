@@ -1,0 +1,86 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Build target'
+        required: true
+        default: 'basic'
+        type: choice
+        options:
+          - basic
+          - advanced
+          - origin
+
+# 기본 환경변수 정의
+env:
+  DEFAULT_BUILD_TARGET: basic
+  NODE_VERSION: 20
+  PNPM_VERSION: 9
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Repository Variable 사용 (없으면 기본값)
+      BUILD_TARGET: ${{ github.event.inputs.target || vars.BUILD_TARGET || 'basic' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Display build target
+        run: echo "🎯 Building target - ${{ env.BUILD_TARGET }}"
+
+      - name: Run tests
+        run: pnpm test:${{ env.BUILD_TARGET }} --run
+
+      - name: Build for production
+        run: pnpm build
+        env:
+          BUILD_TARGET: ${{ env.BUILD_TARGET }}
+          BASE_URL: /${{ github.event.repository.name }}/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
