@@ -13,6 +13,9 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
+    "build:basic": "BUILD_TARGET=basic tsc -b && BUILD_TARGET=basic vite build",
+    "build:advanced": "BUILD_TARGET=advanced tsc -b && BUILD_TARGET=advanced vite build",
+    "build:origin": "BUILD_TARGET=origin tsc -b && BUILD_TARGET=origin vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
