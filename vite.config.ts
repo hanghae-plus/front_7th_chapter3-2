@@ -7,11 +7,15 @@ export default defineConfig(({ mode }) => {
   // .env 파일에서 환경변수 로드
   const env = loadEnv(mode, process.cwd(), "");
 
-  // BUILD_TARGET: 'basic' | 'advanced' | 'origin' (default: 'basic')
-  const buildTarget = env.BUILD_TARGET || "basic";
+  // process.env 우선, 없으면 .env 파일, 없으면 기본값
+  const buildTarget = process.env.BUILD_TARGET || env.BUILD_TARGET || "basic";
+  const baseUrl = process.env.BASE_URL || env.BASE_URL || "/";
+
+  console.log(`🎯 Build Target: ${buildTarget}`);
+  console.log(`🌐 Base URL: ${baseUrl}`);
 
   return {
-    base: env.BASE_URL || "/",
+    base: baseUrl,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
@@ -21,7 +25,11 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         input: {
-          main: path.resolve(__dirname, `index.${buildTarget}.html`),
+          index: path.resolve(__dirname, `index.${buildTarget}.html`),
+        },
+        output: {
+          // 출력 파일명을 index.html로 변경
+          entryFileNames: "assets/[name]-[hash].js",
         },
       },
     },

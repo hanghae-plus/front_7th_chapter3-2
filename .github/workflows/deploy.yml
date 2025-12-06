@@ -66,6 +66,15 @@ jobs:
           BUILD_TARGET: ${{ env.BUILD_TARGET }}
           BASE_URL: /${{ github.event.repository.name }}/
 
+      - name: Rename HTML file for GitHub Pages
+        run: |
+          cd dist
+          if [ -f "index.${{ env.BUILD_TARGET }}.html" ]; then
+            mv "index.${{ env.BUILD_TARGET }}.html" index.html
+            echo "✅ Renamed index.${{ env.BUILD_TARGET }}.html → index.html"
+          fi
+          ls -la
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
