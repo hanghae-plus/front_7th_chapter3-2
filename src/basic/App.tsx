@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CartLayout } from './components/ui/layout/CartLayout';
 import { AdminPage } from './components/ui/admin';
 import { AdminLayout } from './components/ui/layout/AdminLayout';
-import { CartPage } from './components/CartPage';
+import { CartPage } from './components/ui/cart/CartPage';
 
 // 커스텀 훅
 import { useCart } from './hooks/useCart';

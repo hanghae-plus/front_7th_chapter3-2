@@ -1,10 +1,10 @@
 // components/CartPage.tsx
 import { useMemo } from 'react';
 import { Product, Coupon } from '@/types';
-import { ProductCard } from './ui/shop/ProductCard';
-import { Button } from './ui/common/button';
-import { useCart } from '../hooks/useCart';
-import { calculateItemTotal, filterProductsBySearch } from '../models/cart';
+import { ProductCard } from './ProductCard';
+import { Button } from '../common/button';
+import { useCart } from '../../../hooks/useCart';
+import { calculateItemTotal, filterProductsBySearch } from '../../../models/cart';
 // TODO: UI 분리 필요
 interface ProductWithUI extends Product {
   description?: string;
