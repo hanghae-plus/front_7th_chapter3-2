@@ -1,0 +1,103 @@
+import { Coupon, Product } from "../../types";
+import { useState } from "react";
+import CouponSection from "../components/domain/adminPage/CouponSection";
+import ProductSection from "../components/domain/adminPage/ProductSection";
+import AdminHeader from "../components/domain/adminPage/AdminHeader";
+interface ProductWithUI extends Product {
+  description?: string;
+  isRecommended?: boolean;
+}
+
+const AdminPage = ({
+  //   PRODUCTS
+  products,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  //   COUPON
+  coupons,
+  addCoupon,
+  deleteCoupon,
+  //   COUPONT FORM
+  selectedCoupon,
+  setSelectedCoupon,
+  //   NOTIFICATION
+  addNotification,
+  goShoppingPage,
+}: {
+  products: ProductWithUI[];
+  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
+  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
+  deleteProduct: (productId: string) => void;
+
+  coupons: Coupon[];
+  addCoupon: (newCoupon: Coupon) => void;
+  deleteCoupon: (couponCode: string) => void;
+
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (value: Coupon | null) => void;
+
+  addNotification: (value: string, type: "error" | "success" | "warning") => void;
+  goShoppingPage: () => void;
+}) => {
+  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
+
+  return (
+    <>
+      <AdminHeader goShoppingPage={goShoppingPage} />
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
+            <p className="text-gray-600 mt-1">상품과 쿠폰을 관리할 수 있습니다</p>
+          </div>
+          <div className="border-b border-gray-200 mb-6">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab("products")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === "products"
+                    ? "border-gray-900 text-gray-900"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                상품 관리
+              </button>
+              <button
+                onClick={() => setActiveTab("coupons")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === "coupons"
+                    ? "border-gray-900 text-gray-900"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                쿠폰 관리
+              </button>
+            </nav>
+          </div>
+
+          {activeTab === "products" ? (
+            <ProductSection
+              products={products}
+              addProduct={addProduct}
+              updateProduct={updateProduct}
+              deleteProduct={deleteProduct}
+              addNotification={addNotification}
+            />
+          ) : (
+            <CouponSection
+              coupons={coupons}
+              selectedCoupon={selectedCoupon}
+              setSelectedCoupon={setSelectedCoupon}
+              deleteCoupon={deleteCoupon}
+              addNotification={addNotification}
+              addCoupon={addCoupon}
+            />
+          )}
+        </div>
+      </main>
+    </>
+  );
+};
+
+export default AdminPage;

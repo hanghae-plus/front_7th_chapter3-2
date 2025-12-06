@@ -1,8 +1,18 @@
 // @ts-nocheck
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
+import { render as rtlRender, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from '../App';
+import { CouponProvider } from '../hooks/useCoupons';
 import '../../setupTests';
+
+// CouponProvider로 감싼 커스텀 render 함수
+const render = (ui = <App />) => {
+  return rtlRender(
+    <CouponProvider>
+      {ui}
+    </CouponProvider>
+  );
+};
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
