@@ -5,6 +5,10 @@ export interface Product {
   stock: number;
   discounts: Discount[];
 }
+export interface ProductWithUI extends Product {
+  description?: string;
+  isRecommended?: boolean;
+}
 
 export interface Discount {
   quantity: number;
